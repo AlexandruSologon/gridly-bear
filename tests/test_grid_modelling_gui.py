@@ -4,7 +4,7 @@
 
 import pytest
 import pandapower as pp
-import grid_modelling_gui.src.grid_modelling_gui.grid_modelling_gui as main
+from src.grid_modelling_gui import grid_modelling_gui as main
 
 
 @pytest.fixture
