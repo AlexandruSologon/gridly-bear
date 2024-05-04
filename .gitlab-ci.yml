@@ -1,0 +1,3 @@
+include:
+  - flask_server/.gitlab-ci.yml
+
