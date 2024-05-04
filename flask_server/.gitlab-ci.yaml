@@ -1,0 +1,34 @@
+image: python:3.11
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+before_script:
+  - pip install poetry
+  - poetry config virtualenvs.create false
+  - poetry install
+
+Linting:
+  stage: lint
+  script:
+    - poetry run ruff
+
+Tests:
+  stage: test
+  script:
+    - poetry run pytest
+
+Static Type check:
+  stage: lint
+  script:
+    - poetry run mypy
+
+Deploy:
+  stage: deploy
+  script:
+    - wait 10
+    - echo "deployed"
+
