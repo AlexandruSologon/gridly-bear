@@ -1,6 +1,6 @@
 import unittest
 import pandapower as pp
-import project.net as main
+import flask_server.src.net as main
 import numba
 
 
@@ -30,7 +30,8 @@ class MyTestCase(unittest.TestCase):
 
     def test_problem_buses(self):
         net = basic_network()
-        self.assertTrue(main.problem_buses(net, 1.05, 0.95) == [])
+        print(main.problem_buses(net, 1.05, 0.95))
+        self.assertTrue(len(main.problem_buses(net, 1.05, 0.95)) == 0)
 
 
 if __name__ == '__main__':
