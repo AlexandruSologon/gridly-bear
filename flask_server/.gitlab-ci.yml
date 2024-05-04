@@ -14,7 +14,7 @@ before_script:
 Linting:
   stage: lint
   script:
-    - poetry run ruff
+    - poetry run ruff check
 
 Tests:
   stage: test
