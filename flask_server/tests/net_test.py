@@ -1,7 +1,6 @@
 import unittest
 import pandapower as pp
 import flask_server.src.net as main
-import numba
 
 
 def basic_network():

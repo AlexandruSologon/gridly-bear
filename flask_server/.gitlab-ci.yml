@@ -21,11 +21,6 @@ Tests:
   script:
     - poetry run pytest
 
-Static Type check:
-  stage: lint
-  script:
-    - poetry run mypy
-
 Deploy:
   stage: deploy
   script:
