@@ -24,6 +24,5 @@ Tests:
 Deploy:
   stage: deploy
   script:
-    - wait 10
     - echo "deployed"
 

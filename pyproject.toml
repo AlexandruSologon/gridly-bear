@@ -1,5 +1,6 @@
 [tool.poetry]
-name = "project"
+package-mode = false
+name = "flask_server"
 version = "0.1.0"
 description = ""
 authors = ["Alexandru <a.m.sologon@student.tudelft.nl>"]
