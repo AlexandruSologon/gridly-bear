@@ -12,6 +12,8 @@ import Sidebar from './Sidebar';
 
 import './index.css';
 
+import CustomEdge from './customEdge';
+
 const initialNodes = [
   {
     id: '1',
@@ -31,7 +33,7 @@ const DnDFlow = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((eds) => addEdge({...params, type:'custom'}, eds)),
     [],
   );
 
@@ -84,6 +86,7 @@ const DnDFlow = () => {
             onDrop={onDrop}
             onDragOver={onDragOver}
             fitView
+            edgeTypes={{ custom: CustomEdge }}
           >
             <Controls />
           </ReactFlow>
