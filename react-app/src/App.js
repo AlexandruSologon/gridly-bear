@@ -26,16 +26,39 @@ const initialNodes = [
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
+
+
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [selectedNodes, setSelectedNodes] = useState([]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge({...params, type:'custom'}, eds)),
     [],
   );
+
+  const onElementClick = useCallback(
+  (event, element) => {
+    if (element.type === 'node') {
+      setSelectedNodes((prevNodes) => {
+        if (prevNodes.length === 2) {
+          // Two nodes are already selected, create an edge between them
+          setEdges((eds) => addEdge({ source: prevNodes[0].id, target: element.id, type: 'custom' }, eds));
+          // Reset the selected nodes
+          return [element];
+        } else {
+          // Less than two nodes are selected, add the clicked node to the selected nodes
+          return [...prevNodes, element];
+        }
+      });
+    }
+  },
+  [setEdges, setSelectedNodes],
+);
+
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -87,6 +110,7 @@ const DnDFlow = () => {
             onDragOver={onDragOver}
             fitView
             edgeTypes={{ custom: CustomEdge }}
+            onElementClick={onElementClick}
           >
             <Controls />
           </ReactFlow>
