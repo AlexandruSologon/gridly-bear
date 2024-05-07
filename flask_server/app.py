@@ -1,4 +1,5 @@
-from flask import Flask,jsonify, render_template, send_file, send_from_directory
+import os
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 
 app = Flask(__name__, static_folder="../react-app/build/")
@@ -10,7 +11,10 @@ def serve_main():
 
 @app.route('/<path:path>')
 def send_report(path):
-    return send_from_directory(app.static_folder, path)
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000) #todo port to 80 in deployment
