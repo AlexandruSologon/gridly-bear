@@ -1,21 +1,16 @@
 from flask import Flask,jsonify, render_template, send_file, send_from_directory
 from flask_cors import CORS
 
-app = Flask(__name__, template_folder="./resources")
+app = Flask(__name__, static_folder="../react-app/build/")
 cors = CORS(app, origins='*')
 
-@app.route("/api/hello")
-def hello_world():
-    hi = "Hello World!"
-    return jsonify(hi)
-
 @app.route("/")
-def skgrgkl():
-    return send_from_directory(app.template_folder, "index.html")
+def serve_main():
+    return send_from_directory(app.static_folder, "./index.html")
 
-# @app.route("/src/main.jsx")
-# def dsadasdas():
-#     return send_file("src/main.jsx")
+@app.route('/<path:path>')
+def send_report(path):
+    return send_from_directory(app.static_folder, path)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=5000)
