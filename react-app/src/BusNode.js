@@ -5,6 +5,7 @@ const CustomNode = ({isConnectable}) => {
   return (
       <>
       <Handle
+          draggable= "false"
           type="source"
         isConnectableEnd="true"
         isConnectableStart="true"

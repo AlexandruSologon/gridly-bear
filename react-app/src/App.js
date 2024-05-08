@@ -1,5 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
+import {useMemo} from "react";
 import SolarPanel from './images/solar-panel.png';
+import {
+  StraightEdge,
+} from 'react-flow-renderer/nocss';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -16,13 +20,6 @@ import WindNode from "./WindNode";
 import LoadNode from "./LoadNode";
 
 import './index.css';
-
-import CustomEdge from './customEdge';
-
-const nodeTypes = {solar: SolarNode,
-                        bus: BusNode,
-                        wind: WindNode,
-                        load: LoadNode};
 
 const initialNodes = [
   {
@@ -43,10 +40,10 @@ const CustomNodeFlow = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [selectedNodes, setSelectedNodes] = useState([]);
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge({...params, type:'custom'}, eds)),
-    [],
-  );
+   const onConnect = useCallback(
+     (params) => setEdges((eds) => addEdge({...params}, eds)),
+     [setEdges],
+   );
 
   const onElementClick = useCallback(
   (event, element) => {
@@ -54,7 +51,7 @@ const CustomNodeFlow = () => {
       setSelectedNodes((prevNodes) => {
         if (prevNodes.length === 2) {
           // Two nodes are already selected, create an edge between them
-          setEdges((eds) => addEdge({ source: prevNodes[0].id, target: element.id, type: 'custom' }, eds));
+          setEdges((eds) => addEdge({ source: prevNodes[0].id, target: element.id }, eds));
           // Reset the selected nodes
           return [element];
         } else {
@@ -111,7 +108,15 @@ const CustomNodeFlow = () => {
           <ReactFlow
               connectionMode="loose"
             nodes={nodes}
-            nodeTypes={nodeTypes}
+            nodeTypes={useMemo(
+    () => ({
+      solar: SolarNode,
+                        bus: BusNode,
+                        wind: WindNode,
+                        load: LoadNode
+    }),
+    [],
+        )}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -119,14 +124,19 @@ const CustomNodeFlow = () => {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            fitView
-            edgeTypes={{ custom: CustomEdge }}
+             fitView
+              edgeTypes={useMemo(
+     () => ({
+            default: StraightEdge
+            }),
+      [],
+            )}
+              connectionLineType = "straight"
             onElementClick={onElementClick}
           >
             <Controls />
           </ReactFlow>
         </div>
-        <Sidebar />
       </ReactFlowProvider>
     </div>
   );
