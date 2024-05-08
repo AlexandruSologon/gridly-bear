@@ -1,3 +1,4 @@
+
 .dndflow {
   flex-direction: column;
   display: flex;
@@ -16,19 +17,30 @@
   margin-bottom: 10px;
 }
 
+.dot {
+  width: 64px;
+  height: 64px;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin: auto;
+        }
+
 .dndflow .dndnode {
-  height: 20px;
-  padding: 4px;
+  height: 100px;
+  width:  100px;
+  padding: 1px;
   border: 1px solid #1a192b;
   border-radius: 2px;
   margin-bottom: 10px;
-  display: flex;
+  display: grid;
+  text-align: center;
+  font-size: 16px;
   justify-content: center;
   align-items: center;
   cursor: grab;
 }
 
-.dndflow .dndnode.input {
+.dndflow .dndnode.solar {
   border-color: #0041d0;
 }
 
@@ -44,6 +56,17 @@
 .dndflow .selectall {
   margin-top: 10px;
 }
+
+.sideIcon {
+  width: 80px;
+  height: 80px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
 
 @media screen and (min-width: 768px) {
   .dndflow {

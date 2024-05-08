@@ -1,4 +1,7 @@
 import React from 'react';
+import SolarPanel from './images/solar-panel.png'
+import WindTurbine from './images/windmill.png'
+import Load from './images/eco-house.png'
 
 export default () => {
   const onDragStart = (event, nodeType) => {
@@ -7,17 +10,20 @@ export default () => {
   };
 
   return (
-    <aside>
-      <div className="description">You can drag these nodes to the pane on the right.</div>
-      <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'input')} draggable>
-        Input Node
-      </div>
-      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
-        Default Node
-      </div>
-      <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'output')} draggable>
-        Output Node
-      </div>
-    </aside>
+      <aside>
+          <div className="description">You can drag these components to add them to the canvas.</div>
+          <div className="dndnode" onDragStart={(event) => onDragStart(event, 'solar')} draggable>
+              <img className="sideIcon" src={SolarPanel} alt={"Solar Panel"}/> Solar Panel
+          </div>
+          <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
+              <img className="sideIcon" src={WindTurbine} alt={"Wind Turbine"}/> Wind Turbine
+          </div>
+          <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
+              <span className="dot"></span> Bus
+          </div>
+          <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
+              <img className="sideIcon" src={Load} alt={"Load"}/> Load
+          </div>
+      </aside>
   );
 };
