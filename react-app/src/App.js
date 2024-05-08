@@ -1,5 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
+import {useMemo} from "react";
 import SolarPanel from './images/solar-panel.png';
+import {
+  StraightEdge,
+} from 'react-flow-renderer/nocss';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -17,11 +21,6 @@ import LoadNode from "./LoadNode";
 
 import './index.css';
 
-const nodeTypes = {solar: SolarNode,
-                        bus: BusNode,
-                        wind: WindNode,
-                        load: LoadNode};
-
 const initialNodes = [
   {
     id: '1',
@@ -31,7 +30,6 @@ const initialNodes = [
   },
 ];
 
-
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
@@ -40,11 +38,32 @@ const CustomNodeFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [selectedNodes, setSelectedNodes] = useState([]);
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
-  );
+   const onConnect = useCallback(
+     (params) => setEdges((eds) => addEdge({...params}, eds)),
+     [setEdges],
+   );
+
+  const onElementClick = useCallback(
+  (event, element) => {
+    if (element.type === 'node') {
+      setSelectedNodes((prevNodes) => {
+        if (prevNodes.length === 2) {
+          // Two nodes are already selected, create an edge between them
+          setEdges((eds) => addEdge({ source: prevNodes[0].id, target: element.id }, eds));
+          // Reset the selected nodes
+          return [element];
+        } else {
+          // Less than two nodes are selected, add the clicked node to the selected nodes
+          return [...prevNodes, element];
+        }
+      });
+    }
+  },
+  [setEdges, setSelectedNodes],
+);
+
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -89,7 +108,15 @@ const CustomNodeFlow = () => {
           <ReactFlow
               connectionMode="loose"
             nodes={nodes}
-            nodeTypes={nodeTypes}
+            nodeTypes={useMemo(
+    () => ({
+      solar: SolarNode,
+                        bus: BusNode,
+                        wind: WindNode,
+                        load: LoadNode
+    }),
+    [],
+        )}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -97,7 +124,15 @@ const CustomNodeFlow = () => {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            fitView
+             fitView
+              edgeTypes={useMemo(
+     () => ({
+            default: StraightEdge
+            }),
+      [],
+            )}
+              connectionLineType = "straight"
+            onElementClick={onElementClick}
           >
             <Controls />
           </ReactFlow>

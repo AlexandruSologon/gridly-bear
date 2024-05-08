@@ -13,7 +13,7 @@ def serve_main():
 
 @app.route('/<path:path>')
 def send_report(path):
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path): #todo and not path contains robots
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
