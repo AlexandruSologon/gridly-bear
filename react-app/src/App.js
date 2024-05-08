@@ -87,6 +87,7 @@ const CustomNodeFlow = () => {
           <Sidebar />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
+              connectionMode="loose"
             nodes={nodes}
             nodeTypes={nodeTypes}
             edges={edges}

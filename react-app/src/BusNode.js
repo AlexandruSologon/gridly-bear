@@ -5,7 +5,9 @@ const CustomNode = ({isConnectable}) => {
   return (
       <>
       <Handle
-        type="target"
+          type="source"
+        isConnectableEnd="true"
+        isConnectableStart="true"
         className="hand"
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={isConnectable}
