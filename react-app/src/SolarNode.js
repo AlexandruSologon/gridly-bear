@@ -1,14 +1,13 @@
 
 import SolarPanel from "./images/solar-panel.png";
-import React, { memo } from 'react';
-import { Handle, Position } from 'reactflow';
+import './index.css';
+import { Handle} from 'reactflow';
 const CustomNode = ({isConnectable}) => {
   return (
       <>
       <Handle
         type="source"
-        position={Position.Left}
-        style={{ background: '#555' }}
+        className="hand"
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={isConnectable}
       />
