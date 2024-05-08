@@ -11,10 +11,16 @@ import 'reactflow/dist/style.css';
 
 import Sidebar from './Sidebar';
 import SolarNode from './SolarNode';
+import BusNode from './BusNode';
+import WindNode from "./WindNode";
+import LoadNode from "./LoadNode";
 
 import './index.css';
 
-const nodeTypes = {solar: SolarNode,};
+const nodeTypes = {solar: SolarNode,
+                        bus: BusNode,
+                        wind: WindNode,
+                        load: LoadNode};
 
 const initialNodes = [
   {
