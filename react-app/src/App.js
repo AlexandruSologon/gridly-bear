@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import SolarPanel from './images/solar-panel.png';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -9,22 +10,32 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import Sidebar from './Sidebar';
+import SolarNode from './SolarNode';
+import BusNode from './BusNode';
+import WindNode from "./WindNode";
+import LoadNode from "./LoadNode";
 
 import './index.css';
+
+const nodeTypes = {solar: SolarNode,
+                        bus: BusNode,
+                        wind: WindNode,
+                        load: LoadNode};
 
 const initialNodes = [
   {
     id: '1',
-    type: 'input',
-    data: { label: 'input node' },
+    type: 'solar',
+    data: SolarPanel,
     position: { x: 250, y: 5 },
   },
 ];
 
+
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
-const DnDFlow = () => {
+const CustomNodeFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -32,7 +43,7 @@ const DnDFlow = () => {
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
-    [],
+    [setEdges],
   );
 
   const onDragOver = useCallback((event) => {
@@ -67,15 +78,18 @@ const DnDFlow = () => {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance],
+    [reactFlowInstance, setNodes],
   );
 
   return (
     <div className="dndflow">
       <ReactFlowProvider>
+          <Sidebar />
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
+              connectionMode="loose"
             nodes={nodes}
+            nodeTypes={nodeTypes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -88,10 +102,9 @@ const DnDFlow = () => {
             <Controls />
           </ReactFlow>
         </div>
-        <Sidebar />
       </ReactFlowProvider>
     </div>
   );
 };
 
-export default DnDFlow;
+export default CustomNodeFlow;
