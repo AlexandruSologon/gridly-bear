@@ -138,7 +138,11 @@ const CustomNodeFlow = () => {
                             opacity={0.7}
                         />
                         {markers.map(marker => (
-                            <Marker key={marker.id} position={marker.position} icon={marker.icon}>
+                            <Marker key={marker.id}
+                                    position={marker.position}
+                                    icon={marker.icon}
+                                    draggable={true}
+                            >
                                 <Popup>{marker.name}</Popup>
                             </Marker>
                         ))}
