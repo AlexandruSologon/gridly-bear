@@ -102,6 +102,9 @@ const CustomNodeFlow = () => {
     [reactFlowInstance, setNodes],
   );
 
+  // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
+  const mapCenter = [51.91145215945188, 4.478236914116433];
+
   return (
       <div style={{position: 'relative', width: '100%', height: '100%'}}>
         <div className="dndflow" style={{position: 'absolute', width: '97%', height: '100%', zIndex:1}}>
@@ -142,7 +145,8 @@ const CustomNodeFlow = () => {
             </div>
           </ReactFlowProvider>
         </div>
-          <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{width: '100%', height: '100%', zIndex: 0}}>
+          {/* Opacity can be changed to 0 to have a blank canvas */}
+          <MapContainer center={mapCenter} zoom={13} scrollWheelZoom={false} style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}>
               <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
