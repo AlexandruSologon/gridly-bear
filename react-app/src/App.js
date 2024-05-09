@@ -11,7 +11,6 @@ import ReactFlow, {
   useEdgesState,
   Controls,
 } from 'reactflow';
-import 'reactflow/dist/style.css';
 
 import Sidebar from './Sidebar';
 import SolarNode from './SolarNode';
@@ -20,6 +19,9 @@ import WindNode from "./WindNode";
 import LoadNode from "./LoadNode";
 
 import './index.css';
+import 'reactflow/dist/style.css';
+import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet'
 
 const initialNodes = [
   {
@@ -100,45 +102,58 @@ const CustomNodeFlow = () => {
     [reactFlowInstance, setNodes],
   );
 
+  // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
+  const mapCenter = [51.91145215945188, 4.478236914116433];
+
   return (
-    <div className="dndflow">
-      <ReactFlowProvider>
-          <Sidebar />
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-          <ReactFlow
-              connectionMode="loose"
-            nodes={nodes}
-            nodeTypes={useMemo(
-    () => ({
-      solar: SolarNode,
-                        bus: BusNode,
-                        wind: WindNode,
-                        load: LoadNode
-    }),
-    [],
-        )}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onInit={setReactFlowInstance}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-             fitView
-              edgeTypes={useMemo(
-     () => ({
-            default: StraightEdge
-            }),
-      [],
+      <div style={{position: 'relative', width: '100%', height: '100%'}}>
+        <div className="dndflow" style={{position: 'absolute', width: '97%', height: '100%', zIndex:1}}>
+          <ReactFlowProvider>
+              <Sidebar />
+            <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{zIndex: 2}}>
+              <ReactFlow
+                  connectionMode="loose"
+                nodes={nodes}
+                nodeTypes={useMemo(
+        () => ({
+          solar: SolarNode,
+                            bus: BusNode,
+                            wind: WindNode,
+                            load: LoadNode
+        }),
+        [],
             )}
-              connectionLineType = "straight"
-            onElementClick={onElementClick}
-          >
-            <Controls />
-          </ReactFlow>
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onInit={setReactFlowInstance}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                 fitView
+                  edgeTypes={useMemo(
+         () => ({
+                default: StraightEdge
+                }),
+          [],
+                )}
+                  connectionLineType = "straight"
+                onElementClick={onElementClick}
+              >
+                <Controls />
+              </ReactFlow>
+            </div>
+          </ReactFlowProvider>
         </div>
-      </ReactFlowProvider>
-    </div>
+          {/* Opacity can be changed to 0 to have a blank canvas */}
+          <MapContainer center={mapCenter} zoom={13} scrollWheelZoom={false} style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}>
+              <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <ZoomControl position="topright" />
+          </MapContainer>
+      </div>
   );
 };
 
