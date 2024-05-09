@@ -188,16 +188,23 @@ const CustomNodeFlow = () => {
         iconUrl: require('./images/house.png')
     });
 
+    const windIcon = new L.icon({
+        iconRetinaUrl: require('./images/wind.png'),
+        iconUrl: require('./images/wind.png')
+    });
+
     const iconMapping = {
         solar: solarIcon,
         bus: busIcon,
-        load: loadIcon
+        load: loadIcon,
+        wind: windIcon
     };
 
     const sidebarItems = [
-        { id: 1, name: 'Solar', type: 'solar' },
+        { id: 1, name: 'Solar Panel', type: 'solar' },
         { id: 2, name: 'Bus', type: 'bus' },
-        { id: 3, name: 'Load', type: 'load' }
+        { id: 3, name: 'Load', type: 'load' },
+        { id: 4, name: 'Wind Turbine', type: 'wind'}
     ];
 
     const [draggedItem, setDraggedItem] = useState(null);
