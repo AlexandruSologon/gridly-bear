@@ -41,9 +41,9 @@ class Load {
     }
 }
 
-class Generator extends Load{
+class Generator{
     constructor(bus, power) {
-        super()
-        this.power = - this.power
+        this.bus = bus
+        this.power = this.power
     }
 }
