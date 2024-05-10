@@ -4,8 +4,10 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet';
+import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 
 const CustomNodeFlow = () => {
+
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
 
