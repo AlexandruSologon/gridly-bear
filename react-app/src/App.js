@@ -2,34 +2,65 @@ import React, { useState, useRef } from 'react';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 
 const CustomNodeFlow = () => {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
+    const [lines, setLines] = useState([]);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+
+    const handleMarkerClick = (markerIndex) => {
+        if (selectedMarker === null) {
+            setSelectedMarker(markerIndex);
+        } else {
+            const newLines = [...lines, [markers[selectedMarker].position, markers[markerIndex].position]];
+            setLines(newLines);
+            setSelectedMarker(null);
+        }
+    };
+
+    const handleMarkerHover = (markerIndex) => {
+        if (selectedMarker !== null) {
+            const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
+            if (markerElement) {
+                markerElement.classList.add('marker-hover');
+            }
+        }
+    };
+
+    const handleMarkerLeave = () => {
+        const markerElements = document.querySelectorAll('.leaflet-marker-icon');
+        markerElements.forEach(markerElement => {
+            markerElement.classList.remove('marker-hover');
+        });
+    };
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
 
+    // TODO: in case of needing to change the below icons for the sake of design,
+    //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
     const solarIcon = new L.icon({
         iconRetinaUrl: require('./images/solar.png'),
-        iconUrl: require('./images/solar.png')
+        iconUrl: require('./images/solar.png'),
+        iconAnchor: [35, 35],
     });
-
     const busIcon = new L.icon({
         iconRetinaUrl: require('./images/bus.png'),
-        iconUrl: require('./images/bus.png')
+        iconUrl: require('./images/bus.png'),
+        iconAnchor: [35, 35],
     });
-
     const loadIcon = new L.icon({
         iconRetinaUrl: require('./images/house.png'),
-        iconUrl: require('./images/house.png')
+        iconUrl: require('./images/house.png'),
+        iconAnchor: [32, 32],
     });
-
     const windIcon = new L.icon({
         iconRetinaUrl: require('./images/wind.png'),
-        iconUrl: require('./images/wind.png')
+        iconUrl: require('./images/wind.png'),
+        iconAnchor: [42.5, 42.5],
     });
 
     const iconMapping = {
@@ -121,32 +152,42 @@ const CustomNodeFlow = () => {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div style={{ position: 'relative', flex: '1', height: '100%' }}>
+                <div style={{position: 'relative', flex: '1', height: '100%'}}>
                     <MapContainer
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
                         scrollWheelZoom={true}
-                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
+                        style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
                     >
-                        {/* Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
+                        {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             opacity={0.7}
                         />
-                        {markers.map(marker => (
-                            <Marker key={marker.id}
+                        {markers.map((marker, index) => (
+                            <Marker key={index}
                                     position={marker.position}
                                     icon={marker.icon}
                                     draggable={true}
+                                    clickable={true}
+                                    eventHandlers={{
+                                        click: () => handleMarkerClick(index),
+                                        mouseover: () => handleMarkerHover(index),
+                                        mouseout: handleMarkerLeave,
+                                    }}
                             >
                                 <Popup>{marker.name}</Popup>
                             </Marker>
                         ))}
-                        <ZoomControl position="topright" />
+                        {lines.map((line, index) => (
+                            // TODO: color can be changed to indicate overload, for example: color={'red'}
+                            <Polyline key={index} positions={line}/>
+                        ))}
+                        <ZoomControl position="topright"/>
                     </MapContainer>
                 </div>
             </div>
