@@ -10,6 +10,7 @@ export class Bus {
     move(newx, newy) {
         this.xcoord = newx
         this.ycoord = newy
+
     }
 }
 
