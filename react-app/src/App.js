@@ -21,6 +21,24 @@ const CustomNodeFlow = () => {
         }
     };
 
+    const handleMarkerDrag = (markerIndex, newPosition) => {
+        const updatedMarkers = [...markers];
+        updatedMarkers[markerIndex].position = newPosition;
+        setMarkers(updatedMarkers);
+
+        // Update the corresponding polyline
+        const updatedLines = lines.map((line, index) => {
+            if (index === markerIndex) {
+                return [newPosition, markers[index + 1].position];
+            } else if (index === markerIndex - 1) {
+                return [markers[index].position, newPosition];
+            } else {
+                return line;
+            }
+        });
+        setLines(updatedLines);
+    };
+
     const handleMarkerHover = (markerIndex) => {
         if (selectedMarker !== null) {
             const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
@@ -178,6 +196,8 @@ const CustomNodeFlow = () => {
                                         click: () => handleMarkerClick(index),
                                         mouseover: () => handleMarkerHover(index),
                                         mouseout: handleMarkerLeave,
+                                        dragstart: () => setSelectedMarker(null),
+                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng())
                                     }}
                             >
                                 <Popup>{marker.name}</Popup>
