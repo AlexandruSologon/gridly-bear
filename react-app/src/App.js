@@ -23,6 +23,15 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet'
 
+/*
+* This is a helloworld json example, this should not be deployed
+*/
+const functions = require('firebase/functions'); //import firebase functions module
+const helloWorld = functions.httpsCallable('helloWorld'); //create callable request
+helloWorld().then((result) => { //request to server and add callback
+  console.log(result.data);
+});
+
 const initialNodes = [
   {
     id: '1',
@@ -36,6 +45,7 @@ let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const CustomNodeFlow = () => {
+
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
