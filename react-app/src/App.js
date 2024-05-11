@@ -15,28 +15,44 @@ const CustomNodeFlow = () => {
         if (selectedMarker === null) {
             setSelectedMarker(markerIndex);
         } else {
-            const newLines = [...lines, [markers[selectedMarker].position, markers[markerIndex].position]];
-            setLines(newLines);
+            if (lines.length === 0 || lines[lines.length - 1].length === 2) {
+                // If there are no lines or the last line is complete, start a new line
+                const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                setLines([...lines, newLine]);
+            } else {
+                // If a third marker is clicked, start a new line
+                const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                setLines([...lines.slice(0, lines.length - 1), newLine]);
+            }
             setSelectedMarker(null);
         }
     };
 
     const handleMarkerDrag = (markerIndex, newPosition) => {
+        const markerOldPos = markers[markerIndex].position;
         const updatedMarkers = [...markers];
         updatedMarkers[markerIndex].position = newPosition;
         setMarkers(updatedMarkers);
 
-        // Update the corresponding polyline
-        const updatedLines = lines.map((line, index) => {
-            if (index === markerIndex) {
-                return [newPosition, markers[index + 1].position];
-            } else if (index === markerIndex - 1) {
-                return [markers[index].position, newPosition];
-            } else {
-                return line;
+        const updated = lines.map((line, index) =>{
+            if (typeof line !== undefined) {
+                const start = line[0];
+                const end = line[1];
+
+                if (start.x === markerOldPos.x && start.y === markerOldPos.y) {
+                    return [newPosition, end];
+                } if (end.x === markerOldPos.x && end.y === markerOldPos.y) {
+                    return [start, newPosition];
+                } else {
+                    return line;
+                }
             }
+            return line;
         });
-        setLines(updatedLines);
+        // Update the corresponding polyline
+        for(let i = 0; i < lines.length; i++) {
+            lines[i] = updated[i];
+        }
     };
 
     const handleMarkerHover = (markerIndex) => {
