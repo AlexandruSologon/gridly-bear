@@ -3,9 +3,10 @@ import json
 
 
 def parsejson(x):
+    # receives a json string as input and returns
+    # the networks stored inside the string
     network = pp.create_empty_network()
     components = json.loads(x)["components"]
-    print(components)
     for component in components:
         match component["class"]:
             case "bus":
