@@ -15,14 +15,16 @@ const CustomNodeFlow = () => {
         if (selectedMarker === null) {
             setSelectedMarker(markerIndex);
         } else {
-            if (lines.length === 0 || lines[lines.length - 1].length === 2) {
-                // If there are no lines or the last line is complete, start a new line
-                const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                setLines([...lines, newLine]);
-            } else {
-                // If a third marker is clicked, start a new line
-                const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                setLines([...lines.slice(0, lines.length - 1), newLine]);
+            if (selectedMarker !== markerIndex) {
+                if (lines.length === 0 || lines[lines.length - 1].length === 2) {
+                    // If there are no lines or the last line is complete, start a new line
+                    const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                    setLines([...lines, newLine]);
+                } else {
+                    // If a third marker is clicked, start a new line
+                    const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                    setLines([...lines.slice(0, lines.length - 1), newLine]);
+                }
             }
             setSelectedMarker(null);
         }
