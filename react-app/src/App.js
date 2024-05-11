@@ -34,25 +34,18 @@ const CustomNodeFlow = () => {
         updatedMarkers[markerIndex].position = newPosition;
         setMarkers(updatedMarkers);
 
-        const updated = lines.map((line, index) =>{
-            if (typeof line !== undefined) {
-                const start = line[0];
-                const end = line[1];
-
-                if (start.x === markerOldPos.x && start.y === markerOldPos.y) {
+        const updatedLines = lines.map((line, index) => {
+            if (line) {
+                const [start, end] = line;
+                if (start.equals(markerOldPos)) {
                     return [newPosition, end];
-                } if (end.x === markerOldPos.x && end.y === markerOldPos.y) {
+                } else if (end.equals(markerOldPos)) {
                     return [start, newPosition];
-                } else {
-                    return line;
                 }
             }
             return line;
         });
-        // Update the corresponding polyline
-        for(let i = 0; i < lines.length; i++) {
-            lines[i] = updated[i];
-        }
+        setLines(updatedLines);
     };
 
     const handleMarkerHover = (markerIndex) => {
