@@ -5,66 +5,79 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 
-const CustomNodeFlow = () => {
+function SubmitButton() {
+    return (
+        <input type="submit" name="Submit"/>
+    );
+}
+
+function DeleteButton({ onClick }) {
+    return (
+        <button style={{ color: 'red' }} onClick={onClick}>
+            Delete
+        </button>
+    );
+}
+
+function Parameter01() {
+    return (
+        <input type="text" placeholder="Parameter 1">
+        </input>
+    );
+}
+
+function Parameter02() {
+    return (
+        <input type="text" placeholder="Parameter 2">
+        </input>
+    );
+}
+
+function Parameter03() {
+    return (
+        <input type="text" placeholder="Parameter 3">
+        </input>
+    );
+}
+
+function DropdownMenu() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleItemClick = (item) => {
+        alert(`You clicked ${item}`);
+        setIsOpen(false);
+    };
+
+    return (
+        <div style={{ position: 'relative', marginBottom: '10px' }}>
+            <button onClick={toggleMenu}>Open Dropdown</button>
+            {isOpen && (
+                <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '5px' }}>
+                    <div onClick={() => handleItemClick('Item 1')}>Item 1</div>
+                    <div onClick={() => handleItemClick('Item 2')}>Item 2</div>
+                    <div onClick={() => handleItemClick('Item 3')}>Item 3</div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function Address() {
+    return (
+        <input type="text" placeholder="Address">
+        </input>
+    );
+}
+
+function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);
-    const [selectedMarker, setSelectedMarker] = useState(null);
-
-    const handleMarkerClick = (markerIndex) => {
-        if (selectedMarker === null) {
-            setSelectedMarker(markerIndex);
-        } else {
-            if (selectedMarker !== markerIndex) {
-                if (lines.length === 0 || lines[lines.length - 1].length === 2) {
-                    // If there are no lines or the last line is complete, start a new line
-                    const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                    setLines([...lines, newLine]);
-                } else {
-                    // If a third marker is clicked, start a new line
-                    const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                    setLines([...lines.slice(0, lines.length - 1), newLine]);
-                }
-            }
-            setSelectedMarker(null);
-        }
-    };
-
-    const handleMarkerDrag = (markerIndex, newPosition) => {
-        const markerOldPos = markers[markerIndex].position;
-        const updatedMarkers = [...markers];
-        updatedMarkers[markerIndex].position = newPosition;
-        setMarkers(updatedMarkers);
-
-        const updatedLines = lines.map((line, index) => {
-            if (line) {
-                const [start, end] = line;
-                if (start.equals(markerOldPos)) {
-                    return [newPosition, end];
-                } else if (end.equals(markerOldPos)) {
-                    return [start, newPosition];
-                }
-            }
-            return line;
-        });
-        setLines(updatedLines);
-    };
-
-    const handleMarkerHover = (markerIndex) => {
-        if (selectedMarker !== null) {
-            const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
-            if (markerElement) {
-                markerElement.classList.add('marker-hover');
-            }
-        }
-    };
-
-    const handleMarkerLeave = () => {
-        const markerElements = document.querySelectorAll('.leaflet-marker-icon');
-        markerElements.forEach(markerElement => {
-            markerElement.classList.remove('marker-hover');
-        });
-    };
+    const [selectedMarker, setSelectedMarker] = useState(null);const [dropdownPosition, setDropdownPosition] = useState(null);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -75,21 +88,25 @@ const CustomNodeFlow = () => {
         iconRetinaUrl: require('./images/solar.png'),
         iconUrl: require('./images/solar.png'),
         iconAnchor: [35, 35],
+        popupAnchor:[0, -35]
     });
     const busIcon = new L.icon({
         iconRetinaUrl: require('./images/bus.png'),
         iconUrl: require('./images/bus.png'),
         iconAnchor: [35, 35],
+        popupAnchor:[0, -35]
     });
     const loadIcon = new L.icon({
         iconRetinaUrl: require('./images/house.png'),
         iconUrl: require('./images/house.png'),
         iconAnchor: [32, 32],
+        popupAnchor: [0, -32]
     });
     const windIcon = new L.icon({
         iconRetinaUrl: require('./images/wind.png'),
         iconUrl: require('./images/wind.png'),
         iconAnchor: [42.5, 42.5],
+        popupAnchor:[0, -42.5]
     });
 
     const iconMapping = {
@@ -131,12 +148,88 @@ const CustomNodeFlow = () => {
 
             // Get the icon for the dragged item based on its type
             const icon = iconMapping[draggedItem.type];
-
             // Add the dropped item as a marker on the map
             const newMarker = { id: draggedItem.id, position: droppedLatLng, name: draggedItem.name, icon };
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);
+    };
+
+    const handleMarkerClick = (markerIndex) => {
+        // If no marker is currently selected, set the clicked marker as selected
+        if (selectedMarker === null) {
+            setSelectedMarker(markerIndex);
+        } else {
+            // If another marker is already selected
+            if (selectedMarker !== markerIndex) {
+                // Check if both markers still exist
+                if (markers[selectedMarker] && markers[markerIndex]) {
+                    // Logic for creating lines between markers
+                    if (lines.length === 0 || lines[lines.length - 1].length === 2) {
+                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        setLines([...lines, newLine]);
+                    } else {
+                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        setLines([...lines.slice(0, lines.length - 1), newLine]);
+                    }
+                }
+            }
+            // Unselect the marker regardless of the action taken
+            setSelectedMarker(null);
+        }
+    };
+
+    const handleMarkerDrag = (markerIndex, newPosition) => {
+        const markerOldPos = markers[markerIndex].position;
+        const updatedMarkers = [...markers];
+        updatedMarkers[markerIndex].position = newPosition;
+
+        const updatedLines = lines.map((line, index) => {
+            if (line) {
+                const [start, end] = line;
+                if (start.equals(markerOldPos)) {
+                    return [newPosition, end];
+                } else if (end.equals(markerOldPos)) {
+                    return [start, newPosition];
+                }
+            }
+            return line;
+        });
+        setMarkers(updatedMarkers);
+        setLines(updatedLines);
+    };
+
+    const handleMarkerDelete = (indexMarker) => {
+        const oldMarkerPos = markers[indexMarker].position;
+        const updatedMarkers = [...markers];
+        updatedMarkers.splice(indexMarker, 1);
+        setMarkers(updatedMarkers);
+        if (selectedMarker === indexMarker) {
+            setSelectedMarker(null);
+        }
+        const updatedLines = lines.filter((line) => {
+            // Check if the line contains the deleted marker's position
+            return !line.some((position) => {
+                return position.equals(oldMarkerPos);
+            });
+        });
+        setLines(updatedLines);
+    };
+
+    const handleMarkerHover = (markerIndex) => {
+        if (selectedMarker !== null) {
+            const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
+            if (markerElement) {
+                markerElement.classList.add('marker-hover');
+            }
+        }
+    };
+
+    const handleMarkerLeave = () => {
+        const markerElements = document.querySelectorAll('.leaflet-marker-icon');
+        markerElements.forEach(markerElement => {
+            markerElement.classList.remove('marker-hover');
+        });
     };
 
     return (
@@ -160,14 +253,21 @@ const CustomNodeFlow = () => {
                 {sidebarItems.map((item) => (
                     <div
                         key={item.id}
-                        draggable
+                        draggable={true}
                         onDragStart={(event) => handleDragStart(event, item)}
                         onDragEnd={handleDragEnd}
                         style={{margin: '10px 0', cursor: 'grab'}}
                     >
-                        {item.name}
+                        {/* Container for icon and text */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            {/* Render the icon based on item.type */}
+                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name} />
+                            {/* Render the text */}
+                            <div>{item.name}</div>
+                        </div>
                     </div>
                 ))}
+                <Address />
             </div>
             {/* Main Content */}
             <div
@@ -205,18 +305,43 @@ const CustomNodeFlow = () => {
                                     clickable={true}
                                     eventHandlers={{
                                         click: () => handleMarkerClick(index),
-                                        mouseover: () => handleMarkerHover(index),
-                                        mouseout: handleMarkerLeave,
+                                        // TODO: mouseover and mouseout are intended to change the mouse cursor when hovering over a component
+                                        //  (to indicate users can create a line)
+                                        //mouseover: () => handleMarkerHover(index),
+                                        //mouseout: handleMarkerLeave,
                                         dragstart: () => setSelectedMarker(null),
-                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng())
+                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
                                     }}
                             >
-                                <Popup>{marker.name}</Popup>
+                                <Popup>
+                                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                        <div style={{marginBottom: '5px'}}>{marker.name}</div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <Parameter01 style={{alignSelf: 'center'}}/>
+                                        </div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <Parameter02 style={{alignSelf: 'center'}}/>
+                                        </div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <Parameter03 style={{alignSelf: 'center'}}/>
+                                        </div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <SubmitButton style={{alignSelf: 'center'}}/>
+                                        </div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                        </div>
+                                    </div>
+                                </Popup>
                             </Marker>
                         ))}
                         {lines.map((line, index) => (
                             // TODO: color can be changed to indicate overload, for example: color={'red'}
-                            <Polyline key={index} positions={line}/>
+                            <Polyline key={index}
+                                      positions={line}
+                                      clickable={true}
+                            >
+                            </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
                     </MapContainer>
@@ -226,4 +351,4 @@ const CustomNodeFlow = () => {
     );
 };
 
-export default CustomNodeFlow;
+export default ReactApp;

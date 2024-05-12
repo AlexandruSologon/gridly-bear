@@ -103,3 +103,8 @@
 .marker-draggable {
   cursor: move;
 }
+
+.delete-button {
+  color: red;
+}
+
