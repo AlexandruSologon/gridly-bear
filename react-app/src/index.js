@@ -5,7 +5,7 @@ import "./style.css";
 import App from "./App";
 
 import { initializeApp } from "firebase/app";// Import the functions you need from the SDKs you need for firebase
-import { getAnalytics } from "firebase/analytics";
+import { getFunctions, httpsCallable } from "firebase/functions";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,7 +22,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 const root = createRoot(document.getElementById("root"));
 root.render(
@@ -30,3 +29,17 @@ root.render(
     <App />
   </StrictMode>
 );
+
+/*
+* This is a helloworld json example, this should not be deployed
+*/
+const functions = getFunctions(app); //import firebase functions module
+const helloWorld = httpsCallable(functions, 'helloWorld'); //create callable request
+helloWorld().then((result) => { //request to server and add callback
+console.log(result);
+}).catch((error) => {
+  //const code = error.code;
+  const message = error.message;
+  const details = error.details;
+  console.log(message + " : " +  details);
+});
