@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/LockOutlined';
 import './index.css';
 import 'reactflow/dist/style.css';
@@ -8,7 +7,6 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import debounce from "lodash.debounce";
-import {StyledEngineProvider} from "@mui/material";
 
 function SubmitButton() {
     return (
@@ -84,6 +82,8 @@ function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
+    const [isMapLocked, setIsMapLocked] = useState(true)
+
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -239,7 +239,9 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-        console.log('Lock button clicked!');
+
+        setIsMapLocked(!isMapLocked)
+                console.log('Lock button clicked!' + isMapLocked);
 
     }
 
@@ -292,12 +294,13 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div style={{position: 'relative', flex: '1', height: '100%'}}>
+                <div  style={{position: 'relative', flex: '1', height: '100%'}}>
                     <MapContainer
+                        dragging={isMapLocked}
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
-                        scrollWheelZoom={true}
+                        scrollWheelZoom={isMapLocked}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
