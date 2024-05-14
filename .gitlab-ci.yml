@@ -1,17 +1,48 @@
+image: current-alpine3.18
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+  - deploy-functions
+
 before_script:
-  - npm i -g firebase-tools
-  - npm install
+  - npm ci -g firebase-tools
+  - npm ci
 
 include:
   - flask_server/.gitlab-ci.yml
 
-deploy-functions:
+Linting:
+  stage: lint
+  script:
+    - echo "linting..."
+
+Tests:
+  stage: test
+  script:
+    - echo "testing..."
+
+Deploy:
   stage: deploy
+  script:
+    - firebase deploy
+  only:
+    refs:
+      - master
+    changes:
+      - src/**/*
+
+deploy-functions:
+  stage: deploy-functions
   script:
     - cd react-app
     - npm run build
     - cd ..
-    - firebase deploy --token $FIREBASE_TOKEN
+    - firebase deploy --only functions
   only:
     refs:
       - master
+    changes:
+      - functions/**/*
