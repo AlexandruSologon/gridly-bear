@@ -95,3 +95,16 @@
     max-width: 250px;
   }
 }
+
+.marker-hover {
+  cursor: crosshair;
+}
+
+.marker-draggable {
+  cursor: move;
+}
+
+.delete-button {
+  color: red;
+}
+
