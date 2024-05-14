@@ -1,10 +1,14 @@
 import React, { useState, useRef } from 'react';
+import IconButton from '@mui/material/IconButton';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/LockOutlined';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import debounce from "lodash.debounce";
+import {StyledEngineProvider} from "@mui/material";
 
 function SubmitButton() {
     return (
@@ -234,6 +238,11 @@ function ReactApp() {
         });
     };
 
+    const onLockButtonClick = () => {
+        console.log('Lock button clicked!');
+
+    }
+
     return (
         <div style={{display: 'flex', height: '100vh'}}>
             {/* Sidebar */}
@@ -351,7 +360,12 @@ function ReactApp() {
                             </Marker>
                         ))}
                         <ZoomControl position="topright"/>
+
+
                     </MapContainer>
+                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
+                             <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '70'}} />
+                        </IconButton>
                 </div>
             </div>
         </div>
