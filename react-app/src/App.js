@@ -4,7 +4,7 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
-import throttle from 'lodash.throttle';
+import debounce from "lodash.debounce";
 
 function SubmitButton() {
     return (
@@ -181,7 +181,7 @@ function ReactApp() {
         }
     };
 
-    const handleMarkerDrag = throttle((markerIndex, newPosition) => {
+    const handleMarkerDrag = debounce((markerIndex, newPosition) => {
         const markerOldPos = markers[markerIndex].position;
         const updatedMarkers = [...markers];
         updatedMarkers[markerIndex].position = newPosition;
