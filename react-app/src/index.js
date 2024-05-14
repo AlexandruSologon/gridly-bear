@@ -1,11 +1,9 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
-
-import App from "./App";
-
+import ReactApp from "./App";
 import { initializeApp } from "firebase/app";// Import the functions you need from the SDKs you need for firebase
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from "firebase/functions";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,26 +18,35 @@ const firebaseConfig = {
   measurementId: "G-773KGRGD70"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+/*
+  * This is a helloworld example function, this should not be deployed
+  */
+function useFunctionsEmulator() {
+  console.log("!!changing functions api address to local emulator uri!!");
+  const app = initializeApp(firebaseConfig);
+  const functions = getFunctions(app);
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+  const helloWorld = httpsCallable(functions, 'hello_world'); //create callable request
+  helloWorld().then((result) => { //request to server and add callback
+    console.log("Returned from firebase function call: " + result.data);
+  }).catch((error) => {
+    //const code = error.code;
+    const message = error.message;
+    const details = error.details;
+    console.log(message + " : " +  details);
+  });
+}
 
+//Wrapper
+function App() {
+  useFunctionsEmulator(); //custom hook for connecting to the emulator, remove this in production.
+  return <ReactApp /> // the rest of the App component
+}
+
+//Render the actual app on the root of the page.
 const root = createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
     <App />
   </StrictMode>
 );
-
-/*
-* This is a helloworld json example, this should not be deployed
-*/
-const functions = getFunctions(app); //import firebase functions module
-const helloWorld = httpsCallable(functions, 'helloWorld'); //create callable request
-helloWorld().then((result) => { //request to server and add callback
-console.log(result);
-}).catch((error) => {
-  //const code = error.code;
-  const message = error.message;
-  const details = error.details;
-  console.log(message + " : " +  details);
-});

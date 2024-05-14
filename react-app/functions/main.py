@@ -1,20 +1,22 @@
-# Welcome to Cloud Functions for Firebase for Python!
-# To get started, simply uncomment the below code or create your own.
-# Deploy with `firebase deploy`
-
-from firebase_functions import https_fn
-from firebase_admin import initialize_app
 import functions_framework
+from firebase_functions import https_fn
+from firebase_functions.options import CorsOptions
+from firebase_admin import initialize_app
 from firebase_functions import https_fn, options
-from flask_cors import CORS, cross_origin
+import json
 
 initialize_app()
 
-@https_fn.on_request()
-def on_request_example(req: https_fn.Request) -> https_fn.Response:
-    return https_fn.Response("Hello world!")
+#Hello world example function, do not use in deploymenet
+@https_fn.on_request(cors=options.CorsOptions(
+        cors_origins="*",
+        cors_methods=["get", "post", "options"],))
+def hello_world(req: https_fn.Request) -> https_fn.Response:
+    return json.dumps({"data" : "hello!"})
 
-# @functions_framework.https
-# @cross_origin
-# def helloWorld(request):
-#     return '{"message": "Hello World!"}'
+#Handles the posting of json data corresponding to the canvas state
+@https_fn.on_request(cors=options.CorsOptions(
+        cors_origins="*",
+        cors_methods=["post"],))
+def cnvs_json_post(req: https_fn.Request) -> https_fn.Response:
+    return {'result': 0}
