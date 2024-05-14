@@ -9,7 +9,7 @@ stages:
 
 before_script:
   - npm install -g firebase-tools
-  - npm ci
+  - npm install
 
 include:
   - flask_server/.gitlab-ci.yml
