@@ -77,7 +77,8 @@ function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);
-    const [selectedMarker, setSelectedMarker] = useState(null);const [dropdownPosition, setDropdownPosition] = useState(null);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+    const [dropdownPosition, setDropdownPosition] = useState(null);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -340,7 +341,11 @@ function ReactApp() {
                             <Polyline key={index}
                                       positions={line}
                                       clickable={true}
+                                      onMouseOver={e => e.target.openPopup()}
+                                      onMouseOut={e => e.target.closePopup()}
+                                      weight={10}
                             >
+                                <Popup>A popup on click</Popup>
                             </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
@@ -349,6 +354,6 @@ function ReactApp() {
             </div>
         </div>
     );
-};
+}
 
 export default ReactApp;
