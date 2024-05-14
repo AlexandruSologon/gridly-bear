@@ -1,4 +1,4 @@
-image: alpine:3.19
+image: node:19.0.0-slim
 
 stages:
   - lint
