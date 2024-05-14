@@ -1,4 +1,4 @@
-image: alpine:current
+image: alpine:3.19
 
 stages:
   - lint
