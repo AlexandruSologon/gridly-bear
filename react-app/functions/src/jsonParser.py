@@ -5,11 +5,9 @@ def parsejson(x):
     # receives a json string as input and returns
     # the networks stored inside the string
     network = pp.create_empty_network()
-    print(x)
     jsonrepr = json.loads(x)
-    data = jsonrepr["data"]
-    components = data["components"]
-    return data
+    # data = jsonrepr["data"]
+    components = jsonrepr["components"]
     for component in components:
         match component["class"]:
             case "bus":
@@ -25,5 +23,7 @@ def parsejson(x):
             case "transformer":
                 pp.create_transformer(net=network, hv_bus=component["highBus"],
                                       lv_bus=component["lowBus"], std_type=component["type"])
+            case "generator":
+                pp.create.create_gen(net=network, bus=component["bus"], p_mw=component["power"])
 
     return network

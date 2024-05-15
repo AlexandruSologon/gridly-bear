@@ -169,7 +169,7 @@ function ReactApp() {
         }
         
         const total = buses.concat(components);
-        return  JSON.stringify(new Network(total));
+        return JSON.stringify(new Network(total));
 
     }
 

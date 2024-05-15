@@ -22,8 +22,12 @@ def hello_world(req: https_fn.Request) -> https_fn.Response:
         cors_origins="*",
         cors_methods=["get", "post", "options"],))
 def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
-        # dat = req.data.decode('utf8').replace("'", '"')[0]
-        # net = jsonParser.parsejson(dat)
-        # return json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json())) #can also use json.dumps()
-        print(req.data)
-        return https_fn.Response(req.data)
+        #returns a dictionary in the following form: {'data' : 'b"..."} of which we take the value corresponding to 'data' as a key
+        try:
+                dat = json.loads(req.data)['data']
+                net = jsonParser.parsejson(dat) #parse the data
+                return json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json())) #can also use json.dumps()
+        except UserWarning:
+               return json.dumps({'data' : "Invalid network submitted"})
+        except:
+               return json.dumps({'data' : "Unexpected exception occurred"})
