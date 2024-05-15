@@ -8,7 +8,9 @@ import { Bus, Line, Load, Generator, Network } from './CoreClasses.js';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
+import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 
+<<<<<<< HEAD
 function SubmitButton() {
     return (
         <input type="submit" name="Submit"/>
@@ -78,6 +80,10 @@ function Address() {
 }
 
 function ReactApp() {
+=======
+const CustomNodeFlow = () => {
+
+>>>>>>> run-simulation-funct-serverside
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);

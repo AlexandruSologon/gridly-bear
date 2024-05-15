@@ -8,7 +8,7 @@ export class Bus {
 }
 
 export class Line {
-    constructor(id, bus1, bus2, type, length) {
+    constructor(id, bus1, bus2, length, type) {
         this.id = id
         this.class = "line"
         this.type = type
@@ -66,5 +66,5 @@ export class Generator{
 export class Network {
     constructor(components){
         this.components = components
-}
+    }
 }

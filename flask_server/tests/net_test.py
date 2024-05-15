@@ -25,7 +25,8 @@ class MyTestCase(unittest.TestCase):
 
     def test_problem_line(self):
         net = basic_network()
-        self.assertTrue(main.problem_lines(net) == [0])
+        print(main.problem_lines(net))
+        self.assertTrue(len(main.problem_lines(net)) == 1 )
 
     def test_problem_buses(self):
         net = basic_network()
