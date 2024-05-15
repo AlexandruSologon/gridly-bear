@@ -5,7 +5,11 @@ def parsejson(x):
     # receives a json string as input and returns
     # the networks stored inside the string
     network = pp.create_empty_network()
-    components = json.loads(x)["components"]
+    print(x)
+    jsonrepr = json.loads(x)
+    data = jsonrepr["data"]
+    components = data["components"]
+    return data
     for component in components:
         match component["class"]:
             case "bus":

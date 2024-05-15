@@ -4,7 +4,7 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
-import { Bus, Line, Load, Generator, Network } from './CoreClasses.js';
+// import { Bus, Line, Load, Generator, Network } from './CoreClasses.js';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
@@ -295,7 +295,9 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-        console.log(handleExport())
+        const dat = handleExport();
+        console.log(dat);
+        cnvs_json_post(dat);
     }
 
     return (

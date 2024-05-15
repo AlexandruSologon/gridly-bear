@@ -20,7 +20,10 @@ def hello_world(req: https_fn.Request) -> https_fn.Response:
 #Handles the posting of json data corresponding to the canvas state
 @https_fn.on_request(cors=options.CorsOptions(
         cors_origins="*",
-        cors_methods=["put"],))
-def cnvs_json_post(req: https_fn.Request) -> https_fn.Response:
-        net = jsonParser.parsejson(req.data)
-        return jsonify((nt.all_buses(net).to_json(), nt.all_lines(net).to_json())) #can also use json.dumps()
+        cors_methods=["get", "post", "options"],))
+def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
+        # dat = req.data.decode('utf8').replace("'", '"')[0]
+        # net = jsonParser.parsejson(dat)
+        # return json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json())) #can also use json.dumps()
+        print(req.data)
+        return https_fn.Response(req.data)
