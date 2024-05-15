@@ -4,6 +4,7 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
+import debounce from "lodash.debounce";
 
 function SubmitButton() {
     return (
@@ -180,7 +181,7 @@ function ReactApp() {
         }
     };
 
-    const handleMarkerDrag = (markerIndex, newPosition) => {
+    const handleMarkerDrag = debounce((markerIndex, newPosition) => {
         const markerOldPos = markers[markerIndex].position;
         const updatedMarkers = [...markers];
         updatedMarkers[markerIndex].position = newPosition;
@@ -198,7 +199,7 @@ function ReactApp() {
         });
         setMarkers(updatedMarkers);
         setLines(updatedLines);
-    };
+    }, 100);
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
@@ -334,19 +335,20 @@ function ReactApp() {
                                         </div>
                                     </div>
                                 </Popup>
+                                {lines.map((line, index) => (
+                                    // TODO: color can be changed to indicate overload, for example: color={'red'},
+                                    //  weight can also change accordingly to the desired line width
+                                    <Polyline key={index}
+                                              positions={line}
+                                              clickable={true}
+                                              onMouseOver={e => e.target.openPopup()}
+                                              onMouseOut={e => e.target.closePopup()}
+                                              weight={10}
+                                    >
+                                        <Popup>A popup on click</Popup>
+                                    </Polyline>
+                                ))}
                             </Marker>
-                        ))}
-                        {lines.map((line, index) => (
-                            // TODO: color can be changed to indicate overload, for example: color={'red'}
-                            <Polyline key={index}
-                                      positions={line}
-                                      clickable={true}
-                                      onMouseOver={e => e.target.openPopup()}
-                                      onMouseOut={e => e.target.closePopup()}
-                                      weight={10}
-                            >
-                                <Popup>A popup on click</Popup>
-                            </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
                     </MapContainer>
