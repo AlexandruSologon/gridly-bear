@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
 import { Bus, Line, Load, Generator } from './CoreClasses.js';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 
@@ -134,7 +135,7 @@ function ReactApp() {
         const buses = [];
         const components = [];
         // Bus, Line, Load, Generator, Transformer, Switch, ExtGrid
-        var indices = [0,0,0,0,0,0,0];
+        let indices = [0,0,0,0,0,0,0];
 
         markers.forEach((item) => {
             const busIndex = indices[0];
@@ -414,10 +415,30 @@ function ReactApp() {
                         ))}
                         <ZoomControl position="topright"/>
                     </MapContainer>
+                    <IconButton aria-label="check" style={{
+                        position: 'absolute',
+                        right: '20px',
+                        top: '600px',
+                        width: '40px',
+                        height: '40px',
+                        opacity: '70'
+                    }} onClick={onLockButtonClick}>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <PlayArrowIcon className="PlayArrowIcon" style={{
+                                width: '80px',
+                                height: '80px',
+                                color: '#000',
+                                borderWidth: '1px',
+                                borderColor: '#000',
+                                opacity: '70'
+                            }}/>
+                        </div>
+
+                    </IconButton>
                 </div>
             </div>
         </div>
-    );
+);
 }
 
 export default ReactApp;
