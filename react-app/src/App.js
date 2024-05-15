@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
+import IconButton from '@mui/material/IconButton';
+import LockIcon from '@mui/icons-material/LockOutlined';
 import { Bus, Line, Load, Generator } from './CoreClasses.js';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
@@ -163,8 +165,7 @@ function ReactApp() {
         }
         
         buses.concat(components);
-        const json = JSON.stringify(buses);
-        console.log(json);
+        return  JSON.stringify(buses);
 
     }
 
@@ -215,7 +216,7 @@ function ReactApp() {
                         // Check if line already exists
                         for (let i = 0; i < busLines.length; i++) {
                             const item = busLines[i];
-                            if (item[0] == newBusLine[0] && item[1] == newBusLine[1]) {
+                            if (item[0] === newBusLine[0] && item[1] === newBusLine[1]) {
                                 found = true;
                                 break;
                             }
@@ -289,6 +290,10 @@ function ReactApp() {
         });
     };
 
+    const onLockButtonClick = () => {
+        console.log(handleExport())
+    }
+
     return (
         <div style={{display: 'flex', height: '100vh'}}>
             {/* Sidebar */}
@@ -348,6 +353,9 @@ function ReactApp() {
                         zoomControl={false}
                         attributionControl={false}
                     >
+                         <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
+                             <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '70'}} />
+                        </IconButton>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
