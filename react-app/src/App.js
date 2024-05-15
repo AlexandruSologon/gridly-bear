@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents} from 'react-leaflet'
+import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline} from 'react-leaflet'
 import L from 'leaflet';
 import debounce from "lodash.debounce";
 
@@ -83,15 +84,8 @@ function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
-    const [isMapLocked, setIsMapLocked] = useState(false)
+    const [isMapLocked, setIsMapLocked] = useState(true)
 
-    const MapEvents = () => {
-    const map = useMapEvents({
-        drag: () => {
-            if (isMapLocked) console.log("moving")
-        }
-    })
-}
 
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
@@ -248,10 +242,17 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-
         setIsMapLocked(!isMapLocked)
-                console.log('Lock button clicked!' + isMapLocked);
-
+        const map = mapContainer.current;
+        if(isMapLocked) {map.dragging.disable();
+                         map.keyboard.disable();
+                         map.doubleClickZoom.disable();
+                         map.scrollWheelZoom.disable()}
+        else {map.dragging.enable();
+              map.keyboard.enable();
+              map.doubleClickZoom.enable();
+              map.scrollWheelZoom.enable()}
+        return isMapLocked
     }
 
     return (
@@ -305,17 +306,14 @@ function ReactApp() {
                 {/* Map and other content */}
                 <div  style={{position: 'relative', flex: '1', height: '100%'}} >
                     <MapContainer
+                        dragging={isMapLocked}
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
-                        eventHandlers={{
-                            dragStart: () => {console.log("isDragging")}
-                        }}
                     >
-                        <MapEvents/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -375,10 +373,14 @@ function ReactApp() {
                         ))}
                         <ZoomControl position="topright"/>
 
-                        <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
-                             <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '70'}} />
-                        </IconButton>
+
                     </MapContainer>
+                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '30'}}   onClick={onLockButtonClick}>
+                        <div style={{position: 'relative'}}>
+                        <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: !isMapLocked ? 'flex' : 'none'}}/>
+                        <LockOpenIcon className="LockOpenIcon" style={{  width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: isMapLocked ? 'flex' : 'none'}} />
+                        </div>
+                    </IconButton>
                 </div>
             </div>
         </div>
