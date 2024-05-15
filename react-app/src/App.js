@@ -4,7 +4,7 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
-import { Bus, Line, Load, Generator } from './CoreClasses.js';
+import { Bus, Line, Load, Generator, Network } from './CoreClasses.js';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
@@ -160,13 +160,13 @@ function ReactApp() {
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
-            const bus1Loc = markers[line[0]].getLatLng();
-            const bus2Loc = markers[line[1]].getLatLng();
-            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', bus1Loc.distanceTo(bus2Loc)));
+            //const bus1Loc = markers[line[0]].getLatLng();
+            //const bus2Loc = markers[line[1]].getLatLng();
+            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', 5));
         }
         
-        buses.concat(components);
-        return  JSON.stringify(buses);
+        const total = buses.concat(components);
+        return  JSON.stringify(new Network(total));
 
     }
 

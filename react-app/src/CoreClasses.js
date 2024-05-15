@@ -58,6 +58,7 @@ export class ExtGrid {
 export class Generator{
     constructor(id, bus, power) {
         this.id = id
+        this.class = "generator"
         this.bus = bus
         this.power = power
     }
