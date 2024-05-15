@@ -294,7 +294,7 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div  style={{position: 'relative', flex: '1', height: '100%'}}>
+                <div  style={{position: 'relative', flex: '1', height: '100%'}} ismaplocked={isMapLocked}>>
                     <MapContainer
                         dragging={isMapLocked}
                         ref={mapContainer}
@@ -364,11 +364,10 @@ function ReactApp() {
                         ))}
                         <ZoomControl position="topright"/>
 
-
-                    </MapContainer>
-                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
+                        <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
                              <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '70'}} />
                         </IconButton>
+                    </MapContainer>
                 </div>
             </div>
         </div>
