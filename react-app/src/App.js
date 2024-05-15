@@ -4,7 +4,7 @@ import LockIcon from '@mui/icons-material/LockOutlined';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents} from 'react-leaflet'
 import L from 'leaflet';
 import debounce from "lodash.debounce";
 
@@ -76,13 +76,22 @@ function Address() {
     );
 }
 
+
 function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
-    const [isMapLocked, setIsMapLocked] = useState(true)
+    const [isMapLocked, setIsMapLocked] = useState(false)
+
+    const MapEvents = () => {
+    const map = useMapEvents({
+        drag: () => {
+            if (isMapLocked) console.log("moving")
+        }
+    })
+}
 
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
@@ -294,17 +303,19 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div  style={{position: 'relative', flex: '1', height: '100%'}} ismaplocked={isMapLocked}>>
+                <div  style={{position: 'relative', flex: '1', height: '100%'}} >
                     <MapContainer
-                        dragging={isMapLocked}
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
-                        scrollWheelZoom={isMapLocked}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
+                        eventHandlers={{
+                            dragStart: () => {console.log("isDragging")}
+                        }}
                     >
+                        <MapEvents/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
