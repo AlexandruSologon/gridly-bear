@@ -37,4 +37,4 @@ def runNetwork(net):
     try:
         pp.runpp(net)
     except Exception as e:
-        raise NetworkInvalidError(str(e))
+        raise NetworkInvalidError(str(e) + " - diagnostic results: " + str(pp.diagnostic(net)))
