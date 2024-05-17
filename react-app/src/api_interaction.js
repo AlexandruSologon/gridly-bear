@@ -23,7 +23,7 @@ export function cnvs_json_post(data) {
         else {
             let simres = result.data.sim_result; //is json
             let busarray = JSON.parse(simres.buses); //json
-            console.log(busarray['1']);
+            console.log(busarray[0]);
             //console.log(resarray + " is of type " + (typeof resarray) + " with keys " + (Object.keys( resarray)));
             return result.data;
         }
