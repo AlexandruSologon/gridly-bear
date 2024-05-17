@@ -11,6 +11,7 @@ before_script:
   - cd react-app/
   - npm install -g firebase-tools
   - npm install
+  - cd ..
 
 include:
   - react-app/functions/.gitlab-ci.yaml
@@ -28,7 +29,9 @@ Tests:
 Deploy:
   stage: deploy
   script:
+    - cd react-app
     - firebase deploy
+    - cd ..
   only:
     refs:
       - master
@@ -40,8 +43,8 @@ deploy-functions:
   script:
     - cd react-app
     - npm run build
-    - cd ..
     - firebase deploy --only functions
+    - cd ..
   only:
     refs:
       - master
