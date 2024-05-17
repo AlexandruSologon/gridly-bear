@@ -13,7 +13,7 @@ before_script:
   - npm install
 
 include:
-  - functions/.gitlab-ci.yaml
+  - react-app/functions/.gitlab-ci.yaml
 
 Linting:
   stage: lint
