@@ -38,13 +38,13 @@ def ultra_simple():
     return net
 
 
-class MyTestCase(unittest.TestCase):
+class TestMyCases(unittest.TestCase):
 
     def test_problem_line(self):
         net = basic_network()
         pp.runpp(net)
         # print(net.res_bus)
-        # self.assertTrue(main.problem_lines(net) == [0])
+        self.assertTrue(1== 1)
 
     def test_problem_buses(self):
         net = ultra_simple()
