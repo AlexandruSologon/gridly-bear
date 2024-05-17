@@ -26,13 +26,13 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
         try:
                 dat = json.loads(req.data)['data']
                 net = jsonParser.parsejson(dat) #parse the data
-                res = {'data':json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json()))} #can also use json.dumps()
-                return res
+                res = {'buses':nt.all_buses(net).to_json(), 'lines':nt.all_lines(net).to_json()}
+                return {'data':{'status':"S", 'sim_result':res, 'message':"Success!"}}
         except nt.NetworkInvalidError as e:
-               return json.dumps({'data' : {'status':"E", 'message':"Invalid network submitted: " + str(e)}})
+               return json.dumps({'data' : {'status':"E", 'sim_result':"None", 'message':"Invalid network submitted: " + str(e)}})
         except jsonParser.ParseDataException:
-               return json.dumps({'data' : {'status':"E", 'message':"Submitted data could not be parsed."}})
+               return json.dumps({'data' : {'status':"E", 'sim_result':"None", 'message':"Submitted data could not be parsed."}})
         except Exception as e:
                print("Something unexpected happened: ")
                print(e)
-               return json.dumps({'data' : {'status':"E", 'message':"Server received invalid data."}}) #todo print only pandapower related errors to client
+               return json.dumps({'data' : {'status':"E", 'sim_result':"None", 'message':"Server received invalid data."}}) #todo print only pandapower related errors to client

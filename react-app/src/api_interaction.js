@@ -11,23 +11,23 @@ const firebaseConfig = {
     measurementId: "G-773KGRGD70"
 };
 
+const app = initializeApp(firebaseConfig);//App initialization
+const functions = getFunctions(app);//Get functions
+connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
+const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
+
 export function cnvs_json_post(data) {
-    //App initialization
-    const app = initializeApp(firebaseConfig);
-    //Get functions 
-    const functions = getFunctions(app);
-    //Set connection to local emulator
-    connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment
-    const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
     post(data).then((result) => { //request to server and add callback
-        console.log("Returned from firebase function call: " + result.data);
+        console.log("Returned from firebase function call: " + JSON.stringify(result.data));
         if(result.data.status === "E") alert(result.data.message);
-        return result.data;
+        else {
+            let simres = result.data.sim_result; //is json
+            let busarray = JSON.parse(simres.buses); //json
+            console.log(busarray['1']);
+            //console.log(resarray + " is of type " + (typeof resarray) + " with keys " + (Object.keys( resarray)));
+            return result.data;
+        }
     }).catch((error) => {
-        //const code = error.code;
-        const message = error.message;
-        const details = error.details;
-        console.log(message + " : " +  details);
-        return {'result' : "None"};
+        console.log(error.message + " : " +  error.details);
   });
 }
