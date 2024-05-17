@@ -7,7 +7,6 @@ import json
 import src.net as nt 
 import src.jsonParser as jsonParser
 from flask import jsonify
-import pandapower as pp
 
 initialize_app()
 
@@ -27,11 +26,13 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
         try:
                 dat = json.loads(req.data)['data']
                 net = jsonParser.parsejson(dat) #parse the data
-                return {'data':json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json()))} #can also use json.dumps()
-        except UserWarning:
-               return json.dumps({'data' : {'status':"E", 'message':"Invalid network submitted"}})
-        except ValueError:
-               return json.dumps({'data' : {'status':"E", 'message':"Invalid JSON attribute found"}})
+                res = {'data':json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json()))} #can also use json.dumps()
+                return res
+        except nt.NetworkInvalidError as e:
+               return json.dumps({'data' : {'status':"E", 'message':"Invalid network submitted: " + str(e)}})
+        except jsonParser.ParseDataException:
+               return json.dumps({'data' : {'status':"E", 'message':"Submitted data could not be parsed."}})
         except Exception as e:
+               print("Something unexpected happened: ")
                print(e)
-               return json.dumps({'data' : {'status':"E", 'message':"Exception occurred: " + str(pp.diagnostic(net))}})
+               return json.dumps({'data' : {'status':"E", 'message':"Server received invalid data."}}) #todo print only pandapower related errors to client
