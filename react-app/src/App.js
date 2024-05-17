@@ -3,7 +3,7 @@ import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import IconButton from '@mui/material/IconButton';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents} from 'react-leaflet'
 import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import L from 'leaflet';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
@@ -98,10 +98,11 @@ function ReactApp() {
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconRetinaUrl: require('./images/bus.png'),
+        iconRetinaUrl: require('./images/Blank.png'),
         iconUrl: require('./images/bus.png'),
-        iconAnchor: [35, 35],
-        popupAnchor:[0, -35]
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -35],
+        className: 'dot'
     });
     const gridIcon = new L.icon({
         id: 'grid',
@@ -192,6 +193,7 @@ function ReactApp() {
 
                     components.push(new Transformer(indices[4], busIndex, 5, 20));
                     indices[4] +=1;
+                    break;
                 default:
                     break;
             }
@@ -230,8 +232,8 @@ function ReactApp() {
             const x = clientX - left;
             const y = clientY - top;
             const droppedLatLng = mapContainer.current.containerPointToLatLng([x, y]);
-            const droppedLatLng1 = mapContainer.current.containerPointToLatLng([x-30, y]);
-            const droppedLatLng2 = mapContainer.current.containerPointToLatLng([x+30, y]);
+            const droppedLatLng1 = mapContainer.current.containerPointToLatLng([x-22.5, y]);
+            const droppedLatLng2 = mapContainer.current.containerPointToLatLng([x+22.5, y]);
 
             // Get the icon for the dragged item based on its type
             const icon = iconMapping[draggedItem.type];
@@ -239,17 +241,14 @@ function ReactApp() {
                 console.log(icon)
                 const newMarker1 = { id: markers.length, position: droppedLatLng1, name: draggedItem.name, icon };
                 const newMarker2 = { id: markers.length+1, position: droppedLatLng2, name: draggedItem.name, icon: iconMapping['trafo2'] };
-                const newLine = [newMarker1.position, newMarker2.position];
                 setMarkers([...markers,newMarker1, newMarker2]);
-                setLines([...lines,newLine])
                     }
             else{
             // Add the dropped item as a marker on the map
             const newMarker = { id: markers.length, position: droppedLatLng, name: draggedItem.name, icon };
             setMarkers([...markers, newMarker]);}
         }
-        setDraggedItem(null);
-    };
+        setDraggedItem(null);};
 
     const handleMarkerClick = (markerIndex) => {
         // If no marker is currently selected, set the clicked marker as selected
@@ -290,11 +289,16 @@ function ReactApp() {
     };
 
     const handleMarkerDrag = (markerIndex, newPosition) => {
+        let updatedLines;
         const markerOldPos = markers[markerIndex].position;
-        const updatedMarkers = [...markers];
-        updatedMarkers[markerIndex].position = newPosition;
-
-        const updatedLines = lines.map((line, index) => {
+        const updatedMarkers=[...markers]
+        if(markers[markerIndex].icon.options.id === 'trafo1' ) {
+            updatedMarkers[markerIndex].position = newPosition;
+            const markerOldPos2 = updatedMarkers[markerIndex+1].position;
+            const {x, y} = mapContainer.current.latLngToContainerPoint(newPosition);
+            updatedMarkers[markerIndex+1].position = mapContainer.current.containerPointToLatLng([x+45,y] );
+            const newPosition2 = updatedMarkers[markerIndex+1].position;
+            updatedLines = lines.map((line, index) => {
             if (line) {
                 const [start, end] = line;
                 if (start.equals(markerOldPos)) {
@@ -305,6 +309,69 @@ function ReactApp() {
             }
             return line;
         });
+
+                        updatedLines = updatedLines.map((line, index) => {
+            if (line) {
+                const [start, end] = line;
+                if (start.equals(markerOldPos2)) {
+                    return [newPosition2, end];
+                } else if (end.equals(markerOldPos2)) {
+                    return [start, newPosition2];
+                }
+            }
+
+            return line;
+        });
+
+        }
+        else
+            if(markers[markerIndex].icon.options.id === 'trafo2' ) {
+            updatedMarkers[markerIndex].position = newPosition;
+            const markerOldPos2 = updatedMarkers[markerIndex-1].position;
+            const {x, y} = mapContainer.current.latLngToContainerPoint(newPosition);
+            updatedMarkers[markerIndex-1].position = mapContainer.current.containerPointToLatLng([x-45,y] );
+            const newPosition2 = updatedMarkers[markerIndex-1].position;
+            updatedLines = lines.map((line, index) => {
+            if (line) {
+                const [start, end] = line;
+                if (start.equals(markerOldPos)) {
+                    return [newPosition, end];
+                } else if (end.equals(markerOldPos)) {
+                    return [start, newPosition];
+                }
+            }
+            return line;
+            });
+            updatedLines = updatedLines.map((line, index) => {
+            if (line) {
+                const [start, end] = line;
+                if (start.equals(markerOldPos2)) {
+                    return [newPosition2, end];
+                } else if (end.equals(markerOldPos2)) {
+                    return [start, newPosition2];
+                }
+            }
+
+            return line;
+        });
+
+        }
+        else{
+        updatedMarkers[markerIndex].position = newPosition;
+
+
+
+         updatedLines = lines.map((line, index) => {
+            if (line) {
+                const [start, end] = line;
+                if (start.equals(markerOldPos)) {
+                    return [newPosition, end];
+                } else if (end.equals(markerOldPos)) {
+                    return [start, newPosition];
+                }
+            }
+            return line;
+        });}
         setMarkers(updatedMarkers);
         setLines(updatedLines);
     };
@@ -352,6 +419,16 @@ function ReactApp() {
 
     const onLockButtonClick = () => {
         console.log(handleExport())
+    }
+    const MapEvents =() => {
+    const map = useMapEvents({
+    zoom() {
+      for (let i=0; i < markers.length; i++)
+                    if (markers[i].icon.options.id === 'trafo1')
+                        handleMarkerDrag(i, markers[i].position)
+  },}
+
+  )
     }
 
     return (
@@ -419,6 +496,7 @@ function ReactApp() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             opacity={0.7}
                         />
+                        <MapEvents/>
                         {markers.map((marker, index) => (
                             <Marker key={index}
                                     position={marker.position}
