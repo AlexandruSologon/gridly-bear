@@ -24,6 +24,6 @@ def parsejson(x):
                 pp.create_transformer(net=network, hv_bus=component["highBus"],
                                       lv_bus=component["lowBus"], std_type=component["type"])
             case "generator":
-                pp.create.create_gen(net=network, bus=component["bus"], p_mw=component["power"])
+                pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["power"])
 
     return network

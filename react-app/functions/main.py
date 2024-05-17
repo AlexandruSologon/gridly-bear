@@ -29,5 +29,6 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
                 return json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json())) #can also use json.dumps()
         except UserWarning:
                return json.dumps({'data' : "Invalid network submitted"})
-        except:
+        except Exception as e:
+               print(e)
                return json.dumps({'data' : "Unexpected exception occurred"})

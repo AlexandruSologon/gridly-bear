@@ -13,7 +13,7 @@ before_script:
   - npm install
 
 include:
-  - flask_server/.gitlab-ci.yml
+  - functions/.gitlab-ci.yaml
 
 Linting:
   stage: lint
