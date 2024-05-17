@@ -4,13 +4,12 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
-import { Bus, Line, Load, Generator, Network } from './CoreClasses.js';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import L from 'leaflet';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 
-<<<<<<< HEAD
 function SubmitButton() {
     return (
         <input type="submit" name="Submit"/>
@@ -80,10 +79,6 @@ function Address() {
 }
 
 function ReactApp() {
-=======
-const CustomNodeFlow = () => {
-
->>>>>>> run-simulation-funct-serverside
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);
@@ -360,9 +355,6 @@ const CustomNodeFlow = () => {
                         zoomControl={false}
                         attributionControl={false}
                     >
-                         <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
-                             <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '70'}} />
-                        </IconButton>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -423,17 +415,17 @@ const CustomNodeFlow = () => {
                     </MapContainer>
                     <IconButton aria-label="check" style={{
                         position: 'absolute',
-                        right: '20px',
+                        right: '0px',
                         top: '600px',
-                        width: '40px',
-                        height: '40px',
+                        width: '120px',
+                        height: '120px',
                         opacity: '70'
                     }} onClick={onLockButtonClick}>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                            <PlayArrowIcon className="PlayArrowIcon" style={{
-                                width: '80px',
-                                height: '80px',
-                                color: '#000',
+                            <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
+                                width: '120px',
+                                height: '120px',
+                                color: '#05a95c',
                                 borderWidth: '1px',
                                 borderColor: '#000',
                                 opacity: '70'
