@@ -14,7 +14,7 @@ before_script:
   - cd ..
 
 include:
-  - react-app/functions/.gitlab-ci.yaml
+  - ./react-app/functions/.gitlab-ci.yaml
 
 Linting:
   stage: lint
