@@ -20,6 +20,7 @@ Tests:
   stage: test
   script:
     - poetry run pytest
+    - python -m functions.test.test
 
 Deploy:
   stage: deploy
