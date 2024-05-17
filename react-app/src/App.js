@@ -3,8 +3,6 @@ import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import IconButton from '@mui/material/IconButton';
-import LockIcon from '@mui/icons-material/LockOutlined';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import L from 'leaflet';
@@ -92,42 +90,75 @@ function ReactApp() {
     // TODO: in case of needing to change the below icons for the sake of design,
     //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
     const solarIcon = new L.icon({
+        id: 'solar',
         iconRetinaUrl: require('./images/solar.png'),
         iconUrl: require('./images/solar.png'),
         iconAnchor: [35, 35],
         popupAnchor:[0, -35]
     });
     const busIcon = new L.icon({
+        id: 'bus',
         iconRetinaUrl: require('./images/bus.png'),
         iconUrl: require('./images/bus.png'),
         iconAnchor: [35, 35],
         popupAnchor:[0, -35]
     });
+    const gridIcon = new L.icon({
+        id: 'grid',
+        iconRetinaUrl: require('./images/power (2).png'),
+        iconUrl: require('./images/power (2).png'),
+        iconAnchor: [32,32],
+        popupAnchor:[0, -35]
+    });
     const loadIcon = new L.icon({
+        id: 'load',
         iconRetinaUrl: require('./images/house.png'),
         iconUrl: require('./images/house.png'),
         iconAnchor: [32, 32],
         popupAnchor: [0, -32]
     });
     const windIcon = new L.icon({
+        id: 'wind',
         iconRetinaUrl: require('./images/wind.png'),
         iconUrl: require('./images/wind.png'),
         iconAnchor: [42.5, 42.5],
         popupAnchor:[0, -42.5]
     });
 
+    const trafo1Icon = new L.icon({
+        id: 'trafo1',
+        iconRetinaUrl: require('./images/Blank.png'),
+        iconUrl: require('./images/wind.png'),
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -42.5],
+        className: 'dot'
+    });
+    const trafo2Icon = new L.icon({
+        id: 'trafo2',
+        iconRetinaUrl: require('./images/Blank.png'),
+        iconUrl: require('./images/wind.png'),
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -42.5],
+        className: 'dot'
+    });
+
     const iconMapping = {
+        grid: gridIcon,
         solar: solarIcon,
         bus: busIcon,
         load: loadIcon,
-        wind: windIcon
+        wind: windIcon,
+        trafo1: trafo1Icon,
+        trafo2: trafo2Icon,
     };
 
     const sidebarItems = [
         { id: 1, name: 'Solar Panel', type: 'solar' },
         { id: 2, name: 'Bus', type: 'bus' },
         { id: 3, name: 'Load', type: 'load' },
-        { id: 4, name: 'Wind Turbine', type: 'wind'}
+        { id: 4, name: 'Wind Turbine', type: 'wind'},
+        { id: 5, name: 'External Grid', type: 'grid'},
+        { id: 6, name: 'Transformer', type: 'trafo1'},
     ];
 
     const [draggedItem, setDraggedItem] = useState(null);
@@ -153,6 +184,14 @@ function ReactApp() {
                     components.push(new Generator(indices[3], busIndex, 5));
                     indices[3] += 1;
                     break;
+                case 'External Grid':
+                    components.push(new ExtGrid(indices[6], busIndex, 5, 20));
+                    indices[6] += 1;
+                    break;
+                case 'Transformer':
+
+                    components.push(new Transformer(indices[4], busIndex, 5, 20));
+                    indices[4] +=1;
                 default:
                     break;
             }
@@ -191,12 +230,23 @@ function ReactApp() {
             const x = clientX - left;
             const y = clientY - top;
             const droppedLatLng = mapContainer.current.containerPointToLatLng([x, y]);
+            const droppedLatLng1 = mapContainer.current.containerPointToLatLng([x-30, y]);
+            const droppedLatLng2 = mapContainer.current.containerPointToLatLng([x+30, y]);
 
             // Get the icon for the dragged item based on its type
             const icon = iconMapping[draggedItem.type];
+            if (icon.options.id === 'trafo1' ) {
+                console.log(icon)
+                const newMarker1 = { id: markers.length, position: droppedLatLng1, name: draggedItem.name, icon };
+                const newMarker2 = { id: markers.length+1, position: droppedLatLng2, name: draggedItem.name, icon: iconMapping['trafo2'] };
+                const newLine = [newMarker1.position, newMarker2.position];
+                setMarkers([...markers,newMarker1, newMarker2]);
+                setLines([...lines,newLine])
+                    }
+            else{
             // Add the dropped item as a marker on the map
             const newMarker = { id: markers.length, position: droppedLatLng, name: draggedItem.name, icon };
-            setMarkers([...markers, newMarker]);
+            setMarkers([...markers, newMarker]);}
         }
         setDraggedItem(null);
     };
@@ -260,9 +310,17 @@ function ReactApp() {
     };
 
     const handleMarkerDelete = (indexMarker) => {
+
         const oldMarkerPos = markers[indexMarker].position;
         const updatedMarkers = [...markers];
-        updatedMarkers.splice(indexMarker, 1);
+        console.log(markers[indexMarker].icon.options.id);
+        if(markers[indexMarker].icon.options.id === 'trafo1')
+        updatedMarkers.splice(indexMarker, 2);
+        else
+        if(markers[indexMarker].icon.options.id === 'trafo2')
+            updatedMarkers.splice(indexMarker - 1, 2);
+        else
+            updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
