@@ -1,9 +1,13 @@
 import React, { useState, useRef } from 'react';
+import IconButton from '@mui/material/IconButton';
+import LockIcon from '@mui/icons-material/LockOutlined';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline} from 'react-leaflet'
 import L from 'leaflet';
+import debounce from "lodash.debounce";
 
 function SubmitButton() {
     return (
@@ -73,12 +77,16 @@ function Address() {
     );
 }
 
+
 function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
+    const [isMapLocked, setIsMapLocked] = useState(true)
+
+
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -180,7 +188,7 @@ function ReactApp() {
         }
     };
 
-    const handleMarkerDrag = (markerIndex, newPosition) => {
+    const handleMarkerDrag = debounce((markerIndex, newPosition) => {
         const markerOldPos = markers[markerIndex].position;
         const updatedMarkers = [...markers];
         updatedMarkers[markerIndex].position = newPosition;
@@ -198,7 +206,7 @@ function ReactApp() {
         });
         setMarkers(updatedMarkers);
         setLines(updatedLines);
-    };
+    }, 100);
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
@@ -232,6 +240,20 @@ function ReactApp() {
             markerElement.classList.remove('marker-hover');
         });
     };
+
+    const onLockButtonClick = () => {
+        setIsMapLocked(!isMapLocked)
+        const map = mapContainer.current;
+        if(isMapLocked) {map.dragging.disable();
+                         map.keyboard.disable();
+                         map.doubleClickZoom.disable();
+                         map.scrollWheelZoom.disable()}
+        else {map.dragging.enable();
+              map.keyboard.enable();
+              map.doubleClickZoom.enable();
+              map.scrollWheelZoom.enable()}
+        return isMapLocked
+    }
 
     return (
         <div style={{display: 'flex', height: '100vh'}}>
@@ -282,12 +304,12 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div style={{position: 'relative', flex: '1', height: '100%'}}>
+                <div  style={{position: 'relative', flex: '1', height: '100%'}} >
                     <MapContainer
+                        dragging={isMapLocked}
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
-                        scrollWheelZoom={true}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
@@ -334,22 +356,31 @@ function ReactApp() {
                                         </div>
                                     </div>
                                 </Popup>
+                                {lines.map((line, index) => (
+                                    // TODO: color can be changed to indicate overload, for example: color={'red'},
+                                    //  weight can also change accordingly to the desired line width
+                                    <Polyline key={index}
+                                              positions={line}
+                                              clickable={true}
+                                              onMouseOver={e => e.target.openPopup()}
+                                              onMouseOut={e => e.target.closePopup()}
+                                              weight={10}
+                                    >
+                                        <Popup>A popup on click</Popup>
+                                    </Polyline>
+                                ))}
                             </Marker>
                         ))}
-                        {lines.map((line, index) => (
-                            // TODO: color can be changed to indicate overload, for example: color={'red'}
-                            <Polyline key={index}
-                                      positions={line}
-                                      clickable={true}
-                                      onMouseOver={e => e.target.openPopup()}
-                                      onMouseOut={e => e.target.closePopup()}
-                                      weight={10}
-                            >
-                                <Popup>A popup on click</Popup>
-                            </Polyline>
-                        ))}
                         <ZoomControl position="topright"/>
+
+
                     </MapContainer>
+                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '30'}}   onClick={onLockButtonClick}>
+                        <div style={{position: 'relative'}}>
+                        <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: !isMapLocked ? 'flex' : 'none'}}/>
+                        <LockOpenIcon className="LockOpenIcon" style={{  width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: isMapLocked ? 'flex' : 'none'}} />
+                        </div>
+                    </IconButton>
                 </div>
             </div>
         </div>
