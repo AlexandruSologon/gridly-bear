@@ -20,7 +20,7 @@ def basic_network():
     pp.create_line(net, from_bus=b2, to_bus=b3, length_km=0.1, name="Line", std_type="NAYY 4x50 SE")
     return net
 
-def ultra_simple():
+def simple_load_generator():
     net = pp.create_empty_network(name="network")
 
     # create buses
@@ -40,24 +40,31 @@ def ultra_simple():
 
 class TestMyCases(unittest.TestCase):
 
-    def test_problem_line(self):
-        net = basic_network()
-        pp.runpp(net)
+    def test_problematic_lines(self):
+        mynet = basic_network()
+        pp.runpp(mynet)
         # print(net.res_bus)
-        self.assertTrue(1== 1)
+        self.assertTrue((not net.problem_lines(mynet).empty))
+        self.assertTrue(not len(net.problem_lines(mynet)) == 0)
 
     def test_problem_buses(self):
-        net = ultra_simple()
-        pp.runpp(net)
-        #print(main.problem_buses(net, 1.05, 0.95))
-        #self.assertTrue(len(main.problem_buses(net, 1.05, 0.95)) == 0)
-        # print(net.res_bus)
-    
-    def test_json_run_simple(self):
-        jj = '{"components":[{"class":"bus","id":0,"pos":{"lat":51.90869633027845,"lng":4.407817839528435},"voltage":20},{"class":"bus","id":1,"pos":{"lat":51.90774321365463,"lng":4.458972929860466},"voltage":0.4},{"id":0,"class":"generator","bus":0,"power":5},{"id":0,"class":"load","bus":1,"p_mv":5,"q_mvar":5},{"id":0,"class":"line","type":"NAYY 4x50 SE","bus1":0,"bus2":1,"length":5}]}'
-        netw = jsonParser.parsejson(jj) #parse the data
-        print(json.dumps((net.all_buses(netw).to_json(), net.all_lines(netw).to_json())))
+        mynet = basic_network()
+        pp.runpp(mynet)
+        self.assertTrue(len(net.problem_buses(mynet, 1.05, 0.95)) == 0)
 
+    def test_all_buses(self):
+        mynet = basic_network()
+        pp.runpp(mynet)
+        self.assertTrue(not len(net.all_buses(mynet)) == 0)
+
+    def test_all_lines(self):
+        mynet = simple_load_generator()
+        pp.runpp(mynet)
+        self.assertTrue(len(net.problem_lines(mynet)) == 1)
+
+    def test_not_yet_sim_all_buses(self):
+        mynet = basic_network()
+        self.assertTrue(not len(net.problem_lines(mynet)) == 0 )
 
 if __name__ == '__main__':
     unittest.main()

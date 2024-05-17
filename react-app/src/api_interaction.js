@@ -21,7 +21,7 @@ export function cnvs_json_post(data) {
     const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
     post(data).then((result) => { //request to server and add callback
         console.log("Returned from firebase function call: " + result.data);
-        if(result.data === "Invalid network submitted") alert("Invalid network submitted");
+        if(result.data.status === "E") alert(result.data.message);
         return result.data;
     }).catch((error) => {
         //const code = error.code;

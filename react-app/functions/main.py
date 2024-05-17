@@ -7,6 +7,7 @@ import json
 import src.net as nt 
 import src.jsonParser as jsonParser
 from flask import jsonify
+import pandapower as pp
 
 initialize_app()
 
@@ -26,9 +27,11 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
         try:
                 dat = json.loads(req.data)['data']
                 net = jsonParser.parsejson(dat) #parse the data
-                return json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json())) #can also use json.dumps()
+                return {'data':json.dumps((nt.all_buses(net).to_json(), nt.all_lines(net).to_json()))} #can also use json.dumps()
         except UserWarning:
-               return json.dumps({'data' : "Invalid network submitted"})
+               return json.dumps({'data' : {'status':"E", 'message':"Invalid network submitted"}})
+        except ValueError:
+               return json.dumps({'data' : {'status':"E", 'message':"Invalid JSON attribute found"}})
         except Exception as e:
                print(e)
-               return json.dumps({'data' : "Unexpected exception occurred"})
+               return json.dumps({'data' : {'status':"E", 'message':"Exception occurred: " + str(pp.diagnostic(net))}})

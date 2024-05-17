@@ -1,0 +1,49 @@
+{
+    "components": [
+        {
+            "class": "bus",
+            "id": 0,
+            "xcoord": 14,
+            "ycoord": 25,
+            "voltage": 20
+        },
+        {
+            "class": "bus",
+            "id": 1,
+            "xcoord": 14,
+            "ycoord": 25,
+            "voltage": 0.4
+        },
+        {
+            "class": "bus",
+            "id": 2,
+            "xcoord": 15,
+            "ycoord": 25,
+            "voltage": 0.4
+        },
+        {
+            "class": "ext-grid",
+            "bus": 0,
+            "voltage": 1.02
+        },
+        {
+            "class": "load",
+            "bus": 2,
+            "p_mv": 0.1,
+            "q_mvar": 0.05
+        },
+        {
+            "class": "transformer",
+            "highBus": 0,
+            "lowBus": 1,
+            "type": "0.4 MVA 20/0.4 kV"
+        },
+        {
+            "class": "line",
+            "length": 0.1,
+            "type": "NAYY 4x50 SE",
+            "bus1": 1,
+            "bus2": 2
+        }
+    ]
+}

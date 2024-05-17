@@ -25,5 +25,6 @@ def parsejson(x):
                                       lv_bus=component["lowBus"], std_type=component["type"])
             case "generator":
                 pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["power"])
-
+            case _:
+                raise ValueError
     return network

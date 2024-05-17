@@ -134,6 +134,7 @@ function ReactApp() {
 
     const [draggedItem, setDraggedItem] = useState(null);
 
+    var x = 0;
     const handleExport = () => {
         const buses = [];
         const components = [];
@@ -143,7 +144,9 @@ function ReactApp() {
         markers.forEach((item) => {
             const busIndex = indices[0];
             indices[0] += 1;
-            const newBus = new Bus(busIndex, item.position, 5); //TODO Get voltage from some parameter variable
+            var newBus;
+            if(busIndex === 0) newBus = new Bus(busIndex, item.position, 20);
+            else newBus = new Bus(busIndex, item.position, 0.4); //TODO Get voltage from some parameter variable
             buses.push(newBus);
             switch(item.name) {
                 case 'Load':
