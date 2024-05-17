@@ -1,7 +1,7 @@
 image: node:19.0.0-slim
 
 include:
-  - 'react-app\functions\.gitlab-ci.yml'
+  - 'react-app/functions/.gitlab-ci.yml'
 
 stages:
   - lint
