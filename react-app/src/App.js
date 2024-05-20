@@ -300,8 +300,13 @@ function ReactApp() {
     const onLockButtonClick = () => {
         const dat = handleExport();
         console.log(dat);
-        cnvs_json_post(dat).then( (data) => {
+        cnvs_json_post(dat)
+        .then((data) => {
+            //todo do something useful with data
             console.log(data.buses[1]);
+        }).catch((error) => {
+            console.log(error.message + " : " +  error.details);
+            //todo prompt the user with useful feedback as to why there's an error.
         });
     }
 

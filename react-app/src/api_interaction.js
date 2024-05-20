@@ -18,20 +18,25 @@ const post = httpsCallable(functions, 'cnvs_json_post'); //create callable reque
 
 export function cnvs_json_post(data) {
     //request to server and add callback
-    return post(data).then((result) => handle_results(result)).catch((error) => {
+    return post(data)
+    .then((result) => handle_results(result))
+    .catch((error) => {
+        //if an error occurs, log it to console
         console.log(error.message + " : " +  error.details);
+        return null;
   });
 }
 
 function handle_results(result) {
     console.log("Returned from firebase function call: " + JSON.stringify(result.data));
-        if(result.data.status === "E") {
-            alert(result.data.message); //status E=error, S=success
-            return null;
-        } else {
-            let simres = result.data.sim_result; //is json
-            let busarray = JSON.parse(simres.buses); //json array of busses
-            let linearray = JSON.parse(simres.lines); //json array of lines
-            return {'buses':busarray, 'lines':linearray};
-        }
+    if(result.data.status === "E") {
+        //todo something nicer than an alert to the user
+        alert(result.data.message); //status E=error, S=success
+        return null;
+    } else {
+        let simres = result.data.sim_result; //is json
+        let busarray = JSON.parse(simres.buses); //json array of busses
+        let linearray = JSON.parse(simres.lines); //json array of lines
+        return {'buses':busarray, 'lines':linearray};
+    }
 }
