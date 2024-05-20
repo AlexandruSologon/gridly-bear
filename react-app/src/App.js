@@ -1,13 +1,17 @@
 import React, { useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
-import LockIcon from '@mui/icons-material/LockOutlined';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline} from 'react-leaflet'
+import LockIcon from '@mui/icons-material/LockOutlined';
+// import { Bus, Line, Load, Generator, Network } from './CoreClasses.js';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
+import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 import debounce from "lodash.debounce";
+import { cnvs_json_post } from './api_interaction';
 
 function SubmitButton() {
     return (
@@ -84,9 +88,8 @@ function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
-    const [isMapLocked, setIsMapLocked] = useState(true)
-
-
+    const [isMapLocked, setIsMapLocked] = useState(true);
+    const [busLines, setBusLines] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -134,6 +137,48 @@ function ReactApp() {
 
     const [draggedItem, setDraggedItem] = useState(null);
 
+    var x = 0;
+    const handleExport = () => {
+        const buses = [];
+        const components = [];
+        // Bus, Line, Load, Generator, Transformer, Switch, ExtGrid
+        let indices = [0,0,0,0,0,0,0];
+
+        markers.forEach((item) => {
+            const busIndex = indices[0];
+            indices[0] += 1;
+            var newBus;
+            if(busIndex === 0) newBus = new Bus(busIndex, item.position, 20);
+            else newBus = new Bus(busIndex, item.position, 0.4); //TODO Get voltage from some parameter variable
+            buses.push(newBus);
+            switch(item.name) {
+                case 'Load':
+                    components.push(new Load(indices[2], busIndex, 5, 5));
+                    indices[2] += 1;
+                    break;
+                case 'Solar Panel':
+                case 'Wind Turbine':
+                    components.push(new Generator(indices[3], busIndex, 5));
+                    indices[3] += 1;
+                    break;
+                default:
+                    break;
+            }
+
+        })
+
+        for (let i = 0; i < busLines.length; i++) {
+            const line = busLines[i];
+            //const bus1Loc = markers[line[0]].getLatLng();
+            //const bus2Loc = markers[line[1]].getLatLng();
+            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', 5));
+        }
+        
+        const total = buses.concat(components);
+        return JSON.stringify(new Network(total));
+
+    }
+
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
     };
@@ -158,7 +203,7 @@ function ReactApp() {
             // Get the icon for the dragged item based on its type
             const icon = iconMapping[draggedItem.type];
             // Add the dropped item as a marker on the map
-            const newMarker = { id: draggedItem.id, position: droppedLatLng, name: draggedItem.name, icon };
+            const newMarker = { id: markers.length, position: droppedLatLng, name: draggedItem.name, icon };
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);
@@ -176,7 +221,21 @@ function ReactApp() {
                     // Logic for creating lines between markers
                     if (lines.length === 0 || lines[lines.length - 1].length === 2) {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                        setLines([...lines, newLine]);
+                        const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
+                        let found = false;
+                        // Check if line already exists
+                        for (let i = 0; i < busLines.length; i++) {
+                            const item = busLines[i];
+                            if (item[0] === newBusLine[0] && item[1] === newBusLine[1]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        // Add line if it doesn't exist
+                        if (!found){
+                            setLines([...lines, newLine]);
+                            setBusLines([...busLines, newBusLine]);
+                        }
                     } else {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
@@ -188,7 +247,7 @@ function ReactApp() {
         }
     };
 
-    const handleMarkerDrag = debounce((markerIndex, newPosition) => {
+    const handleMarkerDrag = (markerIndex, newPosition) => {
         const markerOldPos = markers[markerIndex].position;
         const updatedMarkers = [...markers];
         updatedMarkers[markerIndex].position = newPosition;
@@ -206,7 +265,7 @@ function ReactApp() {
         });
         setMarkers(updatedMarkers);
         setLines(updatedLines);
-    }, 100);
+    };
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
@@ -254,6 +313,19 @@ function ReactApp() {
               map.scrollWheelZoom.enable()}
         return isMapLocked
     }
+
+    const onRunButtonClick = () => {
+        const dat = handleExport();
+        console.log(dat);
+        cnvs_json_post(dat)
+        .then((data) => {
+            //todo do something useful with data
+            console.log(data.buses[1]);
+        }).catch((error) => {
+            console.log(error.message + " : " +  error.details);
+            //todo prompt the user with useful feedback as to why there's an error.
+        });
+    } 
 
     return (
         <div style={{display: 'flex', height: '100vh'}}>
@@ -314,6 +386,9 @@ function ReactApp() {
                         zoomControl={false}
                         attributionControl={false}
                     >
+                         <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '70'}}   onClick={onLockButtonClick}>
+                             <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '70'}} />
+                        </IconButton>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -356,30 +431,43 @@ function ReactApp() {
                                         </div>
                                     </div>
                                 </Popup>
-                                {lines.map((line, index) => (
-                                    // TODO: color can be changed to indicate overload, for example: color={'red'},
-                                    //  weight can also change accordingly to the desired line width
-                                    <Polyline key={index}
-                                              positions={line}
-                                              clickable={true}
-                                              onMouseOver={e => e.target.openPopup()}
-                                              onMouseOut={e => e.target.closePopup()}
-                                              weight={10}
-                                    >
-                                        <Popup>A popup on click</Popup>
-                                    </Polyline>
-                                ))}
                             </Marker>
+                        ))}
+                        {lines.map((line, index) => (
+                            // TODO: color can be changed to indicate overload, for example: color={'red'}
+                            <Polyline key={index}
+                                      positions={line}
+                                      clickable={true}
+                                      onMouseOver={e => e.target.openPopup()}
+                                      onMouseOut={e => e.target.closePopup()}
+                                      weight={10}
+                            >
+                                <Popup>A popup on click</Popup>
+                            </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
 
 
                     </MapContainer>
-                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '30'}}   onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                        <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: !isMapLocked ? 'flex' : 'none'}}/>
-                        <LockOpenIcon className="LockOpenIcon" style={{  width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: isMapLocked ? 'flex' : 'none'}} />
+                    <IconButton aria-label="check" style={{
+                        position: 'absolute',
+                        right: '20px',
+                        top: '600px',
+                        width: '40px',
+                        height: '40px',
+                        opacity: '70'
+                    }} onClick={onRunButtonClick}>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <PlayArrowIcon className="PlayArrowIcon" style={{
+                                width: '80px',
+                                height: '80px',
+                                color: '#000',
+                                borderWidth: '1px',
+                                borderColor: '#000',
+                                opacity: '70'
+                            }}/>
                         </div>
+
                     </IconButton>
                 </div>
             </div>
