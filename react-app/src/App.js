@@ -310,6 +310,9 @@ function ReactApp() {
               map.scrollWheelZoom.enable()}
         return isMapLocked
     }
+    const onRunButton = () => {
+        console.log(handleExport())
+    }
 
     return (
         <div style={{display: 'flex', height: '100vh'}}>
@@ -444,7 +447,7 @@ function ReactApp() {
                         width: '120px',
                         height: '120px',
                         opacity: '70'
-                    }} onClick={onLockButtonClick}>
+                    }} onClick={onRunButton}>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                             <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
                                 width: '120px',
@@ -455,6 +458,7 @@ function ReactApp() {
                                 opacity: '70'
                             }}/>
                         </div>
+                                     </IconButton>
                 </div>
             </div>
         </div>
