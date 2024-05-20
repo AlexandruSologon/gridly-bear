@@ -1,3 +1,49 @@
+image: node:19.0.0-slim
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+  - deploy-functions
+
+before_script:
+  - cd react-app/
+  - npm install -g firebase-tools
+  - npm install
+
 include:
   - flask_server/.gitlab-ci.yml
 
+Linting:
+  stage: lint
+  script:
+    - echo "linting..."
+
+Tests:
+  stage: test
+  script:
+    - echo "testing..."
+
+Deploy:
+  stage: deploy
+  script:
+    - firebase deploy
+  only:
+    refs:
+      - master
+    changes:
+      - src/**/*
+
+deploy-functions:
+  stage: deploy-functions
+  script:
+    - cd react-app
+    - npm run build
+    - cd ..
+    - firebase deploy --only functions
+  only:
+    refs:
+      - master
+    changes:
+      - functions/**/*
