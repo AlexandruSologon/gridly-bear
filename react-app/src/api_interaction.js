@@ -17,15 +17,14 @@ connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in
 const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
 
 export function cnvs_json_post(data) {
-    post(data).then((result) => { //request to server and add callback
+    return post(data).then((result) => { //request to server and add callback
         console.log("Returned from firebase function call: " + JSON.stringify(result.data));
-        if(result.data.status === "E") alert(result.data.message);
+        if(result.data.status === "E") alert(result.data.message); //status E=error, S=success
         else {
             let simres = result.data.sim_result; //is json
-            let busarray = JSON.parse(simres.buses); //json
-            console.log(busarray[0]);
-            //console.log(resarray + " is of type " + (typeof resarray) + " with keys " + (Object.keys( resarray)));
-            return result.data;
+            let busarray = JSON.parse(simres.buses); //json array of busses
+            let linearray = JSON.parse(simres.lines); //json array of lines
+            return {'buses':busarray, 'lines':linearray};
         }
     }).catch((error) => {
         console.log(error.message + " : " +  error.details);

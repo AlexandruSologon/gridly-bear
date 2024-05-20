@@ -300,7 +300,9 @@ function ReactApp() {
     const onLockButtonClick = () => {
         const dat = handleExport();
         console.log(dat);
-        cnvs_json_post(dat);
+        cnvs_json_post(dat).then( (data) => {
+            console.log(data.buses[1]);
+        });
     }
 
     return (
