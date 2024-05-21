@@ -89,7 +89,6 @@ function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
-    const [isMapLocked, setIsMapLocked] = useState(true)
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
 
