@@ -7,6 +7,7 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline} from 'react-leaflet'
 import L from 'leaflet';
+import Search from './Search';
 import debounce from "lodash.debounce";
 
 function SubmitButton() {
@@ -72,7 +73,7 @@ function DropdownMenu() {
 
 function Address() {
     return (
-        <input type="text" placeholder="Address">
+        <input type="text" placeholder="Search for Components">
         </input>
     );
 }
@@ -314,6 +315,7 @@ function ReactApp() {
                         zoomControl={false}
                         attributionControl={false}
                     >
+                        <Search />
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
