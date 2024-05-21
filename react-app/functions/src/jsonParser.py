@@ -2,8 +2,9 @@ import pandapower as pp
 import json
 
 class ParseDataException(Exception):
-    def __init__(self):
-        super().__init__("The data received could not be parsed properly")
+    def __init__(self, message="The data received could not be parsed properly"):
+        self.message = message
+        super().__init__(message)
 
 def parsejson(x):
     try:
@@ -34,4 +35,4 @@ def parsejson(x):
                     raise ValueError
         return network
     except Exception as e:
-        raise ParseDataException
+        raise ParseDataException(e)

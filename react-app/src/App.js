@@ -137,7 +137,7 @@ function ReactApp() {
     ];
 
     const [draggedItem, setDraggedItem] = useState(null);
- var x = 0;
+
     const handleExport = () => {
         const buses = [];
         const components = [];
@@ -171,7 +171,7 @@ function ReactApp() {
             const line = busLines[i];
             //const bus1Loc = markers[line[0]].getLatLng();
             //const bus2Loc = markers[line[1]].getLatLng();
-            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', 5));
+            components.push(new Line(i,line[0], line[1], 5, 'NAYY 4x50 SE'));
         }
 
         const total = buses.concat(components);

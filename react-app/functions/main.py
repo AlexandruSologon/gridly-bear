@@ -29,8 +29,10 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
                 res = {'buses':nt.all_buses(net).to_json(), 'lines':nt.all_lines(net).to_json()}
                 return {'data':{'status':"S", 'sim_result':res, 'message':"Success!"}}
         except nt.NetworkInvalidError as e:
+               print(e)
                return json.dumps({'data' : {'status':"E", 'sim_result':"None", 'message':"Invalid network submitted: " + str(e)}})
-        except jsonParser.ParseDataException:
+        except jsonParser.ParseDataException as e:
+               print(e)
                return json.dumps({'data' : {'status':"E", 'sim_result':"None", 'message':"Submitted data could not be parsed."}})
         except Exception as e:
                print("Something unexpected happened: ")
