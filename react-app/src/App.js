@@ -2,13 +2,15 @@ import React, { useState, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import {MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline} from 'react-leaflet'
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
+import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 
 function SubmitButton() {
     return (
@@ -88,6 +90,7 @@ function ReactApp() {
     const [isMapLocked, setIsMapLocked] = useState(true)
 
 
+    const [busLines, setBusLines] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -135,6 +138,45 @@ function ReactApp() {
 
     const [draggedItem, setDraggedItem] = useState(null);
 
+    const handleExport = () => {
+        const buses = [];
+        const components = [];
+        // Bus, Line, Load, Generator, Transformer, Switch, ExtGrid
+        let indices = [0,0,0,0,0,0,0];
+
+        markers.forEach((item) => {
+            const busIndex = indices[0];
+            indices[0] += 1;
+            const newBus = new Bus(busIndex, item.position, 5); //TODO Get voltage from some parameter variable
+            buses.push(newBus);
+            switch(item.name) {
+                case 'Load':
+                    components.push(new Load(indices[2], busIndex, 5, 5));
+                    indices[2] += 1;
+                    break;
+                case 'Solar Panel':
+                case 'Wind Turbine':
+                    components.push(new Generator(indices[3], busIndex, 5));
+                    indices[3] += 1;
+                    break;
+                default:
+                    break;
+            }
+
+        })
+
+        for (let i = 0; i < busLines.length; i++) {
+            const line = busLines[i];
+            //const bus1Loc = markers[line[0]].getLatLng();
+            //const bus2Loc = markers[line[1]].getLatLng();
+            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', 5));
+        }
+
+        const total = buses.concat(components);
+        return  JSON.stringify(new Network(total));
+
+    }
+
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
     };
@@ -159,7 +201,7 @@ function ReactApp() {
             // Get the icon for the dragged item based on its type
             const icon = iconMapping[draggedItem.type];
             // Add the dropped item as a marker on the map
-            const newMarker = { id: draggedItem.id, position: droppedLatLng, name: draggedItem.name, icon };
+            const newMarker = { id: markers.length, position: droppedLatLng, name: draggedItem.name, icon };
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);
@@ -177,7 +219,21 @@ function ReactApp() {
                     // Logic for creating lines between markers
                     if (lines.length === 0 || lines[lines.length - 1].length === 2) {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                        setLines([...lines, newLine]);
+                        const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
+                        let found = false;
+                        // Check if line already exists
+                        for (let i = 0; i < busLines.length; i++) {
+                            const item = busLines[i];
+                            if (item[0] === newBusLine[0] && item[1] === newBusLine[1]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        // Add line if it doesn't exist
+                        if (!found){
+                            setLines([...lines, newLine]);
+                            setBusLines([...busLines, newBusLine]);
+                        }
                     } else {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
@@ -254,6 +310,9 @@ function ReactApp() {
               map.doubleClickZoom.enable();
               map.scrollWheelZoom.enable()}
         return isMapLocked
+    }
+    const onRunButton = () => {
+        console.log(handleExport())
     }
 
     return (
@@ -383,10 +442,29 @@ function ReactApp() {
                         <LockOpenIcon className="LockOpenIcon" style={{  width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: isMapLocked ? 'flex' : 'none'}} />
                         </div>
                     </IconButton>
+                                 <IconButton aria-label="check" style={{
+                        position: 'absolute',
+                        right: '0px',
+                        top: '600px',
+                        width: '120px',
+                        height: '120px',
+                        opacity: '70'
+                    }} onClick={onRunButton}>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
+                                width: '120px',
+                                height: '120px',
+                                color: '#05a95c',
+                                borderWidth: '1px',
+                                borderColor: '#000',
+                                opacity: '70'
+                            }}/>
+                        </div>
+                                     </IconButton>
                 </div>
             </div>
         </div>
-    );
+);
 }
 
 export default ReactApp;
