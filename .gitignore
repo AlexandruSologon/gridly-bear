@@ -6,3 +6,5 @@ __pycache__/
 /react-app/functions/src/__pycache__/
 */__pycache__/*
 /.vs
+/.poe
+/.idea/poetry.xml

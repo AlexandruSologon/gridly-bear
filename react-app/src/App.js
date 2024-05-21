@@ -282,6 +282,14 @@ function ReactApp() {
             });
         });
         setLines(updatedLines);
+
+        const updatedBusLines = busLines.filter((line) => {
+            // Check if the line contains the deleted marker's position
+            return !line.some((id) => {
+                return (id === indexMarker);
+            });
+        });
+        setBusLines(updatedBusLines);
     };
 
     const handleMarkerHover = (markerIndex) => {
