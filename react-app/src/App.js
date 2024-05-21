@@ -314,12 +314,17 @@ function ReactApp() {
         return isMapLocked
     }
 
+    /**
+     * Runs when the green run button is clicked, 
+     * will send and receive data from the server/fb_functions API
+     */
     const onRunButtonClick = () => {
         const dat = handleExport();
         console.log(dat);
         cnvs_json_post(dat)
         .then((data) => {
             //todo do something useful with data
+            if(dat == null) alert("Server did not respond");
             console.log(data.buses[1]);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
