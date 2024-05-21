@@ -6,10 +6,12 @@ import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
+import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 
 function SubmitButton() {
@@ -87,9 +89,7 @@ function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState(null);
-    const [isMapLocked, setIsMapLocked] = useState(true)
-
-
+    const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
@@ -147,7 +147,9 @@ function ReactApp() {
         markers.forEach((item) => {
             const busIndex = indices[0];
             indices[0] += 1;
-            const newBus = new Bus(busIndex, item.position, 5); //TODO Get voltage from some parameter variable
+            var newBus;
+            if(busIndex === 0) newBus = new Bus(busIndex, item.position, 20);
+            else newBus = new Bus(busIndex, item.position, 0.4); //TODO Get voltage from some parameter variable
             buses.push(newBus);
             switch(item.name) {
                 case 'Load':
@@ -169,7 +171,7 @@ function ReactApp() {
             const line = busLines[i];
             //const bus1Loc = markers[line[0]].getLatLng();
             //const bus2Loc = markers[line[1]].getLatLng();
-            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', 5));
+            components.push(new Line(i,line[0], line[1], 5, 'NAYY 4x50 SE'));
         }
 
         const total = buses.concat(components);
@@ -263,7 +265,7 @@ function ReactApp() {
         });
         setMarkers(updatedMarkers);
         setLines(updatedLines);
-    }, 100);
+    },100);
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
@@ -280,6 +282,14 @@ function ReactApp() {
             });
         });
         setLines(updatedLines);
+
+        const updatedBusLines = busLines.filter((line) => {
+            // Check if the line contains the deleted marker's position
+            return !line.some((id) => {
+                return (id === indexMarker);
+            });
+        });
+        setBusLines(updatedBusLines);
     };
 
     const handleMarkerHover = (markerIndex) => {
@@ -311,8 +321,23 @@ function ReactApp() {
               map.scrollWheelZoom.enable()}
         return isMapLocked
     }
-    const onRunButton = () => {
-        console.log(handleExport())
+
+    /**
+     * Runs when the green run button is clicked, 
+     * will send and receive data from the server/fb_functions API
+     */
+    const onRunButtonClick = () => {
+        const dat = handleExport();
+        console.log(dat);
+        cnvs_json_post(dat)
+        .then((data) => {
+            //todo do something useful with data
+            if(dat == null) alert("Server did not respond");
+            console.log(data.buses[1]);
+        }).catch((error) => {
+            console.log(error.message + " : " +  error.details);
+            //todo prompt the user with useful feedback as to why there's an error.
+        });
     }
 
     return (
@@ -417,20 +442,19 @@ function ReactApp() {
                                         </div>
                                     </div>
                                 </Popup>
-                                {lines.map((line, index) => (
-                                    // TODO: color can be changed to indicate overload, for example: color={'red'},
-                                    //  weight can also change accordingly to the desired line width
-                                    <Polyline key={index}
-                                              positions={line}
-                                              clickable={true}
-                                              onMouseOver={e => e.target.openPopup()}
-                                              onMouseOut={e => e.target.closePopup()}
-                                              weight={10}
-                                    >
-                                        <Popup>A popup on click</Popup>
-                                    </Polyline>
-                                ))}
                             </Marker>
+                        ))}
+                        {lines.map((line, index) => (
+                            // TODO: color can be changed to indicate overload, for example: color={'red'}
+                            <Polyline key={index}
+                                      positions={line}
+                                      clickable={true}
+                                      onMouseOver={e => e.target.openPopup()}
+                                      onMouseOut={e => e.target.closePopup()}
+                                      weight={10}
+                            >
+                                <Popup>A popup on click</Popup>
+                            </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
 
@@ -449,7 +473,7 @@ function ReactApp() {
                         width: '120px',
                         height: '120px',
                         opacity: '70'
-                    }} onClick={onRunButton}>
+                    }} onClick={onRunButtonClick}>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                             <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
                                 width: '120px',
