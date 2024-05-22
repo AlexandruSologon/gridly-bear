@@ -395,6 +395,9 @@ function ReactApp() {
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
+                        maxNativeZoom={19}
+                        //maxZoom={20}
+                        minZoom={3}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
