@@ -333,9 +333,10 @@ function ReactApp() {
         .then((data) => {
             //todo do something useful with data
             if(dat == null) alert("Server did not respond");
-            alert("Results: " + JSON.stringify(data));
+            else alert("Results: " + JSON.stringify(data));
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
+            alert("error");
             //todo prompt the user with useful feedback as to why there's an error.
         });
     }
