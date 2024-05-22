@@ -147,7 +147,7 @@ function ReactApp() {
         markers.forEach((item) => {
             const busIndex = indices[0];
             indices[0] += 1;
-            var newBus;
+            let newBus;
             if(busIndex === 0) newBus = new Bus(busIndex, item.position, 20);
             else newBus = new Bus(busIndex, item.position, 0.4); //TODO Get voltage from some parameter variable
             buses.push(newBus);
@@ -285,9 +285,7 @@ function ReactApp() {
 
         const updatedBusLines = busLines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !line.some((id) => {
-                return (id === indexMarker);
-            });
+                return !(line[0] === indexMarker || line[1] === indexMarker);
         });
         setBusLines(updatedBusLines);
     };
