@@ -332,7 +332,7 @@ function ReactApp() {
         cnvs_json_post(dat)
         .then((data) => {
             //todo do something useful with data
-            if(dat == null) alert("Server did not respond");
+            if(dat === null) alert("Server did not respond");
             else alert("Results: " + JSON.stringify(data));
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
