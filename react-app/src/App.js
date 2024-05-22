@@ -332,12 +332,17 @@ function ReactApp() {
         cnvs_json_post(dat)
         .then((data) => {
             //todo do something useful with data
-            if(dat === null) alert("Server did not respond");
-            else alert("Results: " + JSON.stringify(data));
+            if(data === null) {
+                alert("No response was received");
+            } else {
+                alert("Results: " + JSON.stringify(data));
+                for(var d of data.buses) {
+                    console.log(d);
+                }
+            }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
-            alert("error");
-            //todo prompt the user with useful feedback as to why there's an error.
+            alert("Error showing results");
         });
     }
 
