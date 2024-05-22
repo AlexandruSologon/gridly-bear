@@ -327,7 +327,6 @@ function ReactApp() {
      * will send and receive data from the server/fb_functions API
      */
     const onRunButtonClick = () => {
-        console.log(mapContainer.current.zoom())
         const dat = handleExport();
         console.log(dat);
         cnvs_json_post(dat)
