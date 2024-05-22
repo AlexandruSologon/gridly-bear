@@ -164,7 +164,6 @@ function ReactApp() {
                 default:
                     break;
             }
-
         })
 
         for (let i = 0; i < busLines.length; i++) {
@@ -326,23 +325,23 @@ function ReactApp() {
      * Runs when the green run button is clicked, 
      * will send and receive data from the server/fb_functions API
      */
+    var run_was_clicked = false;
     const onRunButtonClick = () => {
-        const dat = handleExport();
-        console.log(dat);
-        cnvs_json_post(dat)
+        if(run_was_clicked) return;
+        run_was_clicked = true;
+        const dat = handleExport(); //export local representation into json format
+        cnvs_json_post(dat) //Sends data to the server, then executes the callback
         .then((data) => {
-            //todo do something useful with data
             if(data === null) {
-                alert("No response was received");
+                return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                for(var d of data.buses) {
-                    console.log(d);
-                }
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
+        }).finally(() => {
+            run_was_clicked = false;
         });
     }
 
