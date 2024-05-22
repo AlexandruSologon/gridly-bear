@@ -469,21 +469,20 @@ function ReactApp() {
                                  <IconButton aria-label="check" style={{
                         position: 'absolute',
                         right: '0px',
-                        top: '600px',
-                        width: '120px',
-                        height: '120px',
+                        top: '78%',
+                        width: '8vw',
+                        height: '8vw',
                         opacity: '70'
                     }} onClick={onRunButtonClick}>
-                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                             <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-                                width: '120px',
-                                height: '120px',
+                                width: '8vw',
+                                height: '8vw',
                                 color: '#05a95c',
                                 borderWidth: '1px',
                                 borderColor: '#000',
                                 opacity: '70'
                             }}/>
-                        </div>
+
                                      </IconButton>
                 </div>
             </div>
