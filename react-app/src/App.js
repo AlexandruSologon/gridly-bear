@@ -327,6 +327,7 @@ function ReactApp() {
      * will send and receive data from the server/fb_functions API
      */
     const onRunButtonClick = () => {
+        console.log(mapContainer.current.zoom())
         const dat = handleExport();
         console.log(dat);
         cnvs_json_post(dat)
@@ -395,6 +396,9 @@ function ReactApp() {
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
+                        maxNativeZoom={19}
+                        //maxZoom={20}
+                        minZoom={3}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
