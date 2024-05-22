@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -13,6 +13,7 @@ import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
+import {wait} from "@testing-library/user-event/dist/utils";
 
 function SubmitButton() {
     return (
@@ -91,6 +92,7 @@ function ReactApp() {
     const [dropdownPosition, setDropdownPosition] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
+    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -220,7 +222,7 @@ function ReactApp() {
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
                     if (lines.length === 0 || lines[lines.length - 1].length === 2) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
                         // Check if line already exists
@@ -237,7 +239,7 @@ function ReactApp() {
                             setBusLines([...busLines, newBusLine]);
                         }
                     } else {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                     }
                 }
@@ -309,6 +311,7 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
+        console.log(lines)
         setIsMapLocked(!isMapLocked)
         const map = mapContainer.current;
         if(isMapLocked) {map.dragging.disable();
@@ -336,15 +339,21 @@ function ReactApp() {
                 alert("No response was received");
             } else {
                 alert("Results: " + JSON.stringify(data));
-                for(var d of data.buses) {
-                    console.log(d);
-                }
+                renderSomething()
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
         });
     }
+
+    const renderSomething = () => {
+        const uL = lines.map((line, index) =>  [line[0], '#f00'] );
+        console.log(uL)
+        setLines(uL) ;
+        //mapContainer.current.invalidateSize()
+    };
+    const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
         <div style={{display: 'flex', height: '100vh'}}>
@@ -453,10 +462,12 @@ function ReactApp() {
                         {lines.map((line, index) => (
                             // TODO: color can be changed to indicate overload, for example: color={'red'}
                             <Polyline key={index}
-                                      positions={line}
+                                      //positions={[line[0],line[1]]}
+                                      positions ={line[0]}
                                       clickable={true}
                                       onMouseOver={e => e.target.openPopup()}
                                       onMouseOut={e => e.target.closePopup()}
+                                      color={line[1]}
                                       weight={10}
                             >
                                 <Popup>A popup on click</Popup>
