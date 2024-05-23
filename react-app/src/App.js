@@ -421,15 +421,19 @@ function ReactApp() {
         const dat = handleExport(markerInputs);
         console.log('Exported Data:', dat);
         cnvs_json_post(dat)
-            .then((data) => {
-                if (!data) {
-                    alert("Server did not respond");
-                    return;
+        .then((data) => {
+            //todo do something useful with data
+            if(data === null) {
+                alert("No response was received");
+            } else {
+                alert("Results: " + JSON.stringify(data));
+                for(var d of data.buses) {
+                    console.log(d);
                 }
-                console.log('Received Data:', data);
-            }).catch((error) => {
-            alert("An error occurred while communicating with the server");
-            console.log('Error:', error.message, error.details);
+            }
+        }).catch((error) => {
+            console.log(error.message + " : " +  error.details);
+            alert("Error showing results");
         });
     }
 

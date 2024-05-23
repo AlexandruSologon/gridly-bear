@@ -30,7 +30,8 @@ Deploy:
   stage: deploy
   script:
     - cd react-app
-    - firebase deploy
+    - npm run build
+    - firebase deploy --only hosting --token $FIREBASE_TOKEN
     - cd ..
   only:
     refs:
@@ -42,8 +43,7 @@ deploy-functions:
   stage: deploy-functions
   script:
     - cd react-app
-    - npm run build
-    - firebase deploy --only functions
+    - firebase deploy --only functions --token $FIREBASE_TOKEN
     - cd ..
   only:
     refs:
