@@ -256,11 +256,11 @@ function ReactApp() {
 
         const updatedLines = lines.map((line, index) => {
             if (line) {
-                const [start, end] = line;
-                if (start.equals(markerOldPos)) {
-                    return [newPosition, end];
-                } else if (end.equals(markerOldPos)) {
-                    return [start, newPosition];
+                const [start, end] = line[0];
+                if (start === markerOldPos) {
+                    return [[newPosition, end],line[1]];
+                } else if (end === markerOldPos) {
+                    return [[start, newPosition],line[1]];
                 }
             }
             return line;
@@ -311,7 +311,6 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-        console.log(lines)
         setIsMapLocked(!isMapLocked)
         const map = mapContainer.current;
         if(isMapLocked) {map.dragging.disable();
@@ -349,9 +348,7 @@ function ReactApp() {
 
     const renderSomething = () => {
         const uL = lines.map((line, index) =>  [line[0], '#f00'] );
-        console.log(uL)
         setLines(uL) ;
-        //mapContainer.current.invalidateSize()
     };
     const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
@@ -467,7 +464,7 @@ function ReactApp() {
                                       clickable={true}
                                       onMouseOver={e => e.target.openPopup()}
                                       onMouseOut={e => e.target.closePopup()}
-                                      color={line[1]}
+                                      pathOptions = {{ color : line[1] }}
                                       weight={10}
                             >
                                 <Popup>A popup on click</Popup>
