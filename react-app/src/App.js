@@ -6,7 +6,6 @@ import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
@@ -223,10 +222,12 @@ function ReactApp() {
                         if (!found){
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
+                            lineRefs.current.push(newLine);
                         }
                     } else {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
+                        lineRefs.current.push(newLine);
                     }
                 }
             }

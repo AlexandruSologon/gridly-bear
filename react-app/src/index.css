@@ -109,7 +109,7 @@
 }
 
 .search-bar {
-    display: flex,
+    display: flex;
 }
 
 .leaflet-control-geosearch .search-input {
