@@ -33,6 +33,7 @@ function Address() {
 function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
+    const markerRefs = useRef([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
@@ -256,9 +257,18 @@ function ReactApp() {
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
+
+        const markerRef = markerRefs.current[indexMarker];
+        if (markerRef) {
+            markerRef.closePopup();
+        }
+
         const updatedMarkers = [...markers];
         updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
+
+        markerRefs.current.splice(indexMarker, 1);
+
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
@@ -480,6 +490,7 @@ function ReactApp() {
                                     icon={marker.icon}
                                     draggable={true}
                                     clickable={true}
+                                    ref={(ref) => (markerRefs.current[index] = ref)}
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, index),
                                         contextmenu: (e) => handleMarkerRightClick(e),
