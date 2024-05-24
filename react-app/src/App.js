@@ -252,17 +252,8 @@ function ReactApp() {
                     return [[start, newPosition],line[1]];
                 }
             }
-            return marker;
         });
 
-        const updatedLines = lines.map(line => {
-            return line.map(point => {
-                if (point.equals(markers[markerIndex].position)) {
-                    return newPosition;
-                }
-                return point;
-            });
-        });
 
         setMarkers(updatedMarkers);
         setLines(updatedLines);
