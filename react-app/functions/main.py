@@ -6,7 +6,7 @@ from firebase_functions import https_fn, options
 import json
 import src.net as nt 
 import src.jsonParser as jsonParser
-from flask import jsonify
+import traceback
 
 initialize_app()
 
@@ -24,9 +24,10 @@ def hello_world(req: https_fn.Request) -> https_fn.Response:
 def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
         #returns a dictionary in the following form: {'data' : 'b"..."} of which we take the value corresponding to 'data' as a key
         try:
+                print("received data: " + str(req.data))
                 dat = json.loads(req.data)['data']
                 net = jsonParser.parsejson(dat) #parse the data
-                res = {'buses':nt.all_buses(net).to_json(), 'lines':nt.all_lines(net).to_json()}
+                res = {'buses':nt.all_buses(net).to_json(), 'lines':nt.all_line_colors(net).to_json()}
                 return {'data':{'status':"S", 'sim_result':res, 'message':"Success!"}}
         except nt.NetworkInvalidError as e:
                print(e)
@@ -37,4 +38,5 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
         except Exception as e:
                print("Something unexpected happened: ")
                print(e)
+               traceback.print_exc()
                return json.dumps({'data' : {'status':"E", 'sim_result':"None", 'message':"Server received invalid data."}}) #todo print only pandapower related errors to client
