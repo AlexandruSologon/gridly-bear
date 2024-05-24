@@ -80,19 +80,6 @@ function ReactApp() {
         iconAnchor: [42.5, 42.5],
         popupAnchor:[0, -42.5]
     });
-    const transformerIcon = new L.icon({
-        iconRetinaUrl: require('./images/transformer.png'),
-        iconUrl: require('./images/transformer.png'),
-        iconAnchor: [32, 32],
-        popupAnchor:[0, -32]
-    });
-    const extGridIcon = new L.icon({
-        iconRetinaUrl: require('./images/externalGrid.png'),
-        iconUrl: require('./images/externalGrid.png'),
-        iconAnchor: [42.5, 42.5],
-        popupAnchor:[0, -42.5]
-    });
-
     const trafo1Icon = new L.icon({
         id: 'trafo1',
         iconRetinaUrl: require('./images/Blank.png'),
@@ -125,8 +112,8 @@ function ReactApp() {
         { id: 2, name: 'Bus', type: 'bus' },
         { id: 3, name: 'Load', type: 'load' },
         { id: 4, name: 'Wind Turbine', type: 'wind'},
-        { id: 5, name: 'Transformer', type: 'transformer' },
-        { id: 6, name: 'External Grid', type: 'extGrid' },
+        { id: 5, name: 'Transformer', type: 'trafo1' },
+        { id: 6, name: 'External Grid', type: 'grid' },
     ];
 
     // TODO: Change parameter names and/or add more parameters here if necessary
@@ -442,6 +429,7 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
+        sidebarItems.map((item) => (console.log(iconMapping[item.type])))
         setIsMapLocked(!isMapLocked)
         const map = mapContainer.current;
         if(isMapLocked) {map.dragging.disable();
