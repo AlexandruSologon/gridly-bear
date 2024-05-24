@@ -14,64 +14,11 @@ import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 
-function SubmitButton() {
-    return (
-        <input type="submit" name="Submit"/>
-    );
-}
-
 function DeleteButton({ onClick }) {
     return (
         <button style={{ color: 'red' }} onClick={onClick}>
             Delete
         </button>
-    );
-}
-
-function Parameter01() {
-    return (
-        <input type="text" placeholder="Parameter 1">
-        </input>
-    );
-}
-
-function Parameter02() {
-    return (
-        <input type="text" placeholder="Parameter 2">
-        </input>
-    );
-}
-
-function Parameter03() {
-    return (
-        <input type="text" placeholder="Parameter 3">
-        </input>
-    );
-}
-
-function DropdownMenu() {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
-
-    const handleItemClick = (item) => {
-        alert(`You clicked ${item}`);
-        setIsOpen(false);
-    };
-
-    return (
-        <div style={{ position: 'relative', marginBottom: '10px' }}>
-            <button onClick={toggleMenu}>Open Dropdown</button>
-            {isOpen && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '5px' }}>
-                    <div onClick={() => handleItemClick('Item 1')}>Item 1</div>
-                    <div onClick={() => handleItemClick('Item 2')}>Item 2</div>
-                    <div onClick={() => handleItemClick('Item 3')}>Item 3</div>
-                </div>
-            )}
-        </div>
     );
 }
 
@@ -88,7 +35,6 @@ function ReactApp() {
     const [markers, setMarkers] = useState([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
-    const [dropdownPosition, setDropdownPosition] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
 
@@ -331,10 +277,31 @@ function ReactApp() {
         setBusLines(updatedBusLines);
     };
 
+    const handleLineDelete = (index) => {
+        const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
+        const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
+        setBusLines(updatedBusLines);
+        setLines((updatedLines));
+    };
+
     const handleMarkerRightClick = (event) => {
         const targetMarker = event.target;
         if (targetMarker && targetMarker.getPopup()) {
             targetMarker.openPopup();
+        }
+    };
+
+    const handleLineClick = (event, markerIndex) => {
+        const targetLine = event.target;
+        if (targetLine) {
+            targetLine.closePopup();
+        }
+    };
+
+    const handleLineRightClick = (event) => {
+        const targetLine = event.target;
+        if (targetLine && targetLine.getPopup()) {
+            targetLine.openPopup();
         }
     };
 
@@ -543,18 +510,57 @@ function ReactApp() {
                                       onMouseOver={e => e.target.openPopup()}
                                       onMouseOut={e => e.target.closePopup()}
                                       weight={10}
+                                      eventHandlers={{
+                                          click: (e) => handleLineClick(e),
+                                          contextmenu: (e) => handleLineRightClick(e)
+                                      }}
                             >
-                                <Popup>A popup on click</Popup>
+                                <Popup>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center'
+                                    }}>
+                                        <div style={{marginBottom: '5px'}}>{"Connection"}</div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <DeleteButton onClick={() => handleLineDelete(index)}/>
+                                        </div>
+                                    </div>
+
+                                </Popup>
                             </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
 
 
                     </MapContainer>
-                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '30'}}   onClick={onLockButtonClick}>
+                    <IconButton aria-label="check" style={{
+                        position: 'absolute',
+                        right: '6px',
+                        top: '80px',
+                        width: '40px',
+                        height: '40px',
+                        opacity: '30'
+                    }} onClick={onLockButtonClick}>
                         <div style={{position: 'relative'}}>
-                            <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: !isMapLocked ? 'flex' : 'none'}}/>
-                            <LockOpenIcon className="LockOpenIcon" style={{  width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: isMapLocked ? 'flex' : 'none'}} />
+                            <LockIcon className="LockIcon" style={{
+                                width: '40px',
+                                height: '40px',
+                                color: '#000',
+                                borderWidth: '1px',
+                                borderColor: '#000',
+                                opacity: '30',
+                                display: !isMapLocked ? 'flex' : 'none'
+                            }}/>
+                            <LockOpenIcon className="LockOpenIcon" style={{
+                                width: '40px',
+                                height: '40px',
+                                color: '#000',
+                                borderWidth: '1px',
+                                borderColor: '#000',
+                                opacity: '30',
+                                display: isMapLocked ? 'flex' : 'none'
+                            }}/>
                         </div>
                     </IconButton>
                     <IconButton aria-label="check" style={{
