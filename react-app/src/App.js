@@ -457,29 +457,31 @@ function ReactApp() {
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
+    var run_was_clicked = false;
     const onRunButtonClick = () => {
+        if(run_was_clicked) return;
+        run_was_clicked = true;
+
         const markerInputs = markers.map(marker => ({
             id: marker.id,
             type: marker.type,
             parameters: marker.parameters
         }));
-
+        
         const dat = handleExport(markerInputs);
-        console.log('Exported Data:', dat);
+        console.log('Sent over Data:', dat);
         cnvs_json_post(dat)
         .then((data) => {
-            //todo do something useful with data
             if(data === null) {
-                alert("No response was received");
+                return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                for(var d of data.buses) {
-                    console.log(d);
-                }
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
+        }).finally(() => {
+            run_was_clicked = false;
         });
     }
 
