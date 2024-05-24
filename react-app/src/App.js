@@ -6,7 +6,7 @@ import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
@@ -45,49 +45,66 @@ function ReactApp() {
     // TODO: in case of needing to change the below icons for the sake of design,
     //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
     const solarIcon = new L.icon({
+        id: 'solar',
         iconRetinaUrl: require('./images/solar.png'),
         iconUrl: require('./images/solar.png'),
         iconAnchor: [35, 35],
         popupAnchor:[0, -35]
     });
     const busIcon = new L.icon({
-        iconRetinaUrl: require('./images/bus.png'),
+        id: 'bus',
+        iconRetinaUrl: require('./images/Blank.png'),
         iconUrl: require('./images/bus.png'),
-        iconAnchor: [35, 35],
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -35],
+        className: 'dot'
+    });
+    const gridIcon = new L.icon({
+        id: 'grid',
+        iconRetinaUrl: require('./images/power (2).png'),
+        iconUrl: require('./images/power (2).png'),
+        iconAnchor: [32,32],
         popupAnchor:[0, -35]
     });
     const loadIcon = new L.icon({
+        id: 'load',
         iconRetinaUrl: require('./images/house.png'),
         iconUrl: require('./images/house.png'),
         iconAnchor: [32, 32],
         popupAnchor: [0, -32]
     });
     const windIcon = new L.icon({
+        id: 'wind',
         iconRetinaUrl: require('./images/wind.png'),
         iconUrl: require('./images/wind.png'),
         iconAnchor: [42.5, 42.5],
         popupAnchor:[0, -42.5]
     });
-    const transformerIcon = new L.icon({
-        iconRetinaUrl: require('./images/transformer.png'),
-        iconUrl: require('./images/transformer.png'),
+    const trafo1Icon = new L.icon({
+        id: 'trafo1',
+        iconRetinaUrl: require('./images/Blank.png'),
+        iconUrl: require('./images/wind.png'),
         iconAnchor: [32, 32],
-        popupAnchor:[0, -32]
+        popupAnchor:[0, -42.5],
+        className: 'dot'
     });
-    const extGridIcon = new L.icon({
-        iconRetinaUrl: require('./images/externalGrid.png'),
-        iconUrl: require('./images/externalGrid.png'),
-        iconAnchor: [42.5, 42.5],
-        popupAnchor:[0, -42.5]
+    const trafo2Icon = new L.icon({
+        id: 'trafo2',
+        iconRetinaUrl: require('./images/Blank.png'),
+        iconUrl: require('./images/wind.png'),
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -42.5],
+        className: 'dot'
     });
 
     const iconMapping = {
+        grid: gridIcon,
         solar: solarIcon,
         bus: busIcon,
         load: loadIcon,
         wind: windIcon,
-        transformer: transformerIcon,
-        extGrid: extGridIcon
+        trafo1: trafo1Icon,
+        trafo2: trafo2Icon,
     };
 
     const sidebarItems = [
@@ -95,8 +112,8 @@ function ReactApp() {
         { id: 2, name: 'Bus', type: 'bus' },
         { id: 3, name: 'Load', type: 'load' },
         { id: 4, name: 'Wind Turbine', type: 'wind'},
-        { id: 5, name: 'Transformer', type: 'transformer' },
-        { id: 6, name: 'External Grid', type: 'extGrid' },
+        { id: 5, name: 'Transformer', type: 'trafo1' },
+        { id: 6, name: 'External Grid', type: 'grid' },
     ];
 
     // TODO: Change parameter names and/or add more parameters here if necessary
@@ -117,6 +134,7 @@ function ReactApp() {
         const buses = [];
         const components = [];
         let indices = [0, 0, 0, 0, 0, 0, 0];
+        const busIdMap = new Map();
 
         markerInputs.forEach((marker) => {
             const busIndex = indices[0];
@@ -125,24 +143,48 @@ function ReactApp() {
             if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             buses.push(newBus);
-            switch (marker.type) {
-                case 'load':
-                    components.push(new Load(indices[2], busIndex, parseFloat(marker.parameters.p_mv), parseFloat(marker.parameters.q_mvar)));
-                    indices[2] += 1;
-                    break;
-                case 'solar':
-                case 'wind':
-                    components.push(new Generator(indices[3], busIndex, parseFloat(marker.parameters.power)));
-                    indices[3] += 1;
-                    break;
-                default:
-                    break;
-            }
-        });
+            busIdMap.set(marker.id, busIndex);
+        })
+        
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
-            components.push(new Line(i, line[0], line[1], 5, 'NAYY 4x50 SE'));
+            //const bus1Loc = markers[line[0]].getLatLng();
+            //const bus2Loc = markers[line[1]].getLatLng();
+            let item1 = markers[line[0]]
+            let item2 = markers[line[1]]
+            if (item1.name === 'Bus' && item2.name === 'Bus') {
+                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), 'NAYY 4x50 SE', 5));
+                indices[1] += 1;
+            } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
+                if (item1.name === 'Bus') {
+                    [item1,item2] = [item2, item1];
+                }
+                const busIndex = busIdMap.get(item2.id);
+                switch(item1.name) {
+                    case 'Load':
+                        components.push(new Load(indices[2], busIndex, parseFloat(item1.parameters.p_mv), parseFloat(item1.parameters.q_mvar)));
+                        indices[2] += 1;
+                        break;
+                    case 'Solar Panel':
+                    case 'Wind Turbine':
+                        components.push(new Generator(indices[3], busIndex, parseFloat(item1.parameters.power)));
+                        indices[3] += 1;
+                        break;
+                    case 'External Grid':
+                        components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
+                        indices[6] += 1;
+                        break;
+                    /*
+                    case 'Transformer':
+                        components.push(new Transformer(indices[4], busIndex, 5, 20));
+                        indices[4] +=1;
+                        break;
+                        */
+                    default:
+                        break;
+                }
+            }
         }
 
         const total = buses.concat(components);
@@ -189,8 +231,7 @@ function ReactApp() {
             };
             setMarkers([...markers, newMarker]);
         }
-        setDraggedItem(null);
-    };
+        setDraggedItem(null);};
 
     const handleMarkerClick = (event, markerIndex) => {
         const targetMarker = event.target;
@@ -258,6 +299,7 @@ function ReactApp() {
     }, 100);
 
     const handleMarkerDelete = (indexMarker) => {
+
         const oldMarkerPos = markers[indexMarker].position;
 
         const markerRef = markerRefs.current[indexMarker];
@@ -266,7 +308,14 @@ function ReactApp() {
         }
 
         const updatedMarkers = [...markers];
-        updatedMarkers.splice(indexMarker, 1);
+        console.log(markers[indexMarker].icon.options.id);
+        if(markers[indexMarker].icon.options.id === 'trafo1')
+        updatedMarkers.splice(indexMarker, 2);
+        else
+        if(markers[indexMarker].icon.options.id === 'trafo2')
+            updatedMarkers.splice(indexMarker - 1, 2);
+        else
+            updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
 
         markerRefs.current.splice(indexMarker, 1);
@@ -380,6 +429,7 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
+        sidebarItems.map((item) => (console.log(iconMapping[item.type])))
         setIsMapLocked(!isMapLocked)
         const map = mapContainer.current;
         if(isMapLocked) {map.dragging.disable();
@@ -391,6 +441,16 @@ function ReactApp() {
             map.doubleClickZoom.enable();
             map.scrollWheelZoom.enable()}
         return isMapLocked
+    }
+    const MapEvents =() => {
+    const map = useMapEvents({
+    zoom() {
+      for (let i=0; i < markers.length; i++)
+                    if (markers[i].icon.options.id === 'trafo1')
+                        handleMarkerDrag(i, markers[i].position)
+  },}
+
+  )
     }
 
     /**
@@ -493,6 +553,7 @@ function ReactApp() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             opacity={0.7}
                         />
+                        <MapEvents/>
                         {markers.map((marker, index) => (
                             <Marker key={index}
                                     position={marker.position}
