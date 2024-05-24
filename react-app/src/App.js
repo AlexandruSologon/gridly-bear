@@ -34,6 +34,7 @@ function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
+    const lineRefs = useRef([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
@@ -288,10 +289,17 @@ function ReactApp() {
     };
 
     const handleLineDelete = (index) => {
+        const lineRef = lineRefs.current[index];
+        if (lineRef) {
+            lineRef.closePopup();
+        }
+
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
         const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
         setBusLines(updatedBusLines);
         setLines((updatedLines));
+
+        lineRefs.current.splice(index, 1);
     };
 
     const handleMarkerRightClick = (event) => {
@@ -518,9 +526,8 @@ function ReactApp() {
                             <Polyline key={index}
                                       positions={line}
                                       clickable={true}
-                                      onMouseOver={e => e.target.openPopup()}
-                                      onMouseOut={e => e.target.closePopup()}
                                       weight={10}
+                                      ref={(ref) => (lineRefs.current[index] = ref)}
                                       eventHandlers={{
                                           click: (e) => handleLineClick(e),
                                           contextmenu: (e) => handleLineRightClick(e)
@@ -537,7 +544,6 @@ function ReactApp() {
                                             <DeleteButton onClick={() => handleLineDelete(index)}/>
                                         </div>
                                     </div>
-
                                 </Popup>
                             </Polyline>
                         ))}
