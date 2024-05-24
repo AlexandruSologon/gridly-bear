@@ -108,3 +108,22 @@
   color: red;
 }
 
+.search-bar {
+    display: flex;
+}
+
+.leaflet-control-geosearch .search-input {
+    display: none;
+    width: 300px;
+}
+
+.leaflet-control-geosearch .glass {
+    background: none;
+    width: 30px;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

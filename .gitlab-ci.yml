@@ -1,3 +1,52 @@
-include:
-  - flask_server/.gitlab-ci.yml
+image: node:19.0.0-slim
 
+include:
+  - 'react-app/functions/.gitlab-ci.yml'
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+  - deploy-functions
+
+before_script:
+  - cd react-app/
+  - npm install -g firebase-tools
+  - npm install
+  - cd ..
+
+Linting:
+  stage: lint
+  script:
+    - echo "linting..."
+
+Tests:
+  stage: test
+  script:
+    - echo "testing..."
+
+Deploy:
+  stage: deploy
+  script:
+    - cd react-app
+    - npm run build
+    - firebase deploy --only hosting --token $FIREBASE_TOKEN
+    - cd ..
+  only:
+    refs:
+      - master
+    changes:
+      - src/**/*
+
+deploy-functions:
+  stage: deploy-functions
+  script:
+    - cd react-app
+    - firebase deploy --only functions --token $FIREBASE_TOKEN
+    - cd ..
+  only:
+    refs:
+      - master
+    changes:
+      - functions/**/*
