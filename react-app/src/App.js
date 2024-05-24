@@ -188,7 +188,7 @@ function ReactApp() {
             let item1 = markers[line[0]]
             let item2 = markers[line[1]]
             if (item1.name === 'Bus' && item2.name === 'Bus') {
-                components.push(new Line(indices[1],line[0], line[1], 'NAYY 4x50 SE', 5));
+                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), 'NAYY 4x50 SE', 5));
                 indices[1] += 1;
             } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
                 if (item1.name === 'Bus') {
