@@ -6,7 +6,7 @@ import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
@@ -147,6 +147,7 @@ function ReactApp() {
         const buses = [];
         const components = [];
         let indices = [0, 0, 0, 0, 0, 0, 0];
+        const busIdMap = new Map();
 
         markerInputs.forEach((marker) => {
             const busIndex = indices[0];
@@ -155,7 +156,7 @@ function ReactApp() {
             if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             buses.push(newBus);
-            busIdMap.set(item.id, busIndex);
+            busIdMap.set(marker.id, busIndex);
         })
         
 
