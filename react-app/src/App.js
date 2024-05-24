@@ -167,44 +167,56 @@ function ReactApp() {
     const handleExport = () => {
         const buses = [];
         const components = [];
+        const busIdMap = new Map();
         // Bus, Line, Load, Generator, Transformer, Switch, ExtGrid
         let indices = [0,0,0,0,0,0,0];
 
         markers.forEach((item) => {
+            if (item.name === 'Bus') {
             const busIndex = indices[0];
             indices[0] += 1;
             const newBus = new Bus(busIndex, item.position, 5); //TODO Get voltage from some parameter variable
             buses.push(newBus);
-            switch(item.name) {
-                case 'Load':
-                    components.push(new Load(indices[2], busIndex, 5, 5));
-                    indices[2] += 1;
-                    break;
-                case 'Solar Panel':
-                case 'Wind Turbine':
-                    components.push(new Generator(indices[3], busIndex, 5));
-                    indices[3] += 1;
-                    break;
-                case 'External Grid':
-                    components.push(new ExtGrid(indices[6], busIndex, 5, 20));
-                    indices[6] += 1;
-                    break;
-                case 'Transformer':
-
-                    components.push(new Transformer(indices[4], busIndex, 5, 20));
-                    indices[4] +=1;
-                    break;
-                default:
-                    break;
+            busIdMap.set(item.id, busIndex);
             }
-
         })
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
             //const bus1Loc = markers[line[0]].getLatLng();
             //const bus2Loc = markers[line[1]].getLatLng();
-            components.push(new Line(i,line[0], line[1], 'NAYY 4x50 SE', 5));
+            let item1 = markers[line[0]]
+            let item2 = markers[line[1]]
+            if (item1.name === 'Bus' && item2.name === 'Bus') {
+                components.push(new Line(indices[1],line[0], line[1], 'NAYY 4x50 SE', 5));
+                indices[1] += 1;
+            } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
+                if (item1.name === 'Bus') {
+                    [item1,item2] = [item2, item1];
+                }
+                const busIndex = busIdMap.get(item2.id);
+                switch(item1.name) {
+                    case 'Load':
+                        components.push(new Load(indices[2], busIndex, 5, 5));
+                        indices[2] += 1;
+                        break;
+                    case 'Solar Panel':
+                    case 'Wind Turbine':
+                        components.push(new Generator(indices[3], busIndex, 5));
+                        indices[3] += 1;
+                        break;
+                    case 'External Grid':
+                        components.push(new ExtGrid(indices[6], busIndex, 5, 20));
+                        indices[6] += 1;
+                        break;
+                    case 'Transformer':
+                        components.push(new Transformer(indices[4], busIndex, 5, 20));
+                        indices[4] +=1;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         
         const total = buses.concat(components);
