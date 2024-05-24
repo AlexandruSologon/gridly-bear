@@ -6,7 +6,6 @@ import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
@@ -15,64 +14,11 @@ import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 import {wait} from "@testing-library/user-event/dist/utils";
 
-function SubmitButton() {
-    return (
-        <input type="submit" name="Submit"/>
-    );
-}
-
 function DeleteButton({ onClick }) {
     return (
         <button style={{ color: 'red' }} onClick={onClick}>
             Delete
         </button>
-    );
-}
-
-function Parameter01() {
-    return (
-        <input type="text" placeholder="Parameter 1">
-        </input>
-    );
-}
-
-function Parameter02() {
-    return (
-        <input type="text" placeholder="Parameter 2">
-        </input>
-    );
-}
-
-function Parameter03() {
-    return (
-        <input type="text" placeholder="Parameter 3">
-        </input>
-    );
-}
-
-function DropdownMenu() {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
-
-    const handleItemClick = (item) => {
-        alert(`You clicked ${item}`);
-        setIsOpen(false);
-    };
-
-    return (
-        <div style={{ position: 'relative', marginBottom: '10px' }}>
-            <button onClick={toggleMenu}>Open Dropdown</button>
-            {isOpen && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '5px' }}>
-                    <div onClick={() => handleItemClick('Item 1')}>Item 1</div>
-                    <div onClick={() => handleItemClick('Item 2')}>Item 2</div>
-                    <div onClick={() => handleItemClick('Item 3')}>Item 3</div>
-                </div>
-            )}
-        </div>
     );
 }
 
@@ -87,9 +33,10 @@ function Address() {
 function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
+    const markerRefs = useRef([]);
+    const lineRefs = useRef([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
-    const [dropdownPosition, setDropdownPosition] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
     const [lineColors, setLineColors] = useState([]);
@@ -123,63 +70,88 @@ function ReactApp() {
         iconAnchor: [42.5, 42.5],
         popupAnchor:[0, -42.5]
     });
+    const transformerIcon = new L.icon({
+        iconRetinaUrl: require('./images/transformer.png'),
+        iconUrl: require('./images/transformer.png'),
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -32]
+    });
+    const extGridIcon = new L.icon({
+        iconRetinaUrl: require('./images/externalGrid.png'),
+        iconUrl: require('./images/externalGrid.png'),
+        iconAnchor: [42.5, 42.5],
+        popupAnchor:[0, -42.5]
+    });
 
     const iconMapping = {
         solar: solarIcon,
         bus: busIcon,
         load: loadIcon,
-        wind: windIcon
+        wind: windIcon,
+        transformer: transformerIcon,
+        extGrid: extGridIcon
     };
 
     const sidebarItems = [
         { id: 1, name: 'Solar Panel', type: 'solar' },
         { id: 2, name: 'Bus', type: 'bus' },
         { id: 3, name: 'Load', type: 'load' },
-        { id: 4, name: 'Wind Turbine', type: 'wind'}
+        { id: 4, name: 'Wind Turbine', type: 'wind'},
+        { id: 5, name: 'Transformer', type: 'transformer' },
+        { id: 6, name: 'External Grid', type: 'extGrid' },
     ];
+
+    // TODO: Change parameter names and/or add more parameters here if necessary
+    const markerParametersConfig = {
+        bus: ['voltage'],
+        //line: ['type', 'length'], // not a marker
+        transformer: ['type'],
+        switch: ['type'],
+        load: ['p_mv', 'q_mvar'],
+        extGrid: ['voltage'],
+        solar: ['power'],
+        wind: ['power']
+    }
 
     const [draggedItem, setDraggedItem] = useState(null);
 
-    const handleExport = () => {
+    const handleExport = (markerInputs) => {
         const buses = [];
         const components = [];
-        // Bus, Line, Load, Generator, Transformer, Switch, ExtGrid
-        let indices = [0,0,0,0,0,0,0];
+        let indices = [0, 0, 0, 0, 0, 0, 0];
 
-        markers.forEach((item) => {
+        markerInputs.forEach((marker) => {
             const busIndex = indices[0];
             indices[0] += 1;
-            var newBus;
-            if(busIndex === 0) newBus = new Bus(busIndex, item.position, 20);
-            else newBus = new Bus(busIndex, item.position, 0.4); //TODO Get voltage from some parameter variable
+            let newBus;
+            if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
+            else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             buses.push(newBus);
-            switch(item.name) {
-                case 'Load':
-                    components.push(new Load(indices[2], busIndex, 5, 5));
+            switch (marker.type) {
+                case 'load':
+                    components.push(new Load(indices[2], busIndex, parseFloat(marker.parameters.p_mv), parseFloat(marker.parameters.q_mvar)));
                     indices[2] += 1;
                     break;
-                case 'Solar Panel':
-                case 'Wind Turbine':
-                    components.push(new Generator(indices[3], busIndex, 5));
+                case 'solar':
+                case 'wind':
+                    components.push(new Generator(indices[3], busIndex, parseFloat(marker.parameters.power)));
                     indices[3] += 1;
                     break;
                 default:
                     break;
             }
-
-        })
+        });
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
-            //const bus1Loc = markers[line[0]].getLatLng();
-            //const bus2Loc = markers[line[1]].getLatLng();
-            components.push(new Line(i,line[0], line[1], 5, 'NAYY 4x50 SE'));
+            components.push(new Line(i, line[0], line[1], 5, 'NAYY 4x50 SE'));
         }
 
         const total = buses.concat(components);
-        return  JSON.stringify(new Network(total));
-
-    }
+        const networkData = JSON.stringify(new Network(total));
+        console.log('Exported Data:', networkData);
+        return networkData;
+    };
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -201,17 +173,32 @@ function ReactApp() {
             const x = clientX - left;
             const y = clientY - top;
             const droppedLatLng = mapContainer.current.containerPointToLatLng([x, y]);
-
             // Get the icon for the dragged item based on its type
             const icon = iconMapping[draggedItem.type];
+            // Configure the parameters according to the right marker type
+            const parametersConfig = markerParametersConfig[draggedItem.type];
+            const parameters = parametersConfig ? parametersConfig.reduce((acc, param) => {
+                acc[param] = '';
+                return acc;
+            }, {}) : {};
             // Add the dropped item as a marker on the map
-            const newMarker = { id: markers.length, position: droppedLatLng, name: draggedItem.name, icon };
+            const newMarker = {id: markers.length,
+                position: droppedLatLng,
+                name: draggedItem.name,
+                icon,
+                type: draggedItem.type,
+                parameters
+            };
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);
     };
 
-    const handleMarkerClick = (markerIndex) => {
+    const handleMarkerClick = (event, markerIndex) => {
+        const targetMarker = event.target;
+        if (targetMarker) {
+            targetMarker.closePopup();
+        }
         // If no marker is currently selected, set the clicked marker as selected
         if (selectedMarker === null) {
             setSelectedMarker(markerIndex);
@@ -237,10 +224,12 @@ function ReactApp() {
                         if (!found){
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
+                            lineRefs.current.push(newLine);
                         }
                     } else {
                         const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
+                        lineRefs.current.push(newLine);
                     }
                 }
             }
@@ -263,17 +252,36 @@ function ReactApp() {
                     return [[start, newPosition],line[1]];
                 }
             }
-            return line;
+            return marker;
         });
+
+        const updatedLines = lines.map(line => {
+            return line.map(point => {
+                if (point.equals(markers[markerIndex].position)) {
+                    return newPosition;
+                }
+                return point;
+            });
+        });
+
         setMarkers(updatedMarkers);
         setLines(updatedLines);
-    },100);
+    }, 100);
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
+
+        const markerRef = markerRefs.current[indexMarker];
+        if (markerRef) {
+            markerRef.closePopup();
+        }
+
         const updatedMarkers = [...markers];
         updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
+
+        markerRefs.current.splice(indexMarker, 1);
+
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
@@ -287,11 +295,83 @@ function ReactApp() {
 
         const updatedBusLines = busLines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !line.some((id) => {
-                return (id === indexMarker);
-            });
+            return !(line[0] === indexMarker || line[1] === indexMarker);
         });
         setBusLines(updatedBusLines);
+    };
+
+    const handleLineDelete = (index) => {
+        const lineRef = lineRefs.current[index];
+        if (lineRef) {
+            lineRef.closePopup();
+        }
+
+        const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
+        const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
+        setBusLines(updatedBusLines);
+        setLines((updatedLines));
+
+        lineRefs.current.splice(index, 1);
+    };
+
+    const handleMarkerRightClick = (event) => {
+        const targetMarker = event.target;
+        if (targetMarker && targetMarker.getPopup()) {
+            targetMarker.openPopup();
+        }
+    };
+
+    const handleLineClick = (event, markerIndex) => {
+        const targetLine = event.target;
+        if (targetLine) {
+            targetLine.closePopup();
+        }
+    };
+
+    const handleLineRightClick = (event) => {
+        const targetLine = event.target;
+        if (targetLine && targetLine.getPopup()) {
+            targetLine.openPopup();
+        }
+    };
+
+    const renderParameterInputs = (marker) => {
+        const { id, type, parameters } = marker;
+        const parameterFields = markerParametersConfig[type];
+
+        if (!parameterFields) {
+            console.log('Parameters configuration not found for marker type:', type);
+            return null;
+        }
+
+        return (
+            parameterFields.map((param) => (
+                <div key={param} style={{ marginBottom: '5px' }}>
+                    <input
+                        type="text"
+                        placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
+                        value={parameters[param] || ''}
+                        onChange={(e) => handleParameterChange(id, param, e.target.value)}
+                    />
+                </div>
+            ))
+        );
+    };
+
+    const handleParameterChange = (markerId, paramName, value) => {
+        const updatedMarkers = markers.map(marker => {
+            if (marker.id === markerId) {
+                return {
+                    ...marker,
+                    parameters: {
+                        ...marker.parameters,
+                        [paramName]: value
+                    }
+                };
+            }
+            return marker;
+        });
+        setMarkers(updatedMarkers);
     };
 
     const handleMarkerHover = (markerIndex) => {
@@ -314,23 +394,29 @@ function ReactApp() {
         setIsMapLocked(!isMapLocked)
         const map = mapContainer.current;
         if(isMapLocked) {map.dragging.disable();
-                         map.keyboard.disable();
-                         map.doubleClickZoom.disable();
-                         map.scrollWheelZoom.disable()}
+            map.keyboard.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable()}
         else {map.dragging.enable();
-              map.keyboard.enable();
-              map.doubleClickZoom.enable();
-              map.scrollWheelZoom.enable()}
+            map.keyboard.enable();
+            map.doubleClickZoom.enable();
+            map.scrollWheelZoom.enable()}
         return isMapLocked
     }
 
     /**
-     * Runs when the green run button is clicked, 
+     * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
     const onRunButtonClick = () => {
-        const dat = handleExport();
-        console.log(dat);
+        const markerInputs = markers.map(marker => ({
+            id: marker.id,
+            type: marker.type,
+            parameters: marker.parameters
+        }));
+
+        const dat = handleExport(markerInputs);
+        console.log('Exported Data:', dat);
         cnvs_json_post(dat)
         .then((data) => {
             //todo do something useful with data
@@ -407,6 +493,9 @@ function ReactApp() {
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
+                        maxNativeZoom={19}
+                        //maxZoom={20}
+                        minZoom={3}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
@@ -424,8 +513,10 @@ function ReactApp() {
                                     icon={marker.icon}
                                     draggable={true}
                                     clickable={true}
+                                    ref={(ref) => (markerRefs.current[index] = ref)}
                                     eventHandlers={{
-                                        click: () => handleMarkerClick(index),
+                                        click: (e) => handleMarkerClick(e, index),
+                                        contextmenu: (e) => handleMarkerRightClick(e),
                                         // TODO: mouseover and mouseout are intended to change the mouse cursor when hovering over a component
                                         //  (to indicate users can create a line)
                                         //mouseover: () => handleMarkerHover(index),
@@ -437,18 +528,7 @@ function ReactApp() {
                                 <Popup>
                                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                         <div style={{marginBottom: '5px'}}>{marker.name}</div>
-                                        <div style={{marginBottom: '5px'}}>
-                                            <Parameter01 style={{alignSelf: 'center'}}/>
-                                        </div>
-                                        <div style={{marginBottom: '5px'}}>
-                                            <Parameter02 style={{alignSelf: 'center'}}/>
-                                        </div>
-                                        <div style={{marginBottom: '5px'}}>
-                                            <Parameter03 style={{alignSelf: 'center'}}/>
-                                        </div>
-                                        <div style={{marginBottom: '5px'}}>
-                                            <SubmitButton style={{alignSelf: 'center'}}/>
-                                        </div>
+                                        {renderParameterInputs(marker)}
                                         <div style={{marginBottom: '5px'}}>
                                             <DeleteButton onClick={() => handleMarkerDelete(index)} />
                                         </div>
@@ -466,43 +546,81 @@ function ReactApp() {
                                       onMouseOut={e => e.target.closePopup()}
                                       pathOptions = {{ color : line[1] }}
                                       weight={10}
+                                      ref={(ref) => (lineRefs.current[index] = ref)}
+                                      eventHandlers={{
+                                          click: (e) => handleLineClick(e),
+                                          contextmenu: (e) => handleLineRightClick(e)
+                                      }}
                             >
-                                <Popup>A popup on click</Popup>
+                                <Popup>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center'
+                                    }}>
+                                        <div style={{marginBottom: '5px'}}>{"Connection"}</div>
+                                        <div style={{marginBottom: '5px'}}>
+                                            <DeleteButton onClick={() => handleLineDelete(index)}/>
+                                        </div>
+                                    </div>
+                                </Popup>
                             </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
 
 
                     </MapContainer>
-                    <IconButton aria-label="check" style={{position: 'absolute', right: '6px', top:'80px', width:'40px', height: '40px', opacity: '30'}}   onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                        <LockIcon className="LockIcon" style={{width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: !isMapLocked ? 'flex' : 'none'}}/>
-                        <LockOpenIcon className="LockOpenIcon" style={{  width:'40px', height: '40px', color: '#000', borderWidth: '1px', borderColor:'#000', opacity: '30',display: isMapLocked ? 'flex' : 'none'}} />
-                        </div>
-                    </IconButton>
-                                 <IconButton aria-label="check" style={{
+                    <IconButton aria-label="check" style={{
                         position: 'absolute',
-                        right: '0px',
-                        top: '600px',
-                        width: '120px',
-                        height: '120px',
-                        opacity: '70'
-                    }} onClick={onRunButtonClick}>
-                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                            <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-                                width: '120px',
-                                height: '120px',
-                                color: '#05a95c',
+                        right: '6px',
+                        top: '80px',
+                        width: '40px',
+                        height: '40px',
+                        opacity: '30'
+                    }} onClick={onLockButtonClick}>
+                        <div style={{position: 'relative'}}>
+                            <LockIcon className="LockIcon" style={{
+                                width: '40px',
+                                height: '40px',
+                                color: '#000',
                                 borderWidth: '1px',
                                 borderColor: '#000',
-                                opacity: '70'
+                                opacity: '30',
+                                display: !isMapLocked ? 'flex' : 'none'
+                            }}/>
+                            <LockOpenIcon className="LockOpenIcon" style={{
+                                width: '40px',
+                                height: '40px',
+                                color: '#000',
+                                borderWidth: '1px',
+                                borderColor: '#000',
+                                opacity: '30',
+                                display: isMapLocked ? 'flex' : 'none'
                             }}/>
                         </div>
-                                     </IconButton>
+                    </IconButton>
+                    <IconButton aria-label="check" style={{
+                        position: 'absolute',
+                        right: '0px',
+                        top: '78%',
+                        width: '8vw',
+                        height: '8vw',
+                        opacity: '70'
+                    }} onClick={onRunButtonClick}>
+                        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
+                            width: '8vw',
+                            height: '8vw',
+                            color: '#05a95c',
+                            borderWidth: '1px',
+                            borderColor: '#000',
+                            opacity: '70'
+                        }}/>
+
+                    </IconButton>
                 </div>
             </div>
         </div>
-);
+    );
 }
 
 export default ReactApp;
