@@ -2,10 +2,11 @@ import {Drawer} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import React, {useState} from "react";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 
 
 function Sidebar(state) {
-        const [isSidebarOn, setIsSidebarOn] = useState(false);
+        const [isSidebarOn, setIsSidebarOn] = useState(true);
 
 
 
@@ -70,7 +71,7 @@ return (<div>
                                                       width: '30px',
                                                       height: '30px'
                                                   }}/>
-                    <KeyboardDoubleArrowRightIcon className="KeyboardDoubleArrowRightIcon"
+                    <KeyboardDoubleArrowLeftIcon className="KeyboardDoubleArrowLeftIcon"
                                                   style={{
                                                       display: isSidebarOn ? 'flex' : 'none',
                                                       width: '30px',

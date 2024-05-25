@@ -13,6 +13,7 @@ import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
 import Sidebar from "./Sidebar";
+import LockButton from "./LockButton";
 
 function DeleteButton({ onClick }) {
     return (
@@ -588,53 +589,7 @@ function ReactApp() {
 
 
                     </MapContainer>
-                    <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '6px',
-                        top: '80px',
-                        width: '40px',
-                        height: '40px',
-                        opacity: '30'
-                    }} onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                            <LockIcon className="LockIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: !isMapLocked ? 'flex' : 'none'
-                            }}/>
-                            <LockOpenIcon className="LockOpenIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: isMapLocked ? 'flex' : 'none'
-                            }}/>
-                        </div>
-                    </IconButton>
-                    <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '0px',
-                        top: '78%',
-                        width: '8vw',
-                        height: '8vw',
-                        opacity: '70'
-                    }} onClick={onRunButtonClick}>
-                        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-                            width: '8vw',
-                            height: '8vw',
-                            color: '#05a95c',
-                            borderWidth: '1px',
-                            borderColor: '#000',
-                            opacity: '70'
-                        }}/>
-
-                    </IconButton>
+                    <LockButton onLockButtonClick={onLockButtonClick}/>
                 </div>
             </div>
         </div>
