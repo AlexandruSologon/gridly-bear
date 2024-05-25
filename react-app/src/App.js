@@ -12,8 +12,7 @@ import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
-import {Drawer} from "@mui/material";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import Sidebar from "./Sidebar";
 
 function DeleteButton({ onClick }) {
     return (
@@ -40,7 +39,6 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
-    const [isSidebarOn, setIsSidebarOn] = useState(false);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -488,64 +486,14 @@ function ReactApp() {
         });
     }
 
-    const onSidebarToggle = () => {
-        setIsSidebarOn(!isSidebarOn)
-    }
 
     return (
-        <div style={{display: 'flex', height: '100vh'}}>
-            <Drawer
-                                style={{
-                                    display: isSidebarOn ? 'grid' : 'none',
-                                    position: 'absolute',
-                                    height: '0%',
-                                    color: '#000',
-                                    zIndex: 1000,
-                                    width: '120px',
-                                }}
-                                variant="permanent"
-                                anchor="bottomleft"
-                            >
-                                <div style={{height: '3%'}}></div>
-                                <h2 style={{
-                                    fontSize: '19px',
-                                    fontFamily: 'Arial, sans-serif',
-                                    overflow: 'auto'
-                                }}>
-                                </h2>
-                                {/* Render draggable items */}
-                                {sidebarItems.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        draggable={true}
-                                        onDragStart={(event) => handleDragStart(event, item)}
-                                        onDragEnd={handleDragEnd}
-                                        style={{margin: '10px 0', cursor: 'grab'}}
-                                    >
-                                        {/* Container for icon and text */}
-                                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                            {/* Render the icon based on item.type */}
-                                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name}/>
-                                            {/* Render the text */}
-                                            <div>{item.name}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </Drawer>
-                            <IconButton style={{
-                                display: !isSidebarOn ? 'flex' : 'none',
-                                width: '30px',
-                                height: '30px',
-                                left: '70px',
-                                top: '0px',
-                                zIndex: 500
-                            }} onClick={onSidebarToggle}>
-                                <KeyboardDoubleArrowRightIcon className="KeyboardDoubleArrowRightIcon"
-                                                              style={{
-                                                                  width: '30px',
-                                                                  height: '30px'
-                                                              }}/>
-                            </IconButton>
+        <div style={{height: '100vh'}}>
+            <Sidebar
+                sidebarItems = {sidebarItems}
+                handleDragStart = {handleDragStart}
+                handleDragEnd = {handleDragEnd}
+                iconMapping ={iconMapping}/>
 
             {/* Main Content */}
             <div
@@ -559,7 +507,7 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div  style={{position: 'relative', flex: '1', height: '100%'}} >
+                <div style={{position: 'relative', flex: '1', height: '100%'}}>
                     <MapContainer
                         dragging={isMapLocked}
                         ref={mapContainer}
@@ -573,7 +521,7 @@ function ReactApp() {
                         attributionControl={false}
                     >
 
-                        <Search style ={{left: '400px'}}/>
+                        <Search style={{left: '400px'}}/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
