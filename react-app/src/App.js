@@ -329,10 +329,8 @@ function ReactApp() {
         }
         const updatedLines = lines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !line.some((position) => {
-                return position.equals(oldMarkerPos);
+            return !(line[0] === oldMarkerPos || line[1] === oldMarkerPos);
             });
-        });
         setLines(updatedLines);
 
         const updatedBusLines = busLines.filter((line) => {
