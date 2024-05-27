@@ -140,13 +140,16 @@ function ReactApp() {
         const busIdMap = new Map();
 
         markerInputs.forEach((marker) => {
-            const busIndex = indices[0];
-            indices[0] += 1;
-            let newBus;
-            if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
-            else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
-            buses.push(newBus);
-            busIdMap.set(marker.id, busIndex);
+            if(marker.name === "Bus")
+            {
+                const busIndex = indices[0];
+                indices[0] += 1;
+                let newBus;
+                if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
+                else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
+                buses.push(newBus);
+                busIdMap.set(marker.id, busIndex);
+            }
         })
 
 
@@ -157,7 +160,7 @@ function ReactApp() {
             let item1 = markers[line[0]]
             let item2 = markers[line[1]]
             if (item1.name === 'Bus' && item2.name === 'Bus') {
-                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), 'NAYY 4x50 SE', 5));
+                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), 5, 'NAYY 4x50 SE'));
                 indices[1] += 1;
             } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
                 if (item1.name === 'Bus') {
@@ -467,7 +470,8 @@ function ReactApp() {
         const markerInputs = markers.map(marker => ({
             id: marker.id,
             type: marker.type,
-            parameters: marker.parameters
+            parameters: marker.parameters,
+            name: marker.name
         }));
 
         const dat = handleExport(markerInputs);
@@ -478,7 +482,7 @@ function ReactApp() {
                 return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                renderSomething()
+                renderSomething(data)
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
@@ -488,10 +492,22 @@ function ReactApp() {
         });
     }
 
-    const renderSomething = () => {
-        const uL = lines.map((line) =>  [line[0],line[1] ,'#f00'] );
+    const renderSomething = (data) => {
+        let nr = -1;
+        const uL = lines.map((line) =>  {
+            if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
+            {   nr++
+                return [line[0],line[1],data.lines[nr]]}
+            else return line
+            }
+        );
         setLines(uL) ;
+
+
     };
+
+
+
     const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (

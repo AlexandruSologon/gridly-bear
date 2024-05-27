@@ -48,10 +48,13 @@ def get_line_color(line):
         green_blue = 0
     else:
         green_blue = 150 + (line - 70) * ((0 - 150) / (90 - 70)) #formula for getting the exact range between green/blue being 0 to 150 between 70-90%
-    return (150, green_blue, green_blue)
+    return rgb_to_hex(150, green_blue, green_blue)
 
 def all_bus_colors():
     pass
+
+def rgb_to_hex(r, g, b):
+    return '#{:02x}{:02x}{:02x}'.format(r, g, b)
 
 def runNetwork(net):
     try:
