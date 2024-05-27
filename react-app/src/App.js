@@ -12,7 +12,8 @@ import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
-import {wait} from "@testing-library/user-event/dist/utils";
+import Sidebar from "./Sidebar";
+import LockButton from "./LockButton";
 
 function DeleteButton({ onClick }) {
     return (
@@ -496,42 +497,13 @@ function ReactApp() {
     const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
-        <div style={{display: 'flex', height: '100vh'}}>
-            {/* Sidebar */}
-            <div style={{
-                flex: '0 0 10%',
-                backgroundColor: '#f0f0f0',
-                padding: '20px',
-                overflowY: 'auto',
-                margin: '10px'
-            }}>
-                <h2 style={{
-                    fontSize: '19px',
-                    fontFamily: 'Arial, sans-serif',
-                    overflow: 'auto'
-                }}>
-                    Drag and drop items onto the canvas
-                </h2>
-                {/* Render draggable items */}
-                {sidebarItems.map((item) => (
-                    <div
-                        key={item.id}
-                        draggable={true}
-                        onDragStart={(event) => handleDragStart(event, item)}
-                        onDragEnd={handleDragEnd}
-                        style={{margin: '10px 0', cursor: 'grab'}}
-                    >
-                        {/* Container for icon and text */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            {/* Render the icon based on item.type */}
-                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name} sizes={'50%'} />
-                            {/* Render the text */}
-                            <div>{item.name}</div>
-                        </div>
-                    </div>
-                ))}
-                <Address />
-            </div>
+        <div style={{height: '100vh'}}>
+            <Sidebar
+                sidebarItems = {sidebarItems}
+                handleDragStart = {handleDragStart}
+                handleDragEnd = {handleDragEnd}
+                iconMapping ={iconMapping}/>
+
             {/* Main Content */}
             <div
                 style={{
@@ -544,7 +516,7 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div  style={{position: 'relative', flex: '1', height: '100%'}} >
+                <div style={{position: 'relative', flex: '1', height: '100%'}}>
                     <MapContainer
                         dragging={isMapLocked}
                         ref={mapContainer}
@@ -557,7 +529,8 @@ function ReactApp() {
                         zoomControl={false}
                         attributionControl={false}
                     >
-                        <Search />
+
+                        <Search style={{left: '400px'}}/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -588,7 +561,7 @@ function ReactApp() {
                                         <div style={{marginBottom: '5px'}}>{marker.name}</div>
                                         {renderParameterInputs(marker)}
                                         <div style={{marginBottom: '5px'}}>
-                                            <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                            <DeleteButton onClick={() => handleMarkerDelete(index)}/>
                                         </div>
                                     </div>
                                 </Popup>
@@ -627,36 +600,8 @@ function ReactApp() {
 
 
                     </MapContainer>
-                    <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '6px',
-                        top: '80px',
-                        width: '40px',
-                        height: '40px',
-                        opacity: '30'
-                    }} onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                            <LockIcon className="LockIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: !isMapLocked ? 'flex' : 'none'
-                            }}/>
-                            <LockOpenIcon className="LockOpenIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: isMapLocked ? 'flex' : 'none'
-                            }}/>
-                        </div>
-                    </IconButton>
-                    <IconButton aria-label="check" style={{
+                    <LockButton onLockButtonClick={onLockButtonClick}/>
+                                        <IconButton aria-label="check" style={{
                         position: 'absolute',
                         right: '0px',
                         top: '78%',
@@ -674,6 +619,7 @@ function ReactApp() {
                         }}/>
 
                     </IconButton>
+
                 </div>
             </div>
         </div>
