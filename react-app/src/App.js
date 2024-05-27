@@ -477,7 +477,7 @@ function ReactApp() {
             if(data === null) {
                 return;
             } else {
-                alert("Results: " + JSON.stringify(data));
+                // alert("Results: " + JSON.stringify(data));
                 renderSomething()
             }
         }).catch((error) => {
