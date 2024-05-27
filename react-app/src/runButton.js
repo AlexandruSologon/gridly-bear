@@ -1,7 +1,6 @@
 import React from "react";
 import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import IconButton from '@mui/material/IconButton';
-import Spinner from 'spin.js';
 import CircularProgress from '@mui/material/CircularProgress';
 
 /**
@@ -10,22 +9,27 @@ import CircularProgress from '@mui/material/CircularProgress';
  * @returns The jsx for the run button.
  */
 function GreenArrow({onRunButtonClick}) {
-    return (<IconButton aria-label="check" style={{
-        position: 'absolute',
-        right: '0px',
-        top: '78%',
-        width: '8vw',
-        height: '8vw',
-        opacity: '70'
-    }} onClick={onRunButtonClick}>
-        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-            width: '8vw',
-            height: '8vw',
-            color: '#05a95c',
-            borderWidth: '1px',
-            borderColor: '#000',
-            opacity: '70'
-    }}/>
+    return (
+        <IconButton aria-label="check" style = {
+            {
+                position: 'absolute',
+                right: '0px',
+                top: '78%',
+                width: '8vw',
+                height: '8vw',
+                opacity: '70'
+            }
+        } onClick={onRunButtonClick}>
+        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style = {
+            {
+                width: '8vw',
+                height: '8vw',
+                color: '#05a95c',
+                borderWidth: '1px',
+                borderColor: '#000',
+                opacity: '70'
+            }
+        }/>
     </IconButton>);
 }
 
@@ -35,17 +39,17 @@ function GreenArrow({onRunButtonClick}) {
  */
 function AnnularThrobber() {
     return (
-        <div style={
+        <div style = {
             { 
                 position: 'absolute', 
                 right: '0px', 
                 top: '78%', 
                 justifyContent: 'center', 
                 alignItems: 'center', 
-                height: '100vh'
+                height: '8vh'
             }
         }>
-            <CircularProgress style={
+            <CircularProgress style = {
                 { 
                     color: '#05a95c', 
                     width: '8vw', 

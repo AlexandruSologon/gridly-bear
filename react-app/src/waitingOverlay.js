@@ -4,7 +4,21 @@ function WaitingOverlay({runClicked}) {
 
     const renderWaitingOverlay = () => {
         return (
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(255, 255, 255, 0.35)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+            <div style = {
+                { 
+                    position: 'absolute', 
+                    overflow: 'hidden',
+                    top: 0, 
+                    left: 0, 
+                    width: '100vw', 
+                    height: '100vh', 
+                    backgroundColor: 'rgba(255, 255, 255, 0.35)', 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    zIndex: 1000 
+                }
+            }>
                 <p>Waiting on results</p>
             </div>
         );
@@ -12,7 +26,7 @@ function WaitingOverlay({runClicked}) {
 
     return (
         <div>
-            {runClicked && renderWaitingOverlay()}
+            { runClicked && renderWaitingOverlay() }
         </div>
     );
 }

@@ -497,7 +497,7 @@ function ReactApp() {
     const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
-        <div style={{display: 'flex', height: '100vh'}}>
+        <div style={{display: 'flex', height: '100vh', width: '100vw'}}>
             <WaitingOverlay runClicked={runClicked}></WaitingOverlay>
             {/* Sidebar */}
             <div style={{
