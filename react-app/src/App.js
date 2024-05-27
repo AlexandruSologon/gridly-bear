@@ -141,13 +141,13 @@ function ReactApp() {
         const busIdMap = new Map();
 
         markerInputs.forEach((marker) => {
+            if (marker.type === 'bus') {
             const busIndex = indices[0];
             indices[0] += 1;
-            let newBus;
-            if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
-            else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
+            const newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             buses.push(newBus);
             busIdMap.set(marker.id, busIndex);
+            }
         })
 
 
