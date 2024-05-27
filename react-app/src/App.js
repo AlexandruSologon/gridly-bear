@@ -40,7 +40,6 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
-    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -160,7 +159,7 @@ function ReactApp() {
             let item1 = markers[line[0]]
             let item2 = markers[line[1]]
             if (item1.name === 'Bus' && item2.name === 'Bus') {
-                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), 5, 'NAYY 4x50 SE'));
+                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), item1.position.distanceTo(item2.position)/1000, 'NAYY 4x50 SE'));
                 indices[1] += 1;
             } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
                 if (item1.name === 'Bus') {
