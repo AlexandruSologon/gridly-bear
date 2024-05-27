@@ -30,10 +30,10 @@ function GreenArrow({onRunButtonClick}) {
 }
 
 /**
- * Render a rotating waiting icon (aka an anular throbber).
+ * Render a rotating waiting icon (aka an annular throbber).
  * @returns the jsx content for rendering the loading icon.
  */
-function AnularThrobber() {
+function AnnularThrobber() {
     return (
         <div style={
             { 
@@ -58,14 +58,14 @@ function AnularThrobber() {
 }
 
 /**
- * Renders both a run button and a loading icon (anular throbber) depending on the state of the canvas.
+ * Renders both a run button and a loading icon (annular throbber) depending on the state of the canvas.
  * @param {*} runClicked Boolean to convey the state of the canvas, "has this button been clicked and was there no response yet?".
  * @param {*} onRunButtonClick The action to be taken by the run button.
  * @returns 
  */
 function runButton({runClicked, onRunButtonClick}) {
     if(runClicked) {
-        return AnularThrobber();
+        return AnnularThrobber();
     } else {
         return GreenArrow({onRunButtonClick});
     }
