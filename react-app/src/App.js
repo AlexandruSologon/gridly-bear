@@ -590,6 +590,25 @@ function ReactApp() {
 
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick}/>
+                                        <IconButton aria-label="check" style={{
+                        position: 'absolute',
+                        right: '0px',
+                        top: '78%',
+                        width: '8vw',
+                        height: '8vw',
+                        opacity: '70'
+                    }} onClick={onRunButtonClick}>
+                        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
+                            width: '8vw',
+                            height: '8vw',
+                            color: '#05a95c',
+                            borderWidth: '1px',
+                            borderColor: '#000',
+                            opacity: '70'
+                        }}/>
+
+                    </IconButton>
+
                 </div>
             </div>
         </div>
