@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -40,6 +40,7 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
+    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -147,7 +148,7 @@ function ReactApp() {
             buses.push(newBus);
             busIdMap.set(marker.id, busIndex);
         })
-        
+
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
@@ -249,8 +250,9 @@ function ReactApp() {
                 // Check if both markers still exist
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
-                    if (lines.length === 0 || lines[lines.length - 1].length === 2) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                    if (lines.length === 0 || lines[lines.length - 1].length === 3) {
+                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  '#000'];
+                        //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
                         // Check if line already exists
@@ -268,7 +270,7 @@ function ReactApp() {
                             lineRefs.current.push(newLine);
                         }
                     } else {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                         lineRefs.current.push(newLine);
                     }
@@ -287,9 +289,9 @@ function ReactApp() {
             return marker;
         });
 
-        const updatedLines = lines.map(line => {
-            return line.map(point => {
-                if (point.equals(markers[markerIndex].position)) {
+        const updatedLines = lines.map(
+            line => { return line.map(point  => {
+                if (point === markers[markerIndex].position && (point === line[0] || point === line[1])) {
                     return newPosition;
                 }
                 return point;
@@ -299,6 +301,7 @@ function ReactApp() {
         setMarkers(updatedMarkers);
         setLines(updatedLines);
     }, 100);
+
 
     const handleMarkerDelete = (indexMarker) => {
 
@@ -327,10 +330,8 @@ function ReactApp() {
         }
         const updatedLines = lines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !line.some((position) => {
-                return position.equals(oldMarkerPos);
+            return !(line[0] === oldMarkerPos || line[1] === oldMarkerPos);
             });
-        });
         setLines(updatedLines);
 
         const updatedBusLines = busLines.filter((line) => {
@@ -349,7 +350,7 @@ function ReactApp() {
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
         const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
         setBusLines(updatedBusLines);
-        setLines((updatedLines));
+        setLines(updatedLines);
 
         lineRefs.current.splice(index, 1);
     };
@@ -431,7 +432,6 @@ function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-        sidebarItems.map((item) => (console.log(iconMapping[item.type])))
         setIsMapLocked(!isMapLocked)
         const map = mapContainer.current;
         if(isMapLocked) {map.dragging.disable();
@@ -469,7 +469,7 @@ function ReactApp() {
             type: marker.type,
             parameters: marker.parameters
         }));
-        
+
         const dat = handleExport(markerInputs);
         console.log('Sent over Data:', dat);
         cnvs_json_post(dat)
@@ -478,6 +478,7 @@ function ReactApp() {
                 return;
             } else {
                 alert("Results: " + JSON.stringify(data));
+                renderSomething()
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
@@ -487,6 +488,11 @@ function ReactApp() {
         });
     }
 
+    const renderSomething = () => {
+        const uL = lines.map((line) =>  [line[0],line[1] ,'#f00'] );
+        setLines(uL) ;
+    };
+    const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
         <div style={{height: '100vh'}}>
@@ -562,7 +568,10 @@ function ReactApp() {
                         {lines.map((line, index) => (
                             // TODO: color can be changed to indicate overload, for example: color={'red'}
                             <Polyline key={index}
-                                      positions={line}
+                                      positions={[line[0],line[1]]}
+                                      onMouseOver={e => e.target.openPopup()}
+                                      onMouseOut={e => e.target.closePopup()}
+                                      pathOptions = {{ color : line[2] }}
                                       clickable={true}
                                       weight={10}
                                       ref={(ref) => (lineRefs.current[index] = ref)}
