@@ -249,7 +249,7 @@ function ReactApp() {
                 // Check if both markers still exist
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
-                        let color = "#000080";
+                        let color = "#0000ff";
                         if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
                     if (lines.length === 0 || lines[lines.length - 1].length === 3) {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color];
