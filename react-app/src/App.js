@@ -55,18 +55,19 @@ function ReactApp() {
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/bus.png'),
+        iconRetinaUrl: require('./images/dotImage.png'),
+        iconUrl: require('./images/dot.png'),
         iconAnchor: [32, 32],
-        popupAnchor:[0, -35],
-        className: 'dot'
+        popupAnchor:[0, -32],
+        iconSize: [64, 64]
+        //className: 'dot'
     });
     const gridIcon = new L.icon({
         id: 'grid',
         iconRetinaUrl: require('./images/power (2).png'),
         iconUrl: require('./images/power (2).png'),
         iconAnchor: [32,32],
-        popupAnchor:[0, -35]
+        popupAnchor:[0, -32]
     });
     const loadIcon = new L.icon({
         id: 'load',
@@ -523,7 +524,7 @@ function ReactApp() {
                         {/* Container for icon and text */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             {/* Render the icon based on item.type */}
-                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name} />
+                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name} sizes={'50%'} />
                             {/* Render the text */}
                             <div>{item.name}</div>
                         </div>
