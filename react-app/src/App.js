@@ -439,7 +439,7 @@ function ReactApp() {
             map.scrollWheelZoom.disable()}
         else {map.dragging.enable();
             map.keyboard.enable();
-            map.doubleClickZoom.enable();
+            //map.doubleClickZoom.enable();
             map.scrollWheelZoom.enable()}
         return isMapLocked
     }
