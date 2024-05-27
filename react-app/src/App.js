@@ -551,9 +551,10 @@ function ReactApp() {
                         maxNativeZoom={19}
                         //maxZoom={20}
                         minZoom={3}
-                        style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
+                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
                         attributionControl={false}
+                        doubleClickZoom={false}
                     >
                         <Search />
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
