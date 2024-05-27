@@ -30,8 +30,28 @@ def problem_lines(net):
         runNetwork(net)
     return net.res_line.loc[net.res_line.loading_percent > 100].loading_percent
 
+#returns true if the network was already run with pandapower
 def wasSimulated(net):
     return 'res_bus' in net and not net['res_bus'].empty
+
+def all_line_colors(net):
+    lines = all_lines(net)
+    return lines.apply(get_line_color)
+
+def get_line_color(line):
+    #line here is a nunmber, it is the value loading_percent for a given line.
+    print(line)
+    green_blue = 255
+    if(line < 70):
+        green_blue = 150
+    elif(line > 90):
+        green_blue = 0
+    else:
+        green_blue = 150 + (line - 70) * ((0 - 150) / (90 - 70)) #formula for getting the exact range between green/blue being 0 to 150 between 70-90%
+    return (150, green_blue, green_blue)
+
+def all_bus_colors():
+    pass
 
 def runNetwork(net):
     try:

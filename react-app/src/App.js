@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import IconButton from '@mui/material/IconButton';
 import LockIcon from '@mui/icons-material/LockOutlined';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -6,12 +6,14 @@ import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet'
 import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
 import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
+import Sidebar from "./Sidebar";
+import LockButton from "./LockButton";
 
 function DeleteButton({ onClick }) {
     return (
@@ -38,6 +40,7 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
+    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -80,19 +83,6 @@ function ReactApp() {
         iconAnchor: [42.5, 42.5],
         popupAnchor:[0, -42.5]
     });
-    const transformerIcon = new L.icon({
-        iconRetinaUrl: require('./images/transformer.png'),
-        iconUrl: require('./images/transformer.png'),
-        iconAnchor: [32, 32],
-        popupAnchor:[0, -32]
-    });
-    const extGridIcon = new L.icon({
-        iconRetinaUrl: require('./images/externalGrid.png'),
-        iconUrl: require('./images/externalGrid.png'),
-        iconAnchor: [42.5, 42.5],
-        popupAnchor:[0, -42.5]
-    });
-
     const trafo1Icon = new L.icon({
         id: 'trafo1',
         iconRetinaUrl: require('./images/Blank.png'),
@@ -125,8 +115,8 @@ function ReactApp() {
         { id: 2, name: 'Bus', type: 'bus' },
         { id: 3, name: 'Load', type: 'load' },
         { id: 4, name: 'Wind Turbine', type: 'wind'},
-        { id: 5, name: 'Transformer', type: 'transformer' },
-        { id: 6, name: 'External Grid', type: 'extGrid' },
+        { id: 5, name: 'Transformer', type: 'trafo1' },
+        { id: 6, name: 'External Grid', type: 'grid' },
     ];
 
     // TODO: Change parameter names and/or add more parameters here if necessary
@@ -147,6 +137,7 @@ function ReactApp() {
         const buses = [];
         const components = [];
         let indices = [0, 0, 0, 0, 0, 0, 0];
+        const busIdMap = new Map();
 
         markerInputs.forEach((marker) => {
             const busIndex = indices[0];
@@ -155,9 +146,9 @@ function ReactApp() {
             if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
             buses.push(newBus);
-            busIdMap.set(item.id, busIndex);
+            busIdMap.set(marker.id, busIndex);
         })
-        
+
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
@@ -259,8 +250,9 @@ function ReactApp() {
                 // Check if both markers still exist
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
-                    if (lines.length === 0 || lines[lines.length - 1].length === 2) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                    if (lines.length === 0 || lines[lines.length - 1].length === 3) {
+                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  '#000'];
+                        //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
                         // Check if line already exists
@@ -278,7 +270,7 @@ function ReactApp() {
                             lineRefs.current.push(newLine);
                         }
                     } else {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                         lineRefs.current.push(newLine);
                     }
@@ -297,9 +289,9 @@ function ReactApp() {
             return marker;
         });
 
-        const updatedLines = lines.map(line => {
-            return line.map(point => {
-                if (point.equals(markers[markerIndex].position)) {
+        const updatedLines = lines.map(
+            line => { return line.map(point  => {
+                if (point === markers[markerIndex].position && (point === line[0] || point === line[1])) {
                     return newPosition;
                 }
                 return point;
@@ -309,6 +301,7 @@ function ReactApp() {
         setMarkers(updatedMarkers);
         setLines(updatedLines);
     }, 100);
+
 
     const handleMarkerDelete = (indexMarker) => {
 
@@ -337,10 +330,8 @@ function ReactApp() {
         }
         const updatedLines = lines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !line.some((position) => {
-                return position.equals(oldMarkerPos);
+            return !(line[0] === oldMarkerPos || line[1] === oldMarkerPos);
             });
-        });
         setLines(updatedLines);
 
         const updatedBusLines = busLines.filter((line) => {
@@ -359,7 +350,7 @@ function ReactApp() {
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
         const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
         setBusLines(updatedBusLines);
-        setLines((updatedLines));
+        setLines(updatedLines);
 
         lineRefs.current.splice(index, 1);
     };
@@ -468,7 +459,11 @@ function ReactApp() {
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
+    var run_was_clicked = false;
     const onRunButtonClick = () => {
+        if(run_was_clicked) return;
+        run_was_clicked = true;
+
         const markerInputs = markers.map(marker => ({
             id: marker.id,
             type: marker.type,
@@ -476,62 +471,37 @@ function ReactApp() {
         }));
 
         const dat = handleExport(markerInputs);
-        console.log('Exported Data:', dat);
+        console.log('Sent over Data:', dat);
         cnvs_json_post(dat)
         .then((data) => {
-            //todo do something useful with data
             if(data === null) {
-                alert("No response was received");
+                return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                for(var d of data.buses) {
-                    console.log(d);
-                }
+                renderSomething()
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
+        }).finally(() => {
+            run_was_clicked = false;
         });
     }
 
+    const renderSomething = () => {
+        const uL = lines.map((line) =>  [line[0],line[1] ,'#f00'] );
+        setLines(uL) ;
+    };
+    const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
-        <div style={{display: 'flex', height: '100vh'}}>
-            {/* Sidebar */}
-            <div style={{
-                flex: '0 0 10%',
-                backgroundColor: '#f0f0f0',
-                padding: '20px',
-                overflowY: 'auto',
-                margin: '10px'
-            }}>
-                <h2 style={{
-                    fontSize: '19px',
-                    fontFamily: 'Arial, sans-serif',
-                    overflow: 'auto'
-                }}>
-                    Drag and drop items onto the canvas
-                </h2>
-                {/* Render draggable items */}
-                {sidebarItems.map((item) => (
-                    <div
-                        key={item.id}
-                        draggable={true}
-                        onDragStart={(event) => handleDragStart(event, item)}
-                        onDragEnd={handleDragEnd}
-                        style={{margin: '10px 0', cursor: 'grab'}}
-                    >
-                        {/* Container for icon and text */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            {/* Render the icon based on item.type */}
-                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name} />
-                            {/* Render the text */}
-                            <div>{item.name}</div>
-                        </div>
-                    </div>
-                ))}
-                <Address />
-            </div>
+        <div style={{height: '100vh'}}>
+            <Sidebar
+                sidebarItems = {sidebarItems}
+                handleDragStart = {handleDragStart}
+                handleDragEnd = {handleDragEnd}
+                iconMapping ={iconMapping}/>
+
             {/* Main Content */}
             <div
                 style={{
@@ -544,7 +514,7 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div  style={{position: 'relative', flex: '1', height: '100%'}} >
+                <div style={{position: 'relative', flex: '1', height: '100%'}}>
                     <MapContainer
                         dragging={isMapLocked}
                         ref={mapContainer}
@@ -557,7 +527,8 @@ function ReactApp() {
                         zoomControl={false}
                         attributionControl={false}
                     >
-                        <Search />
+
+                        <Search style={{left: '400px'}}/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -588,7 +559,7 @@ function ReactApp() {
                                         <div style={{marginBottom: '5px'}}>{marker.name}</div>
                                         {renderParameterInputs(marker)}
                                         <div style={{marginBottom: '5px'}}>
-                                            <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                            <DeleteButton onClick={() => handleMarkerDelete(index)}/>
                                         </div>
                                     </div>
                                 </Popup>
@@ -597,7 +568,10 @@ function ReactApp() {
                         {lines.map((line, index) => (
                             // TODO: color can be changed to indicate overload, for example: color={'red'}
                             <Polyline key={index}
-                                      positions={line}
+                                      positions={[line[0],line[1]]}
+                                      onMouseOver={e => e.target.openPopup()}
+                                      onMouseOut={e => e.target.closePopup()}
+                                      pathOptions = {{ color : line[2] }}
                                       clickable={true}
                                       weight={10}
                                       ref={(ref) => (lineRefs.current[index] = ref)}
@@ -624,36 +598,8 @@ function ReactApp() {
 
 
                     </MapContainer>
-                    <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '6px',
-                        top: '80px',
-                        width: '40px',
-                        height: '40px',
-                        opacity: '30'
-                    }} onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                            <LockIcon className="LockIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: !isMapLocked ? 'flex' : 'none'
-                            }}/>
-                            <LockOpenIcon className="LockOpenIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: isMapLocked ? 'flex' : 'none'
-                            }}/>
-                        </div>
-                    </IconButton>
-                    <IconButton aria-label="check" style={{
+                    <LockButton onLockButtonClick={onLockButtonClick}/>
+                                        <IconButton aria-label="check" style={{
                         position: 'absolute',
                         right: '0px',
                         top: '78%',
@@ -671,6 +617,7 @@ function ReactApp() {
                         }}/>
 
                     </IconButton>
+
                 </div>
             </div>
         </div>
