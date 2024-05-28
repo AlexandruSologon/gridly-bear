@@ -38,30 +38,32 @@ def all_line_colors(net):
     lines = all_lines(net)
     return lines.apply(get_line_color)
 
-def get_line_color(line):
+def get_line_color(line, red=220, safe_below=70, bad_above=90):
     #line here is a nunmber, it is the value loading_percent for a given line.
-    print(line)
-    green_blue = 255
-    if(line < 70):
-        green_blue = 150
-    elif(line > 90):
-        green_blue = 0
+    green_blue = 255 #default value
+    if(line < safe_below):
+        green_blue = red #make blue and green equal to red to get grey
+    elif(line > bad_above):
+        green_blue = 0 #set b and g to 0 to get full red color
     else:
-        green_blue = int(round(150 + (line - 70) * ((0 - 150) / (90 - 70)))) #formula for getting the exact range between green/blue being 0 to 150 between 70-90%
-    return rgb_to_hex(150, green_blue, green_blue)
+        #formula for getting the exact range between green/blue being 0 to red between safe_below% to bad_above%
+        green_blue = int(round(red + (line - safe_below) * ((0 - red) / (bad_above - safe_below)))) 
+    return rgb_to_hex(red, green_blue, green_blue)
 
 #safe_within: distance from one that's determined safe
 #danger_zone: distance from 1 that's unacceptable
-def get_bus_color(bus, safe_within=0.05, danger_zone=0.1):
+def get_bus_color(bus, red=220, safe_within=0.05, danger_zone=0.1):
     green_blue = 255 #default value
     if(1 + safe_within > bus > 1 - safe_within):
-        green_blue = 150 # safe operating ranges
+        green_blue = red # safe operating ranges
     elif(bus > (1 + danger_zone) or bus < (1 - danger_zone)):
         green_blue = 0 # render completely red in this range
-    else: #relative danger, increasing linearly towards red until true danger range
+    else: 
+        #relative danger, increasing linearly towards red until true danger range
         normalized_distance = abs(bus - 1.0) / danger_zone
-        green_blue = int(round(150 * (1 - normalized_distance))) #formula for getting the exact range between green/blue being 0 to 150 between 1.05-1.1 and 0.95-0.9
-    return rgb_to_hex(150, green_blue, green_blue)
+        #formula for getting the exact range between green/blue being 0 to 150 between 1.05-1.1 and 0.95-0.9
+        green_blue = int(round(red * (1 - normalized_distance))) 
+    return rgb_to_hex(red, green_blue, green_blue)
 
 def all_bus_colors(net):
     lines = all_buses(net)
