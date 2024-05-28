@@ -56,18 +56,19 @@ function ReactApp() {
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/bus.png'),
+        iconRetinaUrl: require('./images/dotImage.png'),
+        iconUrl: require('./images/dot.png'),
         iconAnchor: [32, 32],
-        popupAnchor:[0, -35],
-        className: 'dot'
+        popupAnchor:[0, -32],
+        iconSize: [64, 64]
+        //className: 'dot'
     });
     const gridIcon = new L.icon({
         id: 'grid',
         iconRetinaUrl: require('./images/power (2).png'),
         iconUrl: require('./images/power (2).png'),
         iconAnchor: [32,32],
-        popupAnchor:[0, -35]
+        popupAnchor:[0, -32]
     });
     const loadIcon = new L.icon({
         id: 'load',
@@ -246,12 +247,14 @@ function ReactApp() {
             setSelectedMarker(markerIndex);
         } else {
             // If another marker is already selected
-            if (selectedMarker !== markerIndex) {
+            if (selectedMarker !== markerIndex && (markers[selectedMarker].icon.options.id === "bus" || markers[markerIndex].icon.options.id === "bus")) {
                 // Check if both markers still exist
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
+                        let color = "#358cfb";
+                        if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
                     if (lines.length === 0 || lines[lines.length - 1].length === 3) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  '#000'];
+                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
@@ -313,7 +316,6 @@ function ReactApp() {
         }
 
         const updatedMarkers = [...markers];
-        console.log(markers[indexMarker].icon.options.id);
         if(markers[indexMarker].icon.options.id === 'trafo1')
         updatedMarkers.splice(indexMarker, 2);
         else
