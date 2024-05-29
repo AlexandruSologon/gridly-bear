@@ -138,6 +138,7 @@ function ReactApp() {
         const components = [];
         let indices = [0, 0, 0, 0, 0, 0, 0];
         const busIdMap = new Map();
+        const transLines = [];
 
         markerInputs.forEach((marker) => {
             if(marker.name === "Bus")
@@ -181,16 +182,30 @@ function ReactApp() {
                         components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
                         indices[6] += 1;
                         break;
-                    /*
                     case 'Transformer':
-                        components.push(new Transformer(indices[4], busIndex, 5, 20));
-                        indices[4] +=1;
+                        let newTransLine = [item1.parameters.high, item1.parameters.low];
+                        let found = false;
+                        for (let i = 0; i < transLines.length; i++) {
+                            const item = transLines[i];
+                            if (item[0] === newTransLine[0] && item[1] === newTransLine[1]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            transLines.push(newTransLine);
+                        }
                         break;
-                        */
                     default:
                         break;
                 }
             }
+        }
+
+        for (let i = 0; i < transLines.length; i++) {
+            const line = transLines[i];
+            components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
+            indices[4] +=1;
         }
 
         const total = buses.concat(components);
