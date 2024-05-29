@@ -527,7 +527,7 @@ function ReactApp() {
            marker.valueOf()._icon.style.backgroundColor = '#fff'
            marker.valueOf()._icon.style.width = '48px'
            marker.valueOf()._icon.style.height = '48px'
-           marker.valueOf()._icon.style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+','+data.buses[nr][2]+')' + ' solid 6px'
+           marker.valueOf()._icon.style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%)' + ' solid 6px'
            marker.valueOf()._icon.style.borderRadius = '50%'
            nr++; }})
     }
