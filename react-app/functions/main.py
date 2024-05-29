@@ -27,7 +27,7 @@ def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
                 print("received data: " + str(req.data))
                 dat = json.loads(req.data)['data']
                 net = jsonParser.parsejson(dat) #parse the data
-                res = {'buses':nt.all_buses(net).to_json(), 'lines':nt.all_line_colors(net).to_json()}
+                res = {'buses':nt.all_bus_colors(net).to_json(), 'lines':nt.all_line_colors(net).to_json()}
                 return {'data':{'status':"S", 'sim_result':res, 'message':"Success!"}}
         except nt.NetworkInvalidError as e:
                print(e)
