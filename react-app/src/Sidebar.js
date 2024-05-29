@@ -5,6 +5,17 @@ import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 
 function Draggables({state}) {
+
+    const [mousedOver, setMousedOver] = useState(false);
+
+    const unset = () => {
+        setMousedOver(false);
+    }
+
+    const set = (state) => {
+        setMousedOver(true);
+    }
+
     return (
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             {state.sidebarItems.map((item) => (
@@ -13,7 +24,9 @@ function Draggables({state}) {
                     draggable={true}
                     onDragStart={(event) => state.handleDragStart(event, item)}
                     onDragEnd={state.handleDragEnd}
-                    style={{margin: '7px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+                    onMouseEnter={set}
+                    onMouseLeave={unset}
+                    style={{backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit', margin: '2px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
                 >
                     {/* Container for icon and text */}
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -21,7 +34,8 @@ function Draggables({state}) {
                         <img src={state.iconMapping[item.type].options.iconUrl}
                             alt={item.name}
                             style={{width: state.iconMapping[item.type].options.iconSize[0],
-                                    height: state.iconMapping[item.type].options.iconSize[1]}}
+                                    height: state.iconMapping[item.type].options.iconSize[1],
+                            }}
                             //sizes={}
                         />
                         {/* Render the text */}
