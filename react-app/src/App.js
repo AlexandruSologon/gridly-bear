@@ -444,7 +444,7 @@ function ReactApp() {
             map.scrollWheelZoom.disable()}
         else {map.dragging.enable();
             map.keyboard.enable();
-            map.doubleClickZoom.enable();
+            //map.doubleClickZoom.enable();
             map.scrollWheelZoom.enable()}
         return isMapLocked
     }
@@ -541,9 +541,10 @@ function ReactApp() {
                         zoom={13}
                         maxNativeZoom={19}
                         minZoom={3}
-                        style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
+                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
                         attributionControl={false}
+                        doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                     >
 
