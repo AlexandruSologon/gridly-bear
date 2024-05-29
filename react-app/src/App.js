@@ -1,8 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
-import IconButton from '@mui/material/IconButton';
-import LockIcon from '@mui/icons-material/LockOutlined';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
+import React, {useState, useRef} from 'react';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
@@ -11,7 +7,9 @@ import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
-import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
+import {Network,Bus, Load, Line, ExtGrid, Generator} from './CoreClasses';
+import WaitingOverlay from './waitingOverlay'
+import RunButton from './runButton';
 import Sidebar from "./Sidebar";
 import LockButton from "./LockButton";
 
@@ -40,6 +38,8 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
+    const [runClicked, setRunClicked] = useState(false);
+    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -448,25 +448,26 @@ function ReactApp() {
             map.scrollWheelZoom.enable()}
         return isMapLocked
     }
+
     const MapEvents =() => {
-    const map = useMapEvents({
-    zoom() {
-      for (let i=0; i < markers.length; i++)
+        const map = useMapEvents({
+            zoom() {
+                for (let i=0; i < markers.length; i++)
                     if (markers[i].icon.options.id === 'trafo1')
                         handleMarkerDrag(i, markers[i].position)
-  },}
-
-  )
+            },
+        })
     }
 
     /**
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
-    var run_was_clicked = false;
+    
     const onRunButtonClick = () => {
-        if(run_was_clicked) return;
-        run_was_clicked = true;
+        if(runClicked) return;
+        setRunClicked(true);
+        setIsMapLocked(true);
 
         const markerInputs = markers.map(marker => ({
             id: marker.id,
@@ -489,7 +490,7 @@ function ReactApp() {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
         }).finally(() => {
-            run_was_clicked = false;
+            setRunClicked(false);
         });
     }
 
@@ -512,7 +513,8 @@ function ReactApp() {
     const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
-        <div style={{height: '100vh'}}>
+        <div style={{height: '100vh', width: '100vw'}}>
+            <WaitingOverlay runClicked={runClicked}></WaitingOverlay>
             <Sidebar
                 sidebarItems = {sidebarItems}
                 handleDragStart = {handleDragStart}
@@ -538,11 +540,11 @@ function ReactApp() {
                         center={mapCenter}
                         zoom={13}
                         maxNativeZoom={19}
-                        //maxZoom={20}
                         minZoom={3}
                         style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
                         zoomControl={false}
                         attributionControl={false}
+                        scrollWheelZoom={isMapLocked}
                     >
 
                         <Search style={{left: '400px'}}/>
@@ -612,29 +614,9 @@ function ReactApp() {
                             </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
-
-
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick}/>
-                                        <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '0px',
-                        top: '78%',
-                        width: '8vw',
-                        height: '8vw',
-                        opacity: '70'
-                    }} onClick={onRunButtonClick}>
-                        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-                            width: '8vw',
-                            height: '8vw',
-                            color: '#05a95c',
-                            borderWidth: '1px',
-                            borderColor: '#000',
-                            opacity: '70'
-                        }}/>
-
-                    </IconButton>
-
+                    <RunButton runClicked={runClicked} onRunButtonClick={onRunButtonClick}></RunButton>
                 </div>
             </div>
         </div>
