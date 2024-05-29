@@ -99,6 +99,13 @@ function ReactApp() {
         popupAnchor:[0, -42.5],
         className: 'dot'
     });
+    const arrowIcon = new L.icon({
+        id: 'arrow',
+        iconRetinaUrl: require('./images/Blank.png'),
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -42.5],
+        className: 'arrow'
+    });
 
     const iconMapping = {
         grid: gridIcon,
@@ -156,8 +163,6 @@ function ReactApp() {
 
         for (let i = 0; i < busLines.length; i++) {
             const line = busLines[i];
-            //const bus1Loc = markers[line[0]].getLatLng();
-            //const bus2Loc = markers[line[1]].getLatLng();
             let item1 = markers[line[0]]
             let item2 = markers[line[1]]
             if (item1.name === 'Bus' && item2.name === 'Bus') {
@@ -242,8 +247,12 @@ function ReactApp() {
                 acc[param] = '';
                 return acc;
             }, {}) : {};
+            let markerId = 0;
+            if (markers.length != 0) {
+                markerId = markers[markers.length - 1].id + 1;
+            }
             // Add the dropped item as a marker on the map
-            const newMarker = {id: markers.length,
+            const newMarker = {id: markerId,
                 position: droppedLatLng,
                 name: draggedItem.name,
                 icon,
@@ -319,7 +328,7 @@ function ReactApp() {
                             }
                         }
 
-                        // Add line if it doesn't exist
+                        // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
@@ -360,7 +369,6 @@ function ReactApp() {
 
 
     const handleMarkerDelete = (indexMarker) => {
-
         const oldMarkerPos = markers[indexMarker].position;
 
         const markerRef = markerRefs.current[indexMarker];
@@ -391,7 +399,7 @@ function ReactApp() {
 
         const updatedBusLines = busLines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !(line[0] === indexMarker || line[1] === indexMarker);
+            return (line[0] === indexMarker || line[1] === indexMarker);
         });
         setBusLines(updatedBusLines);
     };
@@ -662,6 +670,7 @@ function ReactApp() {
                                 </Popup>
                             </Polyline>
                         ))}
+
                         <ZoomControl position="topright"/>
 
 
