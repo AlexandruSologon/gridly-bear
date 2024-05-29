@@ -272,8 +272,40 @@ function ReactApp() {
                                 break;
                             }
                         }
+                        let maxTransformer = false;
+                        // Check for transformer constraints
+                        if (markers[selectedMarker].name === "Transformer") {
+                            switch(markers[selectedMarker].parameters.connections) {
+                                case 2:
+                                    maxTransformer = true;
+                                    break;
+                                case 1:
+                                    markers[selectedMarker].parameters.low = markerIndex;
+                                    markers[selectedMarker].parameters.connections = 2;
+                                    break;
+                                case 0:
+                                    markers[selectedMarker].parameters.high = markerIndex;
+                                    markers[selectedMarker].parameters.connections = 1;
+                                    break;
+                            }
+                        } else if (markers[markerIndex].name === "Transformer") {
+                            switch(markers[markerIndex].parameters.connections) {
+                                case 2:
+                                    maxTransformer = true;
+                                    break;
+                                case 1:
+                                    markers[markerIndex].parameters.low = selectedMarker;
+                                    markers[markerIndex].parameters.connections = 2;
+                                    break;
+                                case 0:
+                                    markers[markerIndex].parameters.high = selectedMarker;
+                                    markers[markerIndex].parameters.connections = 1;
+                                    break;
+                            }
+                        }
+
                         // Add line if it doesn't exist
-                        if (!found){
+                        if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
