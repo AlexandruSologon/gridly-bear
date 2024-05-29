@@ -35,7 +35,11 @@ function Draggables({state}) {
             {/* Container for icon and text */}
                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 {/* Render the icon based on item.type */}
-                <img src={state.iconMapping[item.type].options.iconUrl} alt={item.name} style={{width: '64px', height: '64px'}}/>
+                <img src={state.iconMapping[item.type].options.iconUrl}
+                    alt={item.name}
+                    style={{width: '64px', height: '64px'}}
+                    //sizes={}
+                />
                 {/* Render the text */}
                 <div>    {item.name}</div>
             </div>
