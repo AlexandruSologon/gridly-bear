@@ -46,6 +46,14 @@ function ReactApp() {
 
     // TODO: in case of needing to change the below icons for the sake of design,
     //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
+    // const makeIcon = (marker) => {
+    //     if (marker.name === 'Bus') {
+    //         console.log(marker.icon);
+    //         return marker.icon;
+    //     }
+    //
+    //     else return marker.icon;
+    //}
     const solarIcon = new L.icon({
         id: 'solar',
         iconRetinaUrl: require('./images/solar.png'),
@@ -55,12 +63,13 @@ function ReactApp() {
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconRetinaUrl: require('./images/dotImage.png'),
-        iconUrl: require('./images/dot.png'),
-        iconAnchor: [32, 32],
+        iconUrl: require('./images/Blank.png'),
+        iconRetinaUrl: require('./images/dot.png'),
+        iconAnchor: [24, 24],
         popupAnchor:[0, -32],
-        iconSize: [64, 64]
-        //className: 'dot'
+        iconSize: [48, 48],
+        className: 'dot ',
+
     });
     const gridIcon = new L.icon({
         id: 'grid',
@@ -109,6 +118,7 @@ function ReactApp() {
         trafo1: trafo1Icon,
         trafo2: trafo2Icon,
     };
+    const busColor = (index) => markers[index][3];
 
     const sidebarItems = [
         { id: 1, name: 'Solar Panel', type: 'solar' },
@@ -178,7 +188,7 @@ function ReactApp() {
                         indices[3] += 1;
                         break;
                     case 'External Grid':
-                        components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
+                        components.push(new ExtGrid(indices[6], busIndex, 1.2));
                         indices[6] += 1;
                         break;
                     /*
@@ -233,7 +243,8 @@ function ReactApp() {
                 name: draggedItem.name,
                 icon,
                 type: draggedItem.type,
-                parameters
+                parameters,
+                color: '#000'
             };
             setMarkers([...markers, newMarker]);
         }
@@ -483,7 +494,8 @@ function ReactApp() {
                 return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                renderSomething(data)
+                renderLines(data)
+                renderBuses(data)
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
@@ -493,12 +505,12 @@ function ReactApp() {
         });
     }
 
-    const renderSomething = (data) => {
+    const renderLines = (data) => {
         let nr = -1;
         const uL = lines.map((line) =>  {
             if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
             {   nr++
-                return [line[0],line[1],data.lines[nr]]}
+                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)']}
             else return line
             }
         );
@@ -507,9 +519,19 @@ function ReactApp() {
 
     };
 
+    const renderBuses = (data) => {
+        let nr = 0;
+        markerRefs.current.forEach(marker => {
+            console.log(marker.valueOf()._icon.style.backgroundColor);
+                if (marker.options.icon.options.id === "bus"){
+           marker.valueOf()._icon.style.backgroundColor = '#fff'
+           marker.valueOf()._icon.style.width = '48px'
+           marker.valueOf()._icon.style.height = '48px'
+           marker.valueOf()._icon.style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+','+data.buses[nr][2]+')' + ' solid 6px'
+           marker.valueOf()._icon.style.borderRadius = '50%'
+           nr++; }})
+    }
 
-
-    const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
         <div style={{height: '100vh'}}>
@@ -556,10 +578,11 @@ function ReactApp() {
                         {markers.map((marker, index) => (
                             <Marker key={index}
                                     position={marker.position}
-                                    icon={marker.icon}
+                                    icon={ marker.icon}
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
+                                    className = "dot"
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, index),
                                         contextmenu: (e) => handleMarkerRightClick(e),

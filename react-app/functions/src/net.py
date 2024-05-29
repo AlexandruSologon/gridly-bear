@@ -38,34 +38,41 @@ def all_line_colors(net):
     lines = all_lines(net)
     return lines.apply(get_line_color)
 
-def get_line_color(line, red=220, safe_below=70, bad_above=90):
-    #line here is a nunmber, it is the value loading_percent for a given line.
-    green_blue = 255 #default value
-    if(line < safe_below):
-        green_blue = red #make blue and green equal to red to get grey
-    elif(line > bad_above):
-        green_blue = 0 #set b and g to 0 to get full red color
+def get_line_color(line,  safe_below=70, bad_above=90):
+    # colors starts from bright green
+    hue = 120
+    # move towards yellow the closer line gets to safe_below
+    if( line <= safe_below):
+        hue = hue - line * (45/safe_below)
+    # move towards red the closer line gets to bad_above
+    elif( line <= bad_above):
+        hue = hue - 55 - line * (50/(bad_above - safe_below))
     else:
-        #formula for getting the exact range between green/blue being 0 to red between safe_below% to bad_above%
-        green_blue = int(round(red + (line - safe_below) * ((0 - red) / (bad_above - safe_below)))) 
-    return rgb_to_hex(red, green_blue, green_blue)
+    # when line > bad_above red return max value red
+        hue = max(hue - 95 - line * (25 / (120-bad_above)), 0)
+    return (hue, 100, 50)
 
-#safe_within: distance from one that's determined safe
-#danger_zone: distance from 1 that's unacceptable
-def get_bus_color(bus, red=220, safe_within=0.05, danger_zone=0.1):
-    if(danger_zone < safe_within or bus < 0):
-        raise ValueError
-    green_blue = 255 #default value
-    if(abs(bus - 1) <= safe_within):
-        green_blue = red # safe operating ranges
-    elif(abs(bus - 1) >= danger_zone):
-        green_blue = 0 # render completely red in this range
-    else: 
-        #relative danger, increasing linearly towards red color until true danger range,
-        #formula for getting the exact range between green/blue being 0 to 150 between (by default) 1.05-1.1 and 0.95-0.9
-        green_blue = red - (red * ((abs(bus - 1) - safe_within) / (danger_zone - safe_within)))
-        green_blue = int(round(green_blue))
-    return rgb_to_hex(red, green_blue, green_blue)
+
+
+
+
+# safe_within: distance from one that's determined safe
+# danger_zone: distance from 1 that's unacceptable
+def get_bus_color(bus, safe_within=0.05, danger_zone=0.1):
+    # color starts from bright green
+    hue = 120
+    safe_below = abs(safe_within)
+    bad_above = abs(danger_zone)
+    # move towards yellow the closer bus gets to safe_within
+    if( bus <= safe_below):
+        hue = hue - bus * (45/safe_below)
+    # move towards red the closer bus gets to danger_zone
+    elif( bus <= bad_above):
+        hue = hue - 55 - bus * (50/(bad_above - safe_below))
+    else:
+        # when bus > danger_zone red return max value red
+        hue = max(hue - 95 - bus * (25 / (120-bad_above)), 0)
+    return (hue, 100, 50)
 
 def all_bus_colors(net):
     lines = all_buses(net)
