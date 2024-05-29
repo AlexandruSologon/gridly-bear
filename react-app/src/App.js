@@ -1,8 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
-import IconButton from '@mui/material/IconButton';
-import LockIcon from '@mui/icons-material/LockOutlined';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
+import React, {useState, useRef} from 'react';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
@@ -11,8 +7,11 @@ import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
-import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
-import {wait} from "@testing-library/user-event/dist/utils";
+import {Network,Bus, Load, Line, ExtGrid, Generator} from './CoreClasses';
+import WaitingOverlay from './waitingOverlay'
+import RunButton from './runButton';
+import Sidebar from "./Sidebar";
+import LockButton from "./LockButton";
 
 function DeleteButton({ onClick }) {
     return (
@@ -39,6 +38,7 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
+    const [runClicked, setRunClicked] = useState(false);
     const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
@@ -55,18 +55,19 @@ function ReactApp() {
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/bus.png'),
+        iconRetinaUrl: require('./images/dotImage.png'),
+        iconUrl: require('./images/dot.png'),
         iconAnchor: [32, 32],
-        popupAnchor:[0, -35],
-        className: 'dot'
+        popupAnchor:[0, -32],
+        iconSize: [64, 64]
+        //className: 'dot'
     });
     const gridIcon = new L.icon({
         id: 'grid',
         iconRetinaUrl: require('./images/power (2).png'),
         iconUrl: require('./images/power (2).png'),
         iconAnchor: [32,32],
-        popupAnchor:[0, -35]
+        popupAnchor:[0, -32]
     });
     const loadIcon = new L.icon({
         id: 'load',
@@ -139,13 +140,16 @@ function ReactApp() {
         const busIdMap = new Map();
 
         markerInputs.forEach((marker) => {
-            const busIndex = indices[0];
-            indices[0] += 1;
-            let newBus;
-            if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
-            else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
-            buses.push(newBus);
-            busIdMap.set(marker.id, busIndex);
+            if(marker.name === "Bus")
+            {
+                const busIndex = indices[0];
+                indices[0] += 1;
+                let newBus;
+                if (busIndex === 0) newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
+                else newBus = new Bus(busIndex, marker.position, parseFloat(marker.parameters.voltage));
+                buses.push(newBus);
+                busIdMap.set(marker.id, busIndex);
+            }
         })
 
 
@@ -156,7 +160,7 @@ function ReactApp() {
             let item1 = markers[line[0]]
             let item2 = markers[line[1]]
             if (item1.name === 'Bus' && item2.name === 'Bus') {
-                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), 'NAYY 4x50 SE', 5));
+                components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), item1.position.distanceTo(item2.position)/1000, 'NAYY 4x50 SE'));
                 indices[1] += 1;
             } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
                 if (item1.name === 'Bus') {
@@ -245,12 +249,14 @@ function ReactApp() {
             setSelectedMarker(markerIndex);
         } else {
             // If another marker is already selected
-            if (selectedMarker !== markerIndex) {
+            if (selectedMarker !== markerIndex && (markers[selectedMarker].icon.options.id === "bus" || markers[markerIndex].icon.options.id === "bus")) {
                 // Check if both markers still exist
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
+                        let color = "#358cfb";
+                        if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
                     if (lines.length === 0 || lines[lines.length - 1].length === 3) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  '#000'];
+                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
@@ -312,7 +318,6 @@ function ReactApp() {
         }
 
         const updatedMarkers = [...markers];
-        console.log(markers[indexMarker].icon.options.id);
         if(markers[indexMarker].icon.options.id === 'trafo1')
         updatedMarkers.splice(indexMarker, 2);
         else
@@ -443,30 +448,32 @@ function ReactApp() {
             map.scrollWheelZoom.enable()}
         return isMapLocked
     }
+
     const MapEvents =() => {
-    const map = useMapEvents({
-    zoom() {
-      for (let i=0; i < markers.length; i++)
+        const map = useMapEvents({
+            zoom() {
+                for (let i=0; i < markers.length; i++)
                     if (markers[i].icon.options.id === 'trafo1')
                         handleMarkerDrag(i, markers[i].position)
-  },}
-
-  )
+            },
+        })
     }
 
     /**
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
-    var run_was_clicked = false;
+    
     const onRunButtonClick = () => {
-        if(run_was_clicked) return;
-        run_was_clicked = true;
+        if(runClicked) return;
+        setRunClicked(true);
+        setIsMapLocked(true);
 
         const markerInputs = markers.map(marker => ({
             id: marker.id,
             type: marker.type,
-            parameters: marker.parameters
+            parameters: marker.parameters,
+            name: marker.name
         }));
 
         const dat = handleExport(markerInputs);
@@ -477,59 +484,43 @@ function ReactApp() {
                 return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                renderSomething()
+                renderSomething(data)
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
         }).finally(() => {
-            run_was_clicked = false;
+            setRunClicked(false);
         });
     }
 
-    const renderSomething = () => {
-        const uL = lines.map((line) =>  [line[0],line[1] ,'#f00'] );
+    const renderSomething = (data) => {
+        let nr = -1;
+        const uL = lines.map((line) =>  {
+            if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
+            {   nr++
+                return [line[0],line[1],data.lines[nr]]}
+            else return line
+            }
+        );
         setLines(uL) ;
+
+
     };
+
+
+
     const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
-        <div style={{display: 'flex', height: '100vh'}}>
-            {/* Sidebar */}
-            <div style={{
-                flex: '0 0 10%',
-                backgroundColor: '#f0f0f0',
-                padding: '20px',
-                overflowY: 'auto',
-                margin: '10px'
-            }}>
-                <h2 style={{
-                    fontSize: '19px',
-                    fontFamily: 'Arial, sans-serif',
-                    overflow: 'auto'
-                }}>
-                    Drag and drop items onto the canvas
-                </h2>
-                {/* Render draggable items */}
-                {sidebarItems.map((item) => (
-                    <div
-                        key={item.id}
-                        draggable={true}
-                        onDragStart={(event) => handleDragStart(event, item)}
-                        onDragEnd={handleDragEnd}
-                        style={{margin: '10px 0', cursor: 'grab'}}
-                    >
-                        {/* Container for icon and text */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            {/* Render the icon based on item.type */}
-                            <img src={iconMapping[item.type].options.iconUrl} alt={item.name} />
-                            {/* Render the text */}
-                            <div>{item.name}</div>
-                        </div>
-                    </div>
-                ))}
-                <Address />
-            </div>
+        <div style={{height: '100vh', width: '100vw'}}>
+            <WaitingOverlay runClicked={runClicked}></WaitingOverlay>
+            <Sidebar
+                sidebarItems = {sidebarItems}
+                handleDragStart = {handleDragStart}
+                handleDragEnd = {handleDragEnd}
+                iconMapping ={iconMapping}/>
+
             {/* Main Content */}
             <div
                 style={{
@@ -542,21 +533,22 @@ function ReactApp() {
                 onDrop={handleDrop}
             >
                 {/* Map and other content */}
-                <div  style={{position: 'relative', flex: '1', height: '100%'}} >
+                <div style={{position: 'relative', flex: '1', height: '100%'}}>
                     <MapContainer
                         dragging={isMapLocked}
                         ref={mapContainer}
                         center={mapCenter}
                         zoom={13}
                         maxNativeZoom={19}
-                        //maxZoom={20}
                         minZoom={3}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
                         attributionControl={false}
                         doubleClickZoom={false}
+                        scrollWheelZoom={isMapLocked}
                     >
-                        <Search />
+
+                        <Search style={{left: '400px'}}/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -587,7 +579,7 @@ function ReactApp() {
                                         <div style={{marginBottom: '5px'}}>{marker.name}</div>
                                         {renderParameterInputs(marker)}
                                         <div style={{marginBottom: '5px'}}>
-                                            <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                            <DeleteButton onClick={() => handleMarkerDelete(index)}/>
                                         </div>
                                     </div>
                                 </Popup>
@@ -623,56 +615,9 @@ function ReactApp() {
                             </Polyline>
                         ))}
                         <ZoomControl position="topright"/>
-
-
                     </MapContainer>
-                    <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '6px',
-                        top: '80px',
-                        width: '40px',
-                        height: '40px',
-                        opacity: '30'
-                    }} onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                            <LockIcon className="LockIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: !isMapLocked ? 'flex' : 'none'
-                            }}/>
-                            <LockOpenIcon className="LockOpenIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: isMapLocked ? 'flex' : 'none'
-                            }}/>
-                        </div>
-                    </IconButton>
-                    <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '0px',
-                        top: '78%',
-                        width: '8vw',
-                        height: '8vw',
-                        opacity: '70'
-                    }} onClick={onRunButtonClick}>
-                        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-                            width: '8vw',
-                            height: '8vw',
-                            color: '#05a95c',
-                            borderWidth: '1px',
-                            borderColor: '#000',
-                            opacity: '70'
-                        }}/>
-
-                    </IconButton>
+                    <LockButton onLockButtonClick={onLockButtonClick}/>
+                    <RunButton runClicked={runClicked} onRunButtonClick={onRunButtonClick}></RunButton>
                 </div>
             </div>
         </div>

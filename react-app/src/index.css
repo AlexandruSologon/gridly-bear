@@ -17,62 +17,31 @@
   margin-bottom: 10px;
 }
 
+.leaflet-control-geosearch {  left: 300px;  z-index: 10002; }
+
+.sidebarbuttons {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: 120px;
+  top: 0;
+}
+
 .dot {
   width: 48px;
   height: 48px;
   border: 4px solid black;
   border-radius: 50%;
   margin: auto;
+  background-color: #ECEFF1;
         }
 .dotIcon {
-
-    width: 16px;
+  width: 16px;
   height: 16px;
   border: 1px solid black;
   border-radius: 100%;
-
 }
 
-.react-flow .hand {
-  opacity: 0;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-}
-
-.dndflow .dndnode {
-  height: 100px;
-  width:  100px;
-  padding: 1px;
-  border: 1px solid #1a192b;
-  border-radius: 2px;
-  margin-bottom: 10px;
-  display: grid;
-  text-align: center;
-  font-size: 16px;
-  justify-content: center;
-  align-items: center;
-  cursor: grab;
-}
-
-.dndflow .dndnode.solar {
-  border-color: #0041d0;
-}
-
-.dndflow .dndnode.output {
-  border-color: #ff0072;
-}
-
-.dndflow .reactflow-wrapper {
-  flex-grow: 1;
-  height: 100%;
-}
-
-.dndflow .selectall {
-  margin-top: 10px;
-}
 
 .sideIcon {
   width: 80px;
