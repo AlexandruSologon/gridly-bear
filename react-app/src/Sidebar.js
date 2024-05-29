@@ -4,7 +4,7 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 
-function Draggables({state}) {
+function SingleDraggable({state, item}) {
 
     const [mousedOver, setMousedOver] = useState(false);
 
@@ -16,36 +16,42 @@ function Draggables({state}) {
         setMousedOver(true);
     }
 
+    return (<div
+        key={item.id}
+        draggable={true}
+        onDragStart={(event) => state.handleDragStart(event, item)}
+        onDragEnd={state.handleDragEnd}
+        onMouseEnter={set}
+        onMouseLeave={unset}
+        style={{backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit', margin: '2px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+    >
+        {/* Container for icon and text */}
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            {/* Render the icon based on item.type */}
+            <img src={state.iconMapping[item.type].options.iconUrl}
+                alt={item.name}
+                style={{width: state.iconMapping[item.type].options.iconSize[0],
+                        height: state.iconMapping[item.type].options.iconSize[1],
+                }}
+                //sizes={}
+            />
+            {/* Render the text */}
+            <div>    {item.name}</div>
+        </div>
+    </div>);
+}
+
+function Draggables({state}) {
     return (
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             {state.sidebarItems.map((item) => (
-                <div
-                    key={item.id}
-                    draggable={true}
-                    onDragStart={(event) => state.handleDragStart(event, item)}
-                    onDragEnd={state.handleDragEnd}
-                    onMouseEnter={set}
-                    onMouseLeave={unset}
-                    style={{backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit', margin: '2px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
-                >
-                    {/* Container for icon and text */}
-                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        {/* Render the icon based on item.type */}
-                        <img src={state.iconMapping[item.type].options.iconUrl}
-                            alt={item.name}
-                            style={{width: state.iconMapping[item.type].options.iconSize[0],
-                                    height: state.iconMapping[item.type].options.iconSize[1],
-                            }}
-                            //sizes={}
-                        />
-                        {/* Render the text */}
-                        <div>    {item.name}</div>
-                    </div>
-                </div>
+                <SingleDraggable state={state} item={item}/>
             ))}
         </div>
     );
 }
+
+
 
 function CollapseButton({onSidebarToggle, isSidebarOn}) {
     return (
