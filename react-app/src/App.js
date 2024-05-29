@@ -48,10 +48,11 @@ function ReactApp() {
     //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
     const solarIcon = new L.icon({
         id: 'solar',
-        iconRetinaUrl: require('./images/solar.png'),
-        iconUrl: require('./images/solar.png'),
+        iconRetinaUrl: require('./images/solarPanel.png'),
+        iconUrl: require('./images/solarPanel.png'),
         iconAnchor: [35, 35],
-        popupAnchor:[0, -35]
+        popupAnchor:[0, -35],
+        iconSize: [90, 90]
     });
     const busIcon = new L.icon({
         id: 'bus',
@@ -64,40 +65,35 @@ function ReactApp() {
     });
     const gridIcon = new L.icon({
         id: 'grid',
-        iconRetinaUrl: require('./images/power (2).png'),
-        iconUrl: require('./images/power (2).png'),
+        iconRetinaUrl: require('./images/grid.png'),
+        iconUrl: require('./images/grid.png'),
         iconAnchor: [32,32],
-        popupAnchor:[0, -32]
+        popupAnchor:[0, -32],
+        iconSize: [80, 80]
     });
     const loadIcon = new L.icon({
         id: 'load',
-        iconRetinaUrl: require('./images/house.png'),
-        iconUrl: require('./images/house.png'),
+        iconRetinaUrl: require('./images/load.png'),
+        iconUrl: require('./images/load.png'),
         iconAnchor: [32, 32],
-        popupAnchor: [0, -32]
+        popupAnchor: [0, -32],
+        iconSize: [64, 64]
     });
     const windIcon = new L.icon({
         id: 'wind',
-        iconRetinaUrl: require('./images/wind.png'),
-        iconUrl: require('./images/wind.png'),
-        iconAnchor: [42.5, 42.5],
-        popupAnchor:[0, -42.5]
+        iconRetinaUrl: require('./images/windTurbine.png'),
+        iconUrl: require('./images/windTurbine.png'),
+        iconAnchor: [32, 32],
+        popupAnchor: [0, -32],
+        iconSize: [90, 90]
     });
     const trafo1Icon = new L.icon({
         id: 'trafo1',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/wind.png'),
+        iconRetinaUrl: require('./images/energy.png'),
+        iconUrl: require('./images/energy.png'),
         iconAnchor: [32, 32],
-        popupAnchor:[0, -42.5],
-        className: 'dot'
-    });
-    const trafo2Icon = new L.icon({
-        id: 'trafo2',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/wind.png'),
-        iconAnchor: [32, 32],
-        popupAnchor:[0, -42.5],
-        className: 'dot'
+        popupAnchor: [0, -32],
+        iconSize: [64, 64]
     });
 
     const iconMapping = {
@@ -106,8 +102,7 @@ function ReactApp() {
         bus: busIcon,
         load: loadIcon,
         wind: windIcon,
-        trafo1: trafo1Icon,
-        trafo2: trafo2Icon,
+        trafo1: trafo1Icon
     };
 
     const sidebarItems = [
@@ -318,13 +313,8 @@ function ReactApp() {
         }
 
         const updatedMarkers = [...markers];
-        if(markers[indexMarker].icon.options.id === 'trafo1')
-        updatedMarkers.splice(indexMarker, 2);
-        else
-        if(markers[indexMarker].icon.options.id === 'trafo2')
-            updatedMarkers.splice(indexMarker - 1, 2);
-        else
-            updatedMarkers.splice(indexMarker, 1);
+
+        updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
 
         markerRefs.current.splice(indexMarker, 1);
@@ -449,16 +439,6 @@ function ReactApp() {
         return isMapLocked
     }
 
-    const MapEvents =() => {
-        const map = useMapEvents({
-            zoom() {
-                for (let i=0; i < markers.length; i++)
-                    if (markers[i].icon.options.id === 'trafo1')
-                        handleMarkerDrag(i, markers[i].position)
-            },
-        })
-    }
-
     /**
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
@@ -552,9 +532,8 @@ function ReactApp() {
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            opacity={0.7}
+                            opacity={0.4}
                         />
-                        <MapEvents/>
                         {markers.map((marker, index) => (
                             <Marker key={index}
                                     position={marker.position}
