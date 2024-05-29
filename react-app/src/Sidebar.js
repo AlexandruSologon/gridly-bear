@@ -4,48 +4,32 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 
-import {
-    Card,
-    Typography,
-    List,
-    ListItem,
-    ListItemPrefix,
-    ListItemSuffix,
-    Chip,
-  } from "@material-tailwind/react";
-  import {
-    PresentationChartBarIcon,
-    ShoppingBagIcon,
-    UserCircleIcon,
-    Cog6ToothIcon,
-    InboxIcon,
-    PowerIcon,
-  } from "@heroicons/react/24/solid";
-
 function Draggables({state}) {
-    return (<div style={{ alignContent: 'center'}}>
-    {state.sidebarItems.map((item) => (
-        <div
-            key={item.id}
-            draggable={true}
-            onDragStart={(event) => state.handleDragStart(event, item)}
-            onDragEnd={state.handleDragEnd}
-            style={{margin: '10px ', cursor: 'grab',width: '96px', height: '96px'}}
-        >
-            {/* Container for icon and text */}
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                {/* Render the icon based on item.type */}
-                <img src={state.iconMapping[item.type].options.iconUrl}
-                    alt={item.name}
-                    style={{width: '64px', height: '64px'}}
-                    //sizes={}
-                />
-                {/* Render the text */}
-                <div>    {item.name}</div>
-            </div>
+    return (
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            {state.sidebarItems.map((item) => (
+                <div
+                    key={item.id}
+                    draggable={true}
+                    onDragStart={(event) => state.handleDragStart(event, item)}
+                    onDragEnd={state.handleDragEnd}
+                    style={{margin: '10px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+                >
+                    {/* Container for icon and text */}
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        {/* Render the icon based on item.type */}
+                        <img src={state.iconMapping[item.type].options.iconUrl}
+                            alt={item.name}
+                            style={{width: '64px', height: '64px'}}
+                            //sizes={}
+                        />
+                        {/* Render the text */}
+                        <div>    {item.name}</div>
+                    </div>
+                </div>
+            ))}
         </div>
-    ))}
-    </div>);
+    );
 }
 
 function CollapseButton({onSidebarToggle, isSidebarOn}) {
@@ -93,11 +77,12 @@ function Sidebar(state) {
             <Drawer 
                 PaperProps={{
                     sx: {
-                            backgroundColor: " #fdfdfd",
-                            color: "#000",
-                            width: '150px',
-                            textAlign: 'center'
-                        }}}
+                        backgroundColor: "rgba(253, 253, 253, 0.7)",
+                        color: "#000",
+                        width: '150px',
+                        textAlign: 'center'
+                    }
+                }}
                 style={{
                     display: isSidebarOn ? 'grid' : 'none',
                     position: 'absolute',
@@ -118,7 +103,8 @@ function Sidebar(state) {
                 <Draggables state={state}></Draggables>
             </Drawer>
             <CollapseButton onSidebarToggle={onSidebarToggle} isSidebarOn={isSidebarOn}></CollapseButton>
-        </div>);
+        </div>
+    );
 }
 
 export default Sidebar;

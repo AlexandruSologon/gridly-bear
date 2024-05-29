@@ -527,7 +527,7 @@ function ReactApp() {
                         scrollWheelZoom={isMapLocked}
                     >
 
-                        <Search style={{left: '400px'}}/>
+                        <Search/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

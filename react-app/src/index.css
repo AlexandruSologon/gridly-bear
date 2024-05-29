@@ -17,7 +17,7 @@
   margin-bottom: 10px;
 }
 
-.leaflet-control-geosearch {  left: 300px;  z-index: 10002; }
+.leaflet-control-geosearch {  left: 50vw;  z-index: 10002; }
 
 .sidebarbuttons {
   position: absolute;
