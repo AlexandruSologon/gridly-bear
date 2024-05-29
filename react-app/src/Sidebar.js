@@ -13,14 +13,15 @@ function Draggables({state}) {
                     draggable={true}
                     onDragStart={(event) => state.handleDragStart(event, item)}
                     onDragEnd={state.handleDragEnd}
-                    style={{margin: '10px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+                    style={{margin: '7px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
                 >
                     {/* Container for icon and text */}
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         {/* Render the icon based on item.type */}
                         <img src={state.iconMapping[item.type].options.iconUrl}
                             alt={item.name}
-                            style={{width: '64px', height: '64px'}}
+                            style={{width: state.iconMapping[item.type].options.iconSize[0],
+                                    height: state.iconMapping[item.type].options.iconSize[1]}}
                             //sizes={}
                         />
                         {/* Render the text */}

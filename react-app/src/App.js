@@ -50,9 +50,9 @@ function ReactApp() {
         id: 'solar',
         iconRetinaUrl: require('./images/solarPanel.png'),
         iconUrl: require('./images/solarPanel.png'),
-        iconAnchor: [35, 35],
+        iconAnchor: [30, 25],
         popupAnchor:[0, -35],
-        iconSize: [90, 90]
+        iconSize: [60, 50]
     });
     const busIcon = new L.icon({
         id: 'bus',
@@ -75,17 +75,17 @@ function ReactApp() {
         id: 'load',
         iconRetinaUrl: require('./images/load.png'),
         iconUrl: require('./images/load.png'),
-        iconAnchor: [32, 32],
+        iconAnchor: [32, 28.5],
         popupAnchor: [0, -32],
-        iconSize: [64, 64]
+        iconSize: [64, 57]
     });
     const windIcon = new L.icon({
         id: 'wind',
         iconRetinaUrl: require('./images/windTurbine.png'),
         iconUrl: require('./images/windTurbine.png'),
-        iconAnchor: [32, 32],
-        popupAnchor: [0, -32],
-        iconSize: [90, 90]
+        iconAnchor: [35, 35],
+        popupAnchor: [0, -35],
+        iconSize: [70, 70]
     });
     const trafo1Icon = new L.icon({
         id: 'trafo1',
@@ -106,12 +106,12 @@ function ReactApp() {
     };
 
     const sidebarItems = [
-        { id: 1, name: 'Solar Panel', type: 'solar' },
-        { id: 2, name: 'Bus', type: 'bus' },
+        { id: 1, name: 'Wind Turbine', type: 'wind' },
+        { id: 2, name: 'Solar Panel', type: 'solar' },
         { id: 3, name: 'Load', type: 'load' },
-        { id: 4, name: 'Wind Turbine', type: 'wind'},
-        { id: 5, name: 'Transformer', type: 'trafo1' },
-        { id: 6, name: 'External Grid', type: 'grid' },
+        { id: 4, name: 'Transformer', type: 'trafo1' },
+        { id: 5, name: 'External Grid', type: 'grid' },
+        { id: 6, name: 'Bus', type: 'bus'}
     ];
 
     // TODO: Change parameter names and/or add more parameters here if necessary
