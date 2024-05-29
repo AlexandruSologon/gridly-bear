@@ -43,6 +43,14 @@
 
 }
 
+.triangle {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 32.5px 0 32.5px 56.3px;
+  border-color: transparent transparent transparent #c37777;
+  transform: rotate(0deg);
+}
 
 .sideIcon {
   width: 80px;

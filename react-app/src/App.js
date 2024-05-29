@@ -89,7 +89,7 @@ function ReactApp() {
         iconUrl: require('./images/wind.png'),
         iconAnchor: [32, 32],
         popupAnchor:[0, -42.5],
-        className: 'dot'
+        className: 'triangle'
     });
     const trafo2Icon = new L.icon({
         id: 'trafo2',
@@ -123,7 +123,7 @@ function ReactApp() {
     const markerParametersConfig = {
         bus: ['voltage'],
         //line: ['type', 'length'], // not a marker
-        transformer: ['type'],
+        trafo1: ['type', 'connections', 'high', 'low'],
         switch: ['type'],
         load: ['p_mv', 'q_mvar'],
         extGrid: ['voltage'],
@@ -232,6 +232,10 @@ function ReactApp() {
                 type: draggedItem.type,
                 parameters
             };
+            if (newMarker.name === "Transformer") {
+                console.log("Initializing transformer");
+                newMarker.parameters.connections = 0;
+            }
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);};
