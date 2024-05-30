@@ -136,7 +136,7 @@ function ReactApp() {
         transformer: ['type'],
         switch: ['type'],
         load: ['p_mv', 'q_mvar'],
-        extGrid: ['voltage'],
+        grid: ['voltage'],
         solar: ['power'],
         wind: ['power']
     }
@@ -188,7 +188,7 @@ function ReactApp() {
                         indices[3] += 1;
                         break;
                     case 'External Grid':
-                        components.push(new ExtGrid(indices[6], busIndex, 1.2));
+                        components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
                         indices[6] += 1;
                         break;
                     /*
