@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-//
 import { TextEncoder, TextDecoder } from 'util'
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
