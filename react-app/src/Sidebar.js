@@ -37,7 +37,7 @@ function SingleDraggable({state, item}) {
         {/* Container for icon and text */}
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100vh'}}>
             {/* Render the icon based on item.type */}
-            <img src={state.iconMapping[item.type].options.iconUrl}
+            <img src={state.iconMapping[item.type].options.iconRetinaUrl}
                  alt={item.name}
                  style={{
                      width: state.iconMapping[item.type].options.iconSize[0],
