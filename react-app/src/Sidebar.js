@@ -23,21 +23,30 @@ function SingleDraggable({state, item}) {
         onDragEnd={state.handleDragEnd}
         onMouseEnter={set}
         onMouseLeave={unset}
-        style={{backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit', margin: '2px ', cursor: 'grab',width: '96px', height: '96px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+        style={{
+            backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit',
+            margin: '2px ',
+            cursor: 'grab',
+            width: '96px',
+            height: '96px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        }}
     >
         {/* Container for icon and text */}
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100vh'}}>
             {/* Render the icon based on item.type */}
             <img src={state.iconMapping[item.type].options.iconUrl}
-                alt={item.name}
-                style={{width: state.iconMapping[item.type].options.iconSize[0],
-                        height: state.iconMapping[item.type].options.iconSize[1],
-                }}
-                //sizes={}
+                 alt={item.name}
+                 style={{
+                     width: state.iconMapping[item.type].options.iconSize[0],
+                     height: state.iconMapping[item.type].options.iconSize[1],
+                 }}
             />
             {/* Render the text */}
-            <div>    {item.name}</div>
         </div>
+        <div>{item.name}</div>
     </div>);
 }
 
@@ -55,7 +64,7 @@ function Draggables({state}) {
 
 function CollapseButton({onSidebarToggle, isSidebarOn}) {
     return (
-        <IconButton 
+        <IconButton
             style={{
                 position: 'absolute',
                 width: '30px',
