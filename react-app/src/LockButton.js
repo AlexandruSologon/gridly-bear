@@ -12,7 +12,9 @@ function LockButton(props) {
     }
 
     return(
-        <IconButton aria-label="check" style={{
+        <IconButton aria-label="check"
+                    data-testid = "lockbutton"
+                    style={{
                         position: 'absolute',
                         right: '6px',
                         top: '80px',
@@ -21,7 +23,8 @@ function LockButton(props) {
                         opacity: '30'
                     }} onClick={onLockButtonClick}>
                         <div style={{position: 'relative'}}>
-                            <LockIcon className="LockIcon" style={{
+                            <LockIcon data-testid = "lock-close-icon"
+                                className="LockIcon" style={{
                                 width: '40px',
                                 height: '40px',
                                 color: '#000',
@@ -30,7 +33,8 @@ function LockButton(props) {
                                 opacity: '30',
                                 display: !isMapLocked ? 'flex' : 'none'
                             }}/>
-                            <LockOpenIcon className="LockOpenIcon" style={{
+                            <LockOpenIcon data-testid = "lock-open-icon"
+                                className="LockOpenIcon" style={{
                                 width: '40px',
                                 height: '40px',
                                 color: '#000',

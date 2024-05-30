@@ -16,6 +16,7 @@ function Sidebar(state) {
 
 return (<div>
                 <Drawer
+                    data-testid = "sidebar"
                     PaperProps={{
                         sx: {
                             backgroundColor: "#F9F6EE",
@@ -32,6 +33,7 @@ return (<div>
                     anchor="bottomleft"
                 >
                     <div style={{height: '3%'}}></div>
+                    Drag & Drop
                     <h2 style={{
                         fontSize: '19px',
                         fontFamily: 'Arial, sans-serif',
@@ -57,7 +59,9 @@ return (<div>
                         </div>
                     ))}
                 </Drawer>
-                <IconButton style={{
+                <IconButton
+                    data-testid = "retract-sidebar"
+                    style={{
                     position: 'absolute',
                     width: '30px',
                     height: '30px',
@@ -65,13 +69,17 @@ return (<div>
                     top: '0px',
                     zIndex: 1001
                 }} onClick={onSidebarToggle}>
-                    <KeyboardDoubleArrowRightIcon className="KeyboardDoubleArrowRightIcon"
+                    <KeyboardDoubleArrowRightIcon
+                        data-testid = "retract-sidebar-icon-right"
+                        className="KeyboardDoubleArrowRightIcon"
                                                   style={{
                                                       display: !isSidebarOn ? 'flex' : 'none',
                                                       width: '30px',
                                                       height: '30px'
                                                   }}/>
-                    <KeyboardDoubleArrowLeftIcon className="KeyboardDoubleArrowLeftIcon"
+                    <KeyboardDoubleArrowLeftIcon
+                        data-testid = "retract-sidebar-icon-left"
+                        className="KeyboardDoubleArrowLeftIcon"
                                                   style={{
                                                       display: isSidebarOn ? 'flex' : 'none',
                                                       width: '30px',
