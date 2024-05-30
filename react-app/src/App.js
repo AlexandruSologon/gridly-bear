@@ -7,7 +7,7 @@ import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
-import {Network,Bus, Load, Line, ExtGrid, Generator} from './CoreClasses';
+import {Network,Bus, Load, Line, ExtGrid, Generator, Transformer} from './CoreClasses';
 import WaitingOverlay from './waitingOverlay'
 import RunButton from './runButton';
 import Sidebar from "./Sidebar";
@@ -206,7 +206,7 @@ export function ReactApp() {
 
         for (let i = 0; i < transLines.length; i++) {
             const line = transLines[i];
-            components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
+            components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), "0.4 MVA 20/0.4 kV"));
             indices[4] +=1;
         }
 
