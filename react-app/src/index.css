@@ -30,17 +30,11 @@
 .dot {
   width: 48px;
   height: 48px;
-  border: 4px solid black;
+  border: #636363 solid 6px;
   border-radius: 50%;
   margin: auto;
   background-color: #ECEFF1;
         }
-.dotIcon {
-  width: 16px;
-  height: 16px;
-  border: 1px solid black;
-  border-radius: 100%;
-}
 
 
 .sideIcon {
