@@ -65,7 +65,7 @@ function ReactApp() {
     const busIcon = new L.icon({
         id: 'bus',
         iconUrl: require('./images/Blank.png'),
-        iconRetinaUrl: require('./images/dot.png'),
+        iconRetinaUrl: require('./images/busIcon.png'),
         iconAnchor: [24, 24],
         popupAnchor:[0, -32],
         iconSize: [48, 48],
