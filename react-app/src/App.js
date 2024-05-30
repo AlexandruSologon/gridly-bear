@@ -39,21 +39,12 @@ export function ReactApp() {
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
-    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
 
     // TODO: in case of needing to change the below icons for the sake of design,
     //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
-    // const makeIcon = (marker) => {
-    //     if (marker.name === 'Bus') {
-    //         console.log(marker.icon);
-    //         return marker.icon;
-    //     }
-    //
-    //     else return marker.icon;
-    //}
     const solarIcon = new L.icon({
         id: 'solar',
         iconRetinaUrl: require('./images/solarPanel.png'),
@@ -101,8 +92,15 @@ export function ReactApp() {
         iconRetinaUrl: require('./images/energy.png'),
         iconUrl: require('./images/energy.png'),
         iconAnchor: [32, 32],
-        popupAnchor: [0, -32],
+        popupAnchor:[0, -32],
         iconSize: [64, 64]
+    });
+    const arrowIcon = new L.icon({
+        id: 'arrow',
+        iconRetinaUrl: require('./images/Blank.png'),
+        iconAnchor: [32, 32],
+        popupAnchor:[0, -42.5],
+        className: 'arrow'
     });
 
     const iconMapping = {
@@ -113,7 +111,6 @@ export function ReactApp() {
         wind: windIcon,
         trafo1: trafo1Icon
     };
-    const busColor = (index) => markers[index][3];
 
     const sidebarItems = [
         { id: 1, name: 'Wind Turbine', type: 'wind' },
@@ -128,7 +125,7 @@ export function ReactApp() {
     const markerParametersConfig = {
         bus: ['voltage'],
         //line: ['type', 'length'], // not a marker
-        transformer: ['type'],
+        trafo1: ['type', 'connections', 'high', 'low'],
         switch: ['type'],
         load: ['p_mv', 'q_mvar'],
         grid: ['voltage'],
@@ -143,6 +140,7 @@ export function ReactApp() {
         const components = [];
         let indices = [0, 0, 0, 0, 0, 0, 0];
         const busIdMap = new Map();
+        const transLines = [];
 
         markerInputs.forEach((marker) => {
             if(marker.name === "Bus")
@@ -186,16 +184,30 @@ export function ReactApp() {
                         components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
                         indices[6] += 1;
                         break;
-                    /*
                     case 'Transformer':
-                        components.push(new Transformer(indices[4], busIndex, 5, 20));
-                        indices[4] +=1;
+                        let newTransLine = [item1.parameters.high, item1.parameters.low];
+                        let found = false;
+                        for (let i = 0; i < transLines.length; i++) {
+                            const item = transLines[i];
+                            if (item[0] === newTransLine[0] && item[1] === newTransLine[1]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            transLines.push(newTransLine);
+                        }
                         break;
-                        */
                     default:
                         break;
                 }
             }
+        }
+
+        for (let i = 0; i < transLines.length; i++) {
+            const line = transLines[i];
+            components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
+            indices[4] +=1;
         }
 
         const total = buses.concat(components);
@@ -232,15 +244,22 @@ export function ReactApp() {
                 acc[param] = '';
                 return acc;
             }, {}) : {};
+            let markerId = 0;
+            if (markers.length != 0) {
+                markerId = markers[markers.length - 1].id + 1;
+            }
             // Add the dropped item as a marker on the map
-            const newMarker = {id: markers.length,
+            const newMarker = {id: markerId,
                 position: droppedLatLng,
                 name: draggedItem.name,
                 icon,
                 type: draggedItem.type,
-                parameters,
-                color: '#000'
+                parameters
             };
+            if (newMarker.name === "Transformer") {
+                console.log("Initializing transformer");
+                newMarker.parameters.connections = 0;
+            }
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);};
@@ -274,8 +293,40 @@ export function ReactApp() {
                                 break;
                             }
                         }
-                        // Add line if it doesn't exist
-                        if (!found){
+                        let maxTransformer = false;
+                        // Check for transformer constraints
+                        if (markers[selectedMarker].name === "Transformer") {
+                            switch(markers[selectedMarker].parameters.connections) {
+                                case 2:
+                                    maxTransformer = true;
+                                    break;
+                                case 1:
+                                    markers[selectedMarker].parameters.low = markerIndex;
+                                    markers[selectedMarker].parameters.connections = 2;
+                                    break;
+                                case 0:
+                                    markers[selectedMarker].parameters.high = markerIndex;
+                                    markers[selectedMarker].parameters.connections = 1;
+                                    break;
+                            }
+                        } else if (markers[markerIndex].name === "Transformer") {
+                            switch(markers[markerIndex].parameters.connections) {
+                                case 2:
+                                    maxTransformer = true;
+                                    break;
+                                case 1:
+                                    markers[markerIndex].parameters.low = selectedMarker;
+                                    markers[markerIndex].parameters.connections = 2;
+                                    break;
+                                case 0:
+                                    markers[markerIndex].parameters.high = selectedMarker;
+                                    markers[markerIndex].parameters.connections = 1;
+                                    break;
+                            }
+                        }
+
+                        // Add line if it doesn't exist and doesn't break transformer constraints
+                        if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
@@ -341,7 +392,7 @@ export function ReactApp() {
 
         const updatedBusLines = busLines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return !(line[0] === indexMarker || line[1] === indexMarker);
+            return (line[0] === indexMarker || line[1] === indexMarker);
         });
         setBusLines(updatedBusLines);
     };
@@ -445,16 +496,26 @@ export function ReactApp() {
             map.scrollWheelZoom.disable()}
         else {map.dragging.enable();
             map.keyboard.enable();
-            //map.doubleClickZoom.enable();
+            map.doubleClickZoom.enable();
             map.scrollWheelZoom.enable()}
         return isMapLocked
+    }
+    const MapEvents =() => {
+    const map = useMapEvents({
+    zoom() {
+      for (let i=0; i < markers.length; i++)
+                    if (markers[i].icon.options.id === 'trafo1')
+                        handleMarkerDrag(i, markers[i].position)
+  },}
+
+  )
     }
 
     /**
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
-    
+
     const onRunButtonClick = () => {
         if(runClicked) return;
         setRunClicked(true);
@@ -514,6 +575,8 @@ export function ReactApp() {
     }
 
 
+
+
     return (
         <div style={{height: '100vh', width: '100vw'}}>
             <WaitingOverlay runClicked={runClicked}></WaitingOverlay>
@@ -542,6 +605,7 @@ export function ReactApp() {
                         center={mapCenter}
                         zoom={13}
                         maxNativeZoom={19}
+                        //maxZoom={20}
                         minZoom={3}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
@@ -564,7 +628,6 @@ export function ReactApp() {
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
-                                    className = "dot"
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, index),
                                         contextmenu: (e) => handleMarkerRightClick(e),
@@ -616,7 +679,10 @@ export function ReactApp() {
                                 </Popup>
                             </Polyline>
                         ))}
+
                         <ZoomControl position="topright"/>
+
+
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick}/>
                     <RunButton runClicked={runClicked} onRunButtonClick={onRunButtonClick}></RunButton>
