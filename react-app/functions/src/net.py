@@ -71,7 +71,7 @@ def get_bus_color(bus, safe_within=0.05, danger_zone=0.1):
         hue = hue - 55 - bus * (50/(bad_above - safe_below))
     else:
         # when bus > danger_zone red return max value red
-        hue = max(hue - 95 - bus * (25 / (120-bad_above)), 0)
+        hue = max(hue - 95 - bus * (25 / (1.2-bad_above)), 0)
     return (hue, 100, 50)
 
 def all_bus_colors(net):
