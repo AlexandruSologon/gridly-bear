@@ -2,7 +2,7 @@
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
-
+const esModules = ['@react-leaflet', 'react-leaflet'].join('|');
 /** @type {import('jest').Config} */
 const config = {
   // All imported modules in your tests should be mocked automatically
@@ -89,7 +89,10 @@ const config = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+   moduleNameMapper: {
+     //"react-leaflet": "react-app/src/test/mocks/reactLeafletMock.js",
+       "\\.(css|less)$": "<rootDir>/src/test/mocks/styleMock.js"
+   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -122,7 +125,7 @@ const config = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  // rootDir: undefined,
+   rootDir: './',
 
   // A list of paths to directories that Jest should use to search for files in
   // roots: [
@@ -136,7 +139,7 @@ const config = {
    setupFiles: ['./jest.polyfills.js'],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-   setupFilesAfterEnv: ["react-app/setupAfterEnv.js"],
+   setupFilesAfterEnv: [],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
@@ -145,7 +148,7 @@ const config = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -174,11 +177,15 @@ const config = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
+   transform:  {
+       "^.+\\.(js|jsx)$": "babel-jest"
+    },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
    transformIgnorePatterns:  [
       "/node_modules/(?!(@bundled-es-modules)/).*/",
+       `/node_modules/(?!${esModules})`,
+
     ]
   //   "\\\\node_modules\\\\",
   //   "\\.pnp\\.[^\\\\]+$"

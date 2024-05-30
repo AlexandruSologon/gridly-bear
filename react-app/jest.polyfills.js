@@ -8,14 +8,12 @@
  * Consider migrating to a more modern test runner if
  * you don't want to deal with this.
  */
-import { ReadableStream } from 'node:stream/web'
-if (globalThis.ReadableStream === undefined) {
-  globalThis.ReadableStream = ReadableStream
-}
 const { TextDecoder, TextEncoder } = require('node:util')
 
+const ReadableStream = require('node:stream/web')
 
 Object.defineProperties(globalThis, {
+  ReadableStream: {value: ReadableStream},
   TextDecoder: { value: TextDecoder },
   TextEncoder: { value: TextEncoder },
 })
