@@ -29,7 +29,7 @@ function Address() {
 }
 
 
-function ReactApp() {
+export function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);

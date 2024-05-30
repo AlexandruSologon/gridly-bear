@@ -10,7 +10,9 @@ import CircularProgress from '@mui/material/CircularProgress';
  */
 function GreenArrow({onRunButtonClick}) {
     return (
-        <IconButton aria-label="check" style = {
+        <IconButton
+            data-testid = "run-button"
+            aria-label="check" style = {
             {
                 position: 'absolute',
                 right: '0px',
@@ -39,7 +41,8 @@ function GreenArrow({onRunButtonClick}) {
  */
 function AnnularThrobber() {
     return (
-        <div style = {
+        <div data-testid = 'run-circle'
+            style = {
             { 
                 position: 'absolute', 
                 right: '0px', 
