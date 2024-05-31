@@ -29,7 +29,8 @@ test('Sidebar', () => {
         iconRetinaUrl: jest.fn(),
         iconUrl: jest.fn(),
         iconAnchor: [35, 35],
-        popupAnchor:[0, -35]
+        popupAnchor:[0, -35],
+        iconSize: [60, 50]
     });
   render(<Sidebar
                 sidebarItems = {[{id: 1, name: 'Solar Panel', type: 'solar'}]}
