@@ -23,6 +23,14 @@ function DeleteButton({ onClick }) {
     );
 }
 
+function ReverseButton({ onClick }) {
+    return (
+        <button style={{ color: 'blue' }} onClick={onClick}>
+            Reverse
+        </button>
+    );
+}
+
 function Address() {
     return (
         <input type="text" placeholder="Search for Components">
@@ -215,7 +223,7 @@ function ReactApp() {
 
         const total = buses.concat(components);
         const networkData = JSON.stringify(new Network(total));
-        console.log('Exported Data:', networkData);
+        //console.log('Exported Data:', networkData);
         return networkData;
     };
 
@@ -377,13 +385,7 @@ function ReactApp() {
         }
 
         const updatedMarkers = [...markers];
-        if(markers[indexMarker].icon.options.id === 'trafo1')
-        updatedMarkers.splice(indexMarker, 2);
-        else
-        if(markers[indexMarker].icon.options.id === 'trafo2')
-            updatedMarkers.splice(indexMarker - 1, 2);
-        else
-            updatedMarkers.splice(indexMarker, 1);
+        updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
 
         markerRefs.current.splice(indexMarker, 1);
@@ -403,6 +405,25 @@ function ReactApp() {
         });
         setBusLines(updatedBusLines);
     };
+
+    const handleTransReverse = (markerId) => {
+        const marker = markers[markerId];
+        const [newHigh, newLow] = [marker.parameters.low, marker.parameters.high];
+        const updatedMarkers = markers.map(marker => {
+            if (marker.id === markerId) {
+                return {
+                    ...marker,
+                    parameters: {
+                        ...marker.parameters,
+                        high:newHigh,
+                        low:newLow
+                    }
+                };
+            }
+            return marker;
+        });
+        setMarkers(updatedMarkers);
+    }
 
     const handleLineDelete = (index) => {
         const lineRef = lineRefs.current[index];
@@ -461,6 +482,27 @@ function ReactApp() {
             ))
         );
     };
+
+    const renderRequiredButtons = (marker, index) => {
+        const { id, type } = marker;
+        if (type === 'trafo1') {
+            return (
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <div style={{marginBottom: '5px'}}>
+                <DeleteButton onClick={() => handleMarkerDelete(index)}/>
+            </div>
+            <div style={{marginBottom: '5px'}}>
+                <ReverseButton onClick={() => handleTransReverse(index)}/>
+            </div>
+            </div>
+            );
+        }
+        return (
+            <div style={{marginBottom: '5px'}}>
+                <DeleteButton onClick={() => handleMarkerDelete(index)}/>
+            </div>
+        )
+    }
 
     const handleParameterChange = (markerId, paramName, value) => {
         const updatedMarkers = markers.map(marker => {
@@ -634,9 +676,7 @@ function ReactApp() {
                                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                         <div style={{marginBottom: '5px'}}>{marker.name}</div>
                                         {renderParameterInputs(marker)}
-                                        <div style={{marginBottom: '5px'}}>
-                                            <DeleteButton onClick={() => handleMarkerDelete(index)}/>
-                                        </div>
+                                        {renderRequiredButtons(marker, index)}
                                     </div>
                                 </Popup>
                             </Marker>
