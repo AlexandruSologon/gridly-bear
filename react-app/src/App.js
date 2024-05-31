@@ -4,14 +4,14 @@ import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet'
 import L from 'leaflet';
-import Search from './Search';
+import Search from './interface-elements/Search';
 import debounce from "lodash.debounce";
-import { cnvs_json_post } from './api_interaction';
+import { cnvs_json_post } from './utils/api_interaction';
 import {Network,Bus, Load, Line, ExtGrid, Generator} from './CoreClasses';
-import WaitingOverlay from './waitingOverlay'
-import RunButton from './runButton';
-import Sidebar from "./Sidebar";
-import LockButton from "./LockButton";
+import WaitingOverlay from './interface-elements/waitingOverlay'
+import RunButton from './interface-elements/runButton';
+import Sidebar from "./interface-elements/Sidebar";
+import LockButton from "./interface-elements/LockButton";
 
 function DeleteButton({ onClick }) {
     return (
@@ -20,14 +20,6 @@ function DeleteButton({ onClick }) {
         </button>
     );
 }
-
-function Address() {
-    return (
-        <input type="text" placeholder="Search for Components">
-        </input>
-    );
-}
-
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -64,13 +56,11 @@ export function ReactApp() {
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconUrl: require('./images/Blank.png'),
+        iconUrl: require('./images/busIcon.png'),
         iconRetinaUrl: require('./images/busIcon.png'),
         iconAnchor: [24, 24],
         popupAnchor:[0, -32],
-        iconSize: [48, 48],
-        className: 'dot ',
-
+        iconSize: [48, 48]
     });
     const gridIcon = new L.icon({
         id: 'grid',

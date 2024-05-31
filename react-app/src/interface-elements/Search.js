@@ -2,7 +2,7 @@
 import { useMap } from 'react-leaflet';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
-import './index.css';
+import '../index.css';
 
 function Search() {
     //map hook
