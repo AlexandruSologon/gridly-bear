@@ -409,7 +409,7 @@ export function ReactApp() {
 
         const updatedBusLines = busLines.filter((line) => {
             // Check if the line contains the deleted marker's position
-            return (line[0] === indexMarker || line[1] === indexMarker);
+            return !(line[0] === indexMarker || line[1] === indexMarker);
         });
         setBusLines(updatedBusLines);
     };
