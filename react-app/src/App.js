@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import './index.css';
+import './css-files/index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, ZoomControl, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet'

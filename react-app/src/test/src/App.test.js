@@ -2,10 +2,10 @@ import '@testing-library/jest-dom';
 import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Sidebar  from "./interface-elements/Sidebar";
-import LockButton from "./interface-elements/LockButton";
+import Sidebar  from "../../interface-elements/Sidebar";
+import LockButton from "../../interface-elements/LockButton";
 import L from "leaflet";
-import RunButton from "./interface-elements/runButton";
+import RunButton from "../../interface-elements/runButton";
 
   jest.mock('react-leaflet', () => jest.fn());
   jest.mock('firebase-functions', () => jest.fn());
