@@ -143,7 +143,7 @@ export function ReactApp() {
     const markerParametersConfig = {
         bus: ['voltage'],
         //line: ['type', 'length'], // not a marker
-        trafo1: ['type', 'connections', 'high', 'low'],
+        trafo1: ['type'],
         switch: ['type'],
         load: ['p_mv', 'q_mvar'],
         grid: ['voltage'],
@@ -201,7 +201,7 @@ export function ReactApp() {
                         indices[6] += 1;
                         break;
                     case 'Transformer':
-                        let newTransLine = [item1.parameters.high, item1.parameters.low];
+                        let newTransLine = [item1.high, item1.low];
                         let found = false;
                         for (let i = 0; i < transLines.length; i++) {
                             const item = transLines[i];
@@ -275,7 +275,9 @@ export function ReactApp() {
             };
             if (newMarker.name === "Transformer") {
                 console.log("Initializing transformer");
-                newMarker.parameters.connections = 0;
+                newMarker.connections = 0;
+                newMarker.high = null;
+                newMarker.low = null;
             }
             setMarkers([...markers, newMarker]);
         }
@@ -313,31 +315,31 @@ export function ReactApp() {
                         let maxTransformer = false;
                         // Check for transformer constraints
                         if (markers[selectedMarker].name === "Transformer") {
-                            switch(markers[selectedMarker].parameters.connections) {
+                            switch(markers[selectedMarker].connections) {
                                 case 2:
                                     maxTransformer = true;
                                     break;
                                 case 1:
-                                    markers[selectedMarker].parameters.low = markerIndex;
-                                    markers[selectedMarker].parameters.connections = 2;
+                                    markers[selectedMarker].low = markerIndex;
+                                    markers[selectedMarker].connections = 2;
                                     break;
                                 case 0:
-                                    markers[selectedMarker].parameters.high = markerIndex;
-                                    markers[selectedMarker].parameters.connections = 1;
+                                    markers[selectedMarker].high = markerIndex;
+                                    markers[selectedMarker].connections = 1;
                                     break;
                             }
                         } else if (markers[markerIndex].name === "Transformer") {
-                            switch(markers[markerIndex].parameters.connections) {
+                            switch(markers[markerIndex].connections) {
                                 case 2:
                                     maxTransformer = true;
                                     break;
                                 case 1:
-                                    markers[markerIndex].parameters.low = selectedMarker;
-                                    markers[markerIndex].parameters.connections = 2;
+                                    markers[markerIndex].low = selectedMarker;
+                                    markers[markerIndex].connections = 2;
                                     break;
                                 case 0:
-                                    markers[markerIndex].parameters.high = selectedMarker;
-                                    markers[markerIndex].parameters.connections = 1;
+                                    markers[markerIndex].high = selectedMarker;
+                                    markers[markerIndex].connections = 1;
                                     break;
                             }
                         }
@@ -414,16 +416,13 @@ export function ReactApp() {
 
     const handleTransReverse = (markerId) => {
         const marker = markers[markerId];
-        const [newHigh, newLow] = [marker.parameters.low, marker.parameters.high];
+        const [newHigh, newLow] = [marker.low, marker.high];
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
                 return {
                     ...marker,
-                    parameters: {
-                        ...marker.parameters,
-                        high:newHigh,
-                        low:newLow
-                    }
+                    high: newHigh,
+                    low: newLow
                 };
             }
             return marker;
