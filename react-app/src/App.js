@@ -1,8 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
-import IconButton from '@mui/material/IconButton';
-import LockIcon from '@mui/icons-material/LockOutlined';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
+import React, {useState, useRef} from 'react';
 import './index.css';
 import 'reactflow/dist/style.css';
 import 'leaflet/dist/leaflet.css';
@@ -11,7 +7,9 @@ import L from 'leaflet';
 import Search from './Search';
 import debounce from "lodash.debounce";
 import { cnvs_json_post } from './api_interaction';
-import {Network,Bus, Load, Transformer, Line, ExtGrid, Generator} from './CoreClasses';
+import {Network,Bus, Load, Line, ExtGrid, Generator, Transformer} from './CoreClasses';
+import WaitingOverlay from './waitingOverlay'
+import RunButton from './runButton';
 import Sidebar from "./Sidebar";
 import LockButton from "./LockButton";
 
@@ -39,7 +37,7 @@ function Address() {
 }
 
 
-function ReactApp() {
+export function ReactApp() {
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
@@ -48,64 +46,71 @@ function ReactApp() {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
+    const [runClicked, setRunClicked] = useState(false);
+    const [lineColors, setLineColors] = useState([]);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
 
     // TODO: in case of needing to change the below icons for the sake of design,
     //  iconAnchor = [width/2, height/2] (width, height = dimension of image)
+    // const makeIcon = (marker) => {
+    //     if (marker.name === 'Bus') {
+    //         console.log(marker.icon);
+    //         return marker.icon;
+    //     }
+    //
+    //     else return marker.icon;
+    //}
     const solarIcon = new L.icon({
         id: 'solar',
-        iconRetinaUrl: require('./images/solar.png'),
-        iconUrl: require('./images/solar.png'),
-        iconAnchor: [35, 35],
-        popupAnchor:[0, -35]
+        iconRetinaUrl: require('./images/solarPanel.png'),
+        iconUrl: require('./images/solarPanel.png'),
+        iconAnchor: [30, 25],
+        popupAnchor:[0, -35],
+        iconSize: [60, 50]
     });
     const busIcon = new L.icon({
         id: 'bus',
-        iconRetinaUrl: require('./images/dotImage.png'),
-        iconUrl: require('./images/dot.png'),
-        iconAnchor: [32, 32],
+        iconUrl: require('./images/Blank.png'),
+        iconRetinaUrl: require('./images/busIcon.png'),
+        iconAnchor: [24, 24],
         popupAnchor:[0, -32],
-        iconSize: [64, 64]
-        //className: 'dot'
+        iconSize: [48, 48],
+        className: 'dot ',
+
     });
     const gridIcon = new L.icon({
         id: 'grid',
-        iconRetinaUrl: require('./images/power (2).png'),
-        iconUrl: require('./images/power (2).png'),
+        iconRetinaUrl: require('./images/grid.png'),
+        iconUrl: require('./images/grid.png'),
         iconAnchor: [32,32],
-        popupAnchor:[0, -32]
+        popupAnchor:[0, -32],
+        iconSize: [80, 80]
     });
     const loadIcon = new L.icon({
         id: 'load',
-        iconRetinaUrl: require('./images/house.png'),
-        iconUrl: require('./images/house.png'),
-        iconAnchor: [32, 32],
-        popupAnchor: [0, -32]
+        iconRetinaUrl: require('./images/load.png'),
+        iconUrl: require('./images/load.png'),
+        iconAnchor: [32, 28.5],
+        popupAnchor: [0, -32],
+        iconSize: [64, 57]
     });
     const windIcon = new L.icon({
         id: 'wind',
-        iconRetinaUrl: require('./images/wind.png'),
-        iconUrl: require('./images/wind.png'),
-        iconAnchor: [42.5, 42.5],
-        popupAnchor:[0, -42.5]
+        iconRetinaUrl: require('./images/windTurbine.png'),
+        iconUrl: require('./images/windTurbine.png'),
+        iconAnchor: [35, 35],
+        popupAnchor: [0, -35],
+        iconSize: [70, 70]
     });
     const trafo1Icon = new L.icon({
         id: 'trafo1',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/wind.png'),
+        iconRetinaUrl: require('./images/energy.png'),
+        iconUrl: require('./images/energy.png'),
         iconAnchor: [32, 32],
-        popupAnchor:[0, -42.5],
-        className: 'triangle'
-    });
-    const trafo2Icon = new L.icon({
-        id: 'trafo2',
-        iconRetinaUrl: require('./images/Blank.png'),
-        iconUrl: require('./images/wind.png'),
-        iconAnchor: [32, 32],
-        popupAnchor:[0, -42.5],
-        className: 'dot'
+        popupAnchor: [0, -32],
+        iconSize: [64, 64]
     });
     const arrowIcon = new L.icon({
         id: 'arrow',
@@ -121,17 +126,17 @@ function ReactApp() {
         bus: busIcon,
         load: loadIcon,
         wind: windIcon,
-        trafo1: trafo1Icon,
-        trafo2: trafo2Icon,
+        trafo1: trafo1Icon
     };
+    const busColor = (index) => markers[index][3];
 
     const sidebarItems = [
-        { id: 1, name: 'Solar Panel', type: 'solar' },
-        { id: 2, name: 'Bus', type: 'bus' },
+        { id: 1, name: 'Wind Turbine', type: 'wind' },
+        { id: 2, name: 'Solar Panel', type: 'solar' },
         { id: 3, name: 'Load', type: 'load' },
-        { id: 4, name: 'Wind Turbine', type: 'wind'},
-        { id: 5, name: 'Transformer', type: 'trafo1' },
-        { id: 6, name: 'External Grid', type: 'grid' },
+        { id: 4, name: 'Transformer', type: 'trafo1' },
+        { id: 5, name: 'External Grid', type: 'grid' },
+        { id: 6, name: 'Bus', type: 'bus'}
     ];
 
     // TODO: Change parameter names and/or add more parameters here if necessary
@@ -141,7 +146,7 @@ function ReactApp() {
         trafo1: ['type', 'connections', 'high', 'low'],
         switch: ['type'],
         load: ['p_mv', 'q_mvar'],
-        extGrid: ['voltage'],
+        grid: ['voltage'],
         solar: ['power'],
         wind: ['power']
     }
@@ -265,7 +270,8 @@ function ReactApp() {
                 name: draggedItem.name,
                 icon,
                 type: draggedItem.type,
-                parameters
+                parameters,
+                color: '#000'
             };
             if (newMarker.name === "Transformer") {
                 console.log("Initializing transformer");
@@ -545,29 +551,20 @@ function ReactApp() {
             map.scrollWheelZoom.disable()}
         else {map.dragging.enable();
             map.keyboard.enable();
-            map.doubleClickZoom.enable();
+            //map.doubleClickZoom.enable();
             map.scrollWheelZoom.enable()}
         return isMapLocked
-    }
-    const MapEvents =() => {
-    const map = useMapEvents({
-    zoom() {
-      for (let i=0; i < markers.length; i++)
-                    if (markers[i].icon.options.id === 'trafo1')
-                        handleMarkerDrag(i, markers[i].position)
-  },}
-
-  )
     }
 
     /**
      * Runs when the green run button is clicked,
      * will send and receive data from the server/fb_functions API
      */
-    var run_was_clicked = false;
+    
     const onRunButtonClick = () => {
-        if(run_was_clicked) return;
-        run_was_clicked = true;
+        if(runClicked) return;
+        setRunClicked(true);
+        setIsMapLocked(true);
 
         const markerInputs = markers.map(marker => ({
             id: marker.id,
@@ -584,22 +581,23 @@ function ReactApp() {
                 return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                renderSomething(data)
+                renderLines(data)
+                renderBuses(data)
             }
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             alert("Error showing results");
         }).finally(() => {
-            run_was_clicked = false;
+            setRunClicked(false);
         });
     }
 
-    const renderSomething = (data) => {
+    const renderLines = (data) => {
         let nr = -1;
         const uL = lines.map((line) =>  {
             if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
             {   nr++
-                return [line[0],line[1],data.lines[nr]]}
+                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)']}
             else return line
             }
         );
@@ -608,12 +606,23 @@ function ReactApp() {
 
     };
 
+    const renderBuses = (data) => {
+        let nr = 0;
+        markerRefs.current.forEach(marker => {
+            console.log(marker.valueOf()._icon.style.backgroundColor);
+                if (marker.options.icon.options.id === "bus"){
+           marker.valueOf()._icon.style.backgroundColor = '#fff'
+           marker.valueOf()._icon.style.width = '48px'
+           marker.valueOf()._icon.style.height = '48px'
+           marker.valueOf()._icon.style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%)' + ' solid 6px'
+           marker.valueOf()._icon.style.borderRadius = '50%'
+           nr++; }})
+    }
 
-
-    const zip = (a, b) => a.map((k, i) => [k, b[i]])
 
     return (
-        <div style={{height: '100vh'}}>
+        <div style={{height: '100vh', width: '100vw'}}>
+            <WaitingOverlay runClicked={runClicked}></WaitingOverlay>
             <Sidebar
                 sidebarItems = {sidebarItems}
                 handleDragStart = {handleDragStart}
@@ -639,28 +648,29 @@ function ReactApp() {
                         center={mapCenter}
                         zoom={13}
                         maxNativeZoom={19}
-                        //maxZoom={20}
                         minZoom={3}
-                        style={{width: '100%', height: '100%', zIndex: 0, opacity: 1}}
+                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
                         attributionControl={false}
+                        doubleClickZoom={false}
+                        scrollWheelZoom={isMapLocked}
                     >
 
-                        <Search style={{left: '400px'}}/>
+                        <Search/>
                         {/* TODO: Opacity of TitleLayer can be changed to 0 when user want a blank canvas */}
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            opacity={0.7}
+                            opacity={0.4}
                         />
-                        <MapEvents/>
                         {markers.map((marker, index) => (
                             <Marker key={index}
                                     position={marker.position}
-                                    icon={marker.icon}
+                                    icon={ marker.icon}
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
+                                    className = "dot"
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, index),
                                         contextmenu: (e) => handleMarkerRightClick(e),
@@ -712,29 +722,9 @@ function ReactApp() {
                         ))}
 
                         <ZoomControl position="topright"/>
-
-
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick}/>
-                                        <IconButton aria-label="check" style={{
-                        position: 'absolute',
-                        right: '0px',
-                        top: '78%',
-                        width: '8vw',
-                        height: '8vw',
-                        opacity: '70'
-                    }} onClick={onRunButtonClick}>
-                        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style={{
-                            width: '8vw',
-                            height: '8vw',
-                            color: '#05a95c',
-                            borderWidth: '1px',
-                            borderColor: '#000',
-                            opacity: '70'
-                        }}/>
-
-                    </IconButton>
-
+                    <RunButton runClicked={runClicked} onRunButtonClick={onRunButtonClick}></RunButton>
                 </div>
             </div>
         </div>

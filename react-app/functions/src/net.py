@@ -38,20 +38,45 @@ def all_line_colors(net):
     lines = all_lines(net)
     return lines.apply(get_line_color)
 
-def get_line_color(line):
-    #line here is a nunmber, it is the value loading_percent for a given line.
-    print(line)
-    green_blue = 255
-    if(line < 70):
-        green_blue = 150
-    elif(line > 90):
-        green_blue = 0
+def get_line_color(line,  safe_below=70, bad_above=90):
+    # colors starts from bright green
+    hue = 120
+    # move towards yellow the closer line gets to safe_below
+    if( line <= safe_below):
+        hue = hue - line * (45/safe_below)
+    # move towards red the closer line gets to bad_above
+    elif( line <= bad_above):
+        hue = hue - 55 - line * (50/(bad_above - safe_below))
     else:
-        green_blue =    int(round(150 + (line - 70) * ((0 - 150) / (90 - 70)))) #formula for getting the exact range between green/blue being 0 to 150 between 70-90%
-    return rgb_to_hex(150, green_blue, green_blue)
+    # when line > bad_above red return max value red
+        hue = max(hue - 95 - line * (25 / (120-bad_above)), 0)
+    return (hue, 100, 50)
 
-def all_bus_colors():
-    pass
+
+
+
+
+# safe_within: distance from one that's determined safe
+# danger_zone: distance from 1 that's unacceptable
+def get_bus_color(bus, safe_within=0.05, danger_zone=0.1):
+    # color starts from bright green
+    hue = 120
+    safe_below = abs(safe_within)
+    bad_above = abs(danger_zone)
+    # move towards yellow the closer bus gets to safe_within
+    if( bus <= safe_below):
+        hue = hue - bus * (45/safe_below)
+    # move towards red the closer bus gets to danger_zone
+    elif( bus <= bad_above):
+        hue = hue - 55 - bus * (50/(bad_above - safe_below))
+    else:
+        # when bus > danger_zone red return max value red
+        hue = max(hue - 95 - bus * (25 / (1.2-bad_above)), 0)
+    return (hue, 100, 50)
+
+def all_bus_colors(net):
+    lines = all_buses(net)
+    return lines.apply(get_bus_color)
 
 def rgb_to_hex(r, g, b):
     return '#{:02x}{:02x}{:02x}'.format(r, g, b)
