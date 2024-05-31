@@ -299,8 +299,8 @@ export function ReactApp() {
                     // Logic for creating lines between markers
                         let color = "#358cfb";
                         if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
-                    if (lines.length === 0 || lines[lines.length - 1].length === 3) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color];
+                    if (lines.length === 0 || lines[lines.length - 1].length === 4) {
+                        let newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color, 'none'];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
@@ -322,10 +322,12 @@ export function ReactApp() {
                                 case 1:
                                     markers[selectedMarker].low = markerIndex;
                                     markers[selectedMarker].connections = 2;
+                                    newLine[3] = 'low';
                                     break;
                                 case 0:
                                     markers[selectedMarker].high = markerIndex;
                                     markers[selectedMarker].connections = 1;
+                                    newLine[3] = 'high';
                                     break;
                             }
                         } else if (markers[markerIndex].name === "Transformer") {
@@ -336,16 +338,19 @@ export function ReactApp() {
                                 case 1:
                                     markers[markerIndex].low = selectedMarker;
                                     markers[markerIndex].connections = 2;
+                                    newLine[3] = 'low';
                                     break;
                                 case 0:
                                     markers[markerIndex].high = selectedMarker;
                                     markers[markerIndex].connections = 1;
+                                    newLine[3] = 'high';
                                     break;
                             }
                         }
 
                         // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!found && !maxTransformer){
+                            console.log(newLine);
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
@@ -618,6 +623,12 @@ export function ReactApp() {
            nr++; }})
     }
 
+    const lineWeightMap = {
+        none: 10,
+        high: 12,
+        low: 8
+    }
+
 
     return (
         <div style={{height: '100vh', width: '100vw'}}>
@@ -698,7 +709,7 @@ export function ReactApp() {
                                       onMouseOut={e => e.target.closePopup()}
                                       pathOptions = {{ color : line[2] }}
                                       clickable={true}
-                                      weight={10}
+                                      weight={lineWeightMap[line[3]]}
                                       ref={(ref) => (lineRefs.current[index] = ref)}
                                       eventHandlers={{
                                           click: (e) => handleLineClick(e),
