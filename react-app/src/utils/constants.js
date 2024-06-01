@@ -19,7 +19,39 @@ export const iconMapping = {
         popupAnchor:[0, -35],
         iconSize: [60, 50]
     }),
-    // other icons...
+    bus: new L.icon({
+        id: 'bus',
+        iconUrl: require('../images/busIcon.png'),
+        iconRetinaUrl: require('../images/busIcon.png'),
+        iconAnchor: [24, 24],
+        popupAnchor:[0, -32],
+        iconSize: [48, 48],
+
+    }),
+    load: new L.icon({
+        id: 'load',
+        iconRetinaUrl: require('../images/load.png'),
+        iconUrl: require('../images/load.png'),
+        iconAnchor: [32, 28.5],
+        popupAnchor: [0, -32],
+        iconSize: [64, 57]
+    }),
+    wind: new L.icon({
+        id: 'wind',
+        iconRetinaUrl: require('../images/windTurbine.png'),
+        iconUrl: require('../images/windTurbine.png'),
+        iconAnchor: [35, 35],
+        popupAnchor: [0, -35],
+        iconSize: [70, 70]
+    }),
+    trafo1: new L.icon({
+        id: 'trafo1',
+        iconRetinaUrl: require('../images/energy.png'),
+        iconUrl: require('../images/energy.png'),
+        iconAnchor: [32, 32],
+        popupAnchor: [0, -32],
+        iconSize: [64, 64]
+    })
 };
 
 export const sidebarItems = [

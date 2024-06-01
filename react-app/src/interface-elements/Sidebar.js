@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import {sidebarItems} from "../utils/constants";
 
 function SingleDraggable({state, item}) {
 
@@ -53,7 +54,7 @@ function SingleDraggable({state, item}) {
 function Draggables({state}) {
     return (
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            {state.sidebarItems.map((item) => (
+            {sidebarItems.map((item) => (
                 <SingleDraggable state={state} item={item}/>
             ))}
         </div>
