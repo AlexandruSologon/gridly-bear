@@ -40,6 +40,7 @@ function ReactApp() {
     const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
     const [lineColors, setLineColors] = useState([]);
+    const [highlightedMarkerIndex, setHighlightedMarkerIndex] = useState(null);
 
     // TODO: user's input address -> translated to latitude and longitude (hardcode for now)
     const mapCenter = [51.91145215945188, 4.478236914116433];
@@ -64,15 +65,15 @@ function ReactApp() {
     });
     const gridIcon = new L.icon({
         id: 'grid',
-        iconRetinaUrl: require('./images/power (2).png'),
-        iconUrl: require('./images/power (2).png'),
+        iconRetinaUrl: require('./images/grid.png'),
+        iconUrl: require('./images/grid.png'),
         iconAnchor: [32,32],
         popupAnchor:[0, -32]
     });
     const loadIcon = new L.icon({
         id: 'load',
-        iconRetinaUrl: require('./images/house.png'),
-        iconUrl: require('./images/house.png'),
+        iconRetinaUrl: require('./images/load.png'),
+        iconUrl: require('./images/load.png'),
         iconAnchor: [32, 32],
         popupAnchor: [0, -32]
     });
@@ -247,15 +248,15 @@ function ReactApp() {
         // If no marker is currently selected, set the clicked marker as selected
         if (selectedMarker === null) {
             setSelectedMarker(markerIndex);
+            setHighlightedMarkerIndex(markerIndex);
         } else {
             // If another marker is already selected
-            if (selectedMarker !== markerIndex && (markers[selectedMarker].icon.options.id === "bus" || markers[markerIndex].icon.options.id === "bus")) {
+            if (selectedMarker !== markerIndex) {
                 // Check if both markers still exist
                 if (markers[selectedMarker] && markers[markerIndex]) {
                     // Logic for creating lines between markers
                         let color = "#358cfb";
                         if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
-                    if (lines.length === 0 || lines[lines.length - 1].length === 3) {
                         const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
@@ -274,15 +275,11 @@ function ReactApp() {
                             setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
                         }
-                    } else {
-                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
-                        setLines([...lines.slice(0, lines.length - 1), newLine]);
-                        lineRefs.current.push(newLine);
-                    }
                 }
             }
             // Unselect the marker regardless of the action taken
             setSelectedMarker(null);
+            setHighlightedMarkerIndex(null);
         }
     };
 
@@ -555,8 +552,51 @@ function ReactApp() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             opacity={0.7}
                         />
-                        <MapEvents/>
-                        {markers.map((marker, index) => (
+                        <MapEvents />
+                        {markers.map((marker, index) => {
+                            /*Check if current marker should be highlighted*/
+                            const isHighlighted = highlightedMarkerIndex === index;
+                            const markerIcon = isHighlighted
+                                ? L.divIcon({
+                                    html: `<div class="icon-container highlighted"><img src="${require('./images/' + marker.type + '.png')}" /></div>`,
+                                    iconAnchor: [32, 32],
+                                    popupAnchor: [0, -35],
+                                    className: 'highlighted-marker'
+                                })
+                                : marker.icon;
+
+                            return (
+                                <Marker key={index}
+                                    position={marker.position}
+                                    icon={markerIcon}
+                                    draggable={true}
+                                    clickable={true}
+                                    ref={(ref) => (markerRefs.current[index] = ref)}
+                                    eventHandlers={{
+                                        click: (e) => handleMarkerClick(e, index),
+                                        contextmenu: (e) => handleMarkerRightClick(e),
+                                        // TODO: mouseover and mouseout are intended to change the mouse cursor when hovering over a component
+                                        //  (to indicate users can create a line)
+                                        //mouseover: () => handleMarkerHover(index),
+                                        //mouseout: handleMarkerLeave,
+                                        dragstart: () => setSelectedMarker(null),
+                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
+                                    }}
+                                >
+                                    <Popup>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ marginBottom: '5px' }}>{marker.name}</div>
+                                            {renderParameterInputs(marker)}
+                                            <div style={{ marginBottom: '5px' }}>
+                                                <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                            </div>
+                                        </div>
+                                    </Popup>
+
+                                </Marker>
+                            );
+                        })}
+{/*                        {markers.map((marker, index) => (
                             <Marker key={index}
                                     position={marker.position}
                                     icon={marker.icon}
@@ -584,7 +624,7 @@ function ReactApp() {
                                     </div>
                                 </Popup>
                             </Marker>
-                        ))}
+                        ))}*/}
                         {lines.map((line, index) => (
                             // TODO: color can be changed to indicate overload, for example: color={'red'}
                             <Polyline key={index}
