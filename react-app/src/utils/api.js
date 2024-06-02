@@ -110,7 +110,7 @@ const renderLines = (data, lines, busLines, markers, setLines) => {
 const renderBuses = (data, markers, markerRefs) => {
     let nr = 0;
     markerRefs.current.forEach(marker => {
-        const  style = marker.valueOf()._getIcon.style;
+        const  style = marker.valueOf()._icon.style;
         console.log(style.backgroundColor);
         if (marker.options.icon.options.id === "bus"){
             style.backgroundColor = '#fff'
