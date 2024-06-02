@@ -326,7 +326,7 @@ export function ReactApp() {
                         <ZoomControl position="topright" />
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick} />
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, setRunClicked, setIsMapLocked, setLines, setBusLines, setMarkers, markerRefs)} />
+                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs)} />
                 </div>
             </div>
         </div>

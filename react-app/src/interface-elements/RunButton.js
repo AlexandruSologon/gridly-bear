@@ -70,12 +70,12 @@ function AnnularThrobber() {
  * @param {*} onRunButtonClick The action to be taken by the run button.
  * @returns 
  */
-function runButton({runClicked, onRunButtonClick}) {
-    if(runClicked) {
+function RunButton({runClicked, onRunButtonClick}) {
+    if (runClicked) {
         return AnnularThrobber();
     } else {
         return GreenArrow({onRunButtonClick});
     }
 }
 
-export default runButton;
+export default RunButton;
