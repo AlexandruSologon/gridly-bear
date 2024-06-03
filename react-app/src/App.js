@@ -11,6 +11,7 @@ import RunButton from './interface-elements/RunButton';
 import LockButton from './interface-elements/LockButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
+import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -323,6 +324,7 @@ export function ReactApp() {
                                 </Popup>
                             </Polyline>
                         ))}
+                        <PolylineDecorator lines = {lines}> </PolylineDecorator>
                         <ZoomControl position="topright" />
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick} />
