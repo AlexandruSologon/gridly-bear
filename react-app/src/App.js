@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { onRunButtonClick } from './utils/api';
-import { mapCenter, iconMapping, markerParametersConfig } from './utils/constants';
+import {mapCenter, iconMapping, markerParametersConfig, sidebarItems} from './utils/constants';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
@@ -244,7 +244,7 @@ export function ReactApp() {
     return (
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
-            <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} />
+            <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <div
                 style={{
                     position: 'relative',
