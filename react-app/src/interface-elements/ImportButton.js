@@ -41,7 +41,8 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
             line[1] = new LatLng(line[1].lat, line[1].lng);
             return line;
         });
-        
+
+        map.setView(loadedFileJson.center, loadedFileJson.zoom);
         setMarkers(newMarkers);
         setLines(newLines);
         setBusLines(loadedFileJson.busLines);
