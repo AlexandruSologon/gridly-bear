@@ -1,6 +1,6 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./style.css";
+import "./css-files/style.css";
 import ReactApp from "./App";
 
 //Render the actual app on the root of the page.

@@ -1,8 +1,5 @@
-eco-house.png: https://www.flaticon.com/free-icon/windmill_14650695?term=wind+turbine&page=3&position=82&origin=search&related_id=14650695
-solar-panel.png: https://www.flaticon.com/free-icon/solar-panel_10351056?related_id=10351056
-windmill.png: https://www.flaticon.com/free-icon/eco-house_5700221?term=electrical+load&page=1&position=31&origin=search&related_id=5700221
-solar.png: https://www.flaticon.com/free-icon/solar-panel_3463440
-bus.png: https://www.flaticon.com/free-icon/rec_304249
-house.png: https://www.flaticon.com/free-icon/house_619153?term=house&page=1&position=17&origin=search&related_id=619153win
-wind.png: https://www.flaticon.com/free-icon/eco-energy_3391269
-<a href="https://www.flaticon.com/free-icons/electricity" title="electricity icons">Electricity icons created by Vectors Tank - Flaticon</a>
+energy.png: https://www.flaticon.com/free-icon/energy_14826830
+grid.png: https://www.flaticon.com/free-icon/power_10213272?term=grid&page=1&position=67&origin=search&related_id=10213272
+load.png: https://www.flaticon.com/free-icon/house_5687455
+solarPanel.png: https://www.flaticon.com/free-icon/clean-energy_11307459
+windTurbine.png: https://www.flaticon.com/free-icon/power_14805293
