@@ -28,6 +28,16 @@ Tests:
     - npm test
     - cd ..
 
+Build:
+  stage: build
+  script:
+    - cd react-app
+    - npm run build
+    - cd ..
+  only:
+    changes:
+      - src/**/*
+
 Deploy:
   stage: deploy
   script:
