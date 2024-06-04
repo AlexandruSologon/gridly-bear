@@ -24,7 +24,9 @@ Linting:
 Tests:
   stage: test
   script:
-    - echo "testing..."
+    - cd react-app
+    - npm test
+    - cd ..
 
 Deploy:
   stage: deploy
