@@ -55,7 +55,7 @@ function SingleDraggable({state, item}) {
 
 function Draggables({state}) {
     return (
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#fff'}}>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             {state.sidebarItems.map((item) => (
                 <SingleDraggable state={state} item={item}/>
             ))}
