@@ -24,7 +24,9 @@ Linting:
 Tests:
   stage: test
   script:
+    - cd react-app
     - npm test
+    - cd ..
 
 Deploy:
   stage: deploy
