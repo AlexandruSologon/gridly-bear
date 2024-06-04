@@ -13,7 +13,7 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
 
         let newMarkers = markers.map((marker) => {
             let newmarker = Object.assign({}, marker);
-            newmarker.icon = null;
+            newmarker.icon = marker.type;
             return newmarker;
         });
         
