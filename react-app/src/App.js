@@ -256,7 +256,7 @@ export function ReactApp() {
     return (
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
-            <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} />
+            <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <div
                 style={{
                     position: 'relative',
