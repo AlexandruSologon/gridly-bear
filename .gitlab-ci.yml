@@ -24,7 +24,7 @@ Linting:
 Tests:
   stage: test
   script:
-    - echo "testing..."
+    - npm test
 
 Deploy:
   stage: deploy
