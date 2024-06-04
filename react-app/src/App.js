@@ -114,7 +114,7 @@ export function ReactApp() {
         });
 
         const updatedLines = lines.map(line => line.map(point => {
-            if (point === markers[markerIndex].position && (point === line[0] || point === line[1])) {
+            if ((point.lat === markers[markerIndex].position.lat && point.lng === markers[markerIndex].position.lng) && (point === line[0] || point === line[1])) {
                 return newPosition;
             }
             return point;
