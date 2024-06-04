@@ -1,15 +1,23 @@
 import { IconButton } from '@mui/material';
 
-function ExportButton({markers, lines, busLines, mapContainer}) {
+function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContainer}) {
     
     const exp = () => {
 
         console.log(mapContainer);
         let center = 0; //mapContainer.getCenter(); todo
         let zoom = 0; //mapContainer.getZoom(); todo
+
+        console.log("are there actual buslines? " + busLines);
+
+        let newMarkers = markers.map((marker) => {
+            let newmarker = Object.assign({}, marker);
+            newmarker.icon = null;
+            return newmarker;
+        });
         
         const exportData = {
-            markers,
+            markers:newMarkers,
             lines,
             busLines,
             center,
