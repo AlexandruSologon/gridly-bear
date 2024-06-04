@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { onRunButtonClick } from './utils/api';
-import {mapCenter, iconMapping, markerParametersConfig, defVal} from './utils/constants';
+import {mapCenter, iconMapping, markerParametersConfig, defVal, sidebarItems} from './utils/constants';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
