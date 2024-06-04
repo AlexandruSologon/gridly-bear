@@ -228,6 +228,7 @@ export function ReactApp() {
     };
 
     const onLockButtonClick = () => {
+        console.log("markers and lines: ", lines, markers);
         setIsMapLocked(!isMapLocked);
         const map = mapContainer.current;
         if (isMapLocked) {
@@ -328,8 +329,6 @@ export function ReactApp() {
                         <ZoomControl position="topright" />
                     </MapContainer>
                     <ToolElements 
-                        markerRefs={markerRefs}
-                        lineRefs={lineRefs} 
                         onLockButtonClick={onLockButtonClick} 
                         markers={markers} 
                         setMarkers={setMarkers} 

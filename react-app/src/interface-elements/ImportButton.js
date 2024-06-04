@@ -2,7 +2,7 @@ import { IconButton } from "@mui/material";
 import { useState, useRef } from "react";
 import { iconMapping } from "../utils/constants";
 
-function ImportButton({markerRefs, lineRefs, setMarkers, setLines, setBusLines, markers}) {
+function ImportButton({lines, markers, setMarkers, setLines, setBusLines}) {
 
     const fileRef = useRef(null);
     let [file, setFile] = useState();
@@ -29,7 +29,7 @@ function ImportButton({markerRefs, lineRefs, setMarkers, setLines, setBusLines, 
             setBusLines(loadedFileJson.busLines);
         };
         reader.readAsText(selectedFile);
-        console.log("refs: "); console.log(markerRefs);
+        
     };
 
     return(
