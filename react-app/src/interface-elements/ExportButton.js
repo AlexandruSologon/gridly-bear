@@ -1,12 +1,13 @@
 import { IconButton } from '@mui/material';
+import { useMap } from 'react-leaflet';
 
 function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContainer}) {
-    
+    const map = useMap();
     const exp = () => {
 
         console.log(mapContainer);
-        let center = 0; //mapContainer.getCenter(); todo
-        let zoom = 0; //mapContainer.getZoom(); todo
+        let center = map.getCenter();
+        let zoom = map.getZoom();
 
         console.log("are there actual buslines? " + busLines);
 
