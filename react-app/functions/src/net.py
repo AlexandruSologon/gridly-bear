@@ -46,10 +46,10 @@ def get_line_color(line,  safe_below=70, bad_above=90):
         hue = hue - line * (45/70)
     # move towards red the closer line gets to bad_above
     elif( line <= bad_above):
-        hue = hue - 55 - (line-safe_below) * (50/(90 - 70))
+        hue = hue - 55 - (line-safe_below) * (50/bad_above - safe_below)
     else:
     # when line > bad_above red return max value red
-        hue = max(hue - 95 - (line-bad_above) * (25 / (120-90)), 0)
+        hue = max(hue - 95 - (line-bad_above) * (25 / (120-bad_above)), 0)
     return (hue, 100, 50)
 
 
