@@ -32,18 +32,6 @@ export function cnvs_json_post(data) {
     });
 }
 
-/*
-  * This is a helloworld example function, this should not be deployed
-  */
-function runHelloWorld() {
-    const helloWorld = httpsCallable(functions, 'hello_world'); //create callable request
-    helloWorld().then((result) => { //request to server and add callback
-        console.log("Returned from firebase function call: " + result.data);
-    }).catch((error) => {
-        console.log(error.message + " : " +  error.details);
-    });
-}
-
 function handle_results(result) {
     console.log("Returned from firebase function call: " + JSON.stringify(result.data));
     if(result.data.status === "E") {
