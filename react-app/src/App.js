@@ -327,17 +327,17 @@ export function ReactApp() {
                             </Polyline>
                         ))}
                         <ZoomControl position="topright" />
+                        <ToolElements
+                            onLockButtonClick={onLockButtonClick}
+                            markers={markers}
+                            setMarkers={setMarkers}
+                            lines={lines}
+                            setLines={setLines}
+                            busLines={busLines}
+                            setBusLines={setBusLines}
+                            mapContainer={mapContainer}>
+                        </ToolElements>
                     </MapContainer>
-                    <ToolElements 
-                        onLockButtonClick={onLockButtonClick} 
-                        markers={markers} 
-                        setMarkers={setMarkers} 
-                        lines={lines} 
-                        setLines={setLines} 
-                        busLines={busLines} 
-                        setBusLines={setBusLines} 
-                        mapContainer={mapContainer}>
-                    </ToolElements>
                     <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs)} />
                 </div>
             </div>
