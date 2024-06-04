@@ -8,9 +8,9 @@ import { mapCenter, iconMapping, markerParametersConfig } from './utils/constant
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
-import LockButton from './interface-elements/LockButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
+import ToolElements from './interface-elements/ToolElements';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -325,7 +325,7 @@ export function ReactApp() {
                         ))}
                         <ZoomControl position="topright" />
                     </MapContainer>
-                    <LockButton onLockButtonClick={onLockButtonClick} />
+                    <ToolElements onLockButtonClick={onLockButtonClick} markers={markers} setMarkers={setMarkers} setLines={setLines} setBusLines={setBusLines}></ToolElements>
                     <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs)} />
                 </div>
             </div>

@@ -14,14 +14,14 @@ function LockButton(props) {
     return(
         <IconButton aria-label="check"
                     data-testid = "lockbutton"
-                    style={{
-                        position: 'absolute',
-                        right: '6px',
-                        top: '80px',
-                        width: '40px',
-                        height: '40px',
-                        opacity: '30'
-                    }} onClick={onLockButtonClick}>
+                    style={
+                        {
+                            width: '40px',
+                            height: '40px',
+                            opacity: '30'
+                        }
+                    } 
+                    onClick={onLockButtonClick}>
                         <div style={{position: 'relative'}}>
                             <LockIcon data-testid = "lock-close-icon"
                                 className="LockIcon" style={{

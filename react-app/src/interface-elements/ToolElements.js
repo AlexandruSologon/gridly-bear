@@ -2,7 +2,7 @@ import LockButton from "./LockButton";
 import ImportButton from "./ImportButton";
 import ExportButton from "./ExportButton";
 
-function ToolElements({onLockButtonClick}) {
+function ToolElements({onLockButtonClick, setMarkers, setLines, setBusLines, markers}) {
     return (
         <div style={
             {
@@ -14,7 +14,7 @@ function ToolElements({onLockButtonClick}) {
             }
         }>
             <LockButton onLockButtonClick={onLockButtonClick} />
-            <ImportButton></ImportButton>
+            <ImportButton setMarkers={setMarkers} setLines={setLines} setBusLines={setBusLines} markers={markers}></ImportButton>
             <ExportButton></ExportButton>
         </div>
     );

@@ -84,8 +84,8 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
                 return;
             } else {
                 alert("Results: " + JSON.stringify(data));
-                renderLines(data, lines, busLines, markers, setLines)
-                renderBuses(data, markers, markerRefs)
+                renderLines(data, lines, busLines, markers, setLines);
+                renderBuses(data, markers, markerRefs);
             }
         }).catch((error) => {
         console.log(error.message + " : " +  error.details);
@@ -97,7 +97,7 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
 
 const renderLines = (data, lines, busLines, markers, setLines) => {
     let nr = -1;
-    const uL = lines.map((line) =>  {
+    const uL = lines.map((line) => {
             if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
             {   nr++
                 return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)']}
