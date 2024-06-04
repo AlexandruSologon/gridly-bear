@@ -1,7 +1,8 @@
 import { IconButton } from "@mui/material";
 import { useState, useRef } from "react";
+import { iconMapping } from "../utils/constants";
 
-function ImportButton({setMarkers, setLines, setBusLines, markers}) {
+function ImportButton({markerRefs, lineRefs, setMarkers, setLines, setBusLines, markers}) {
 
     const fileRef = useRef(null);
     let [file, setFile] = useState();
@@ -18,12 +19,17 @@ function ImportButton({setMarkers, setLines, setBusLines, markers}) {
             let loadedFileJson = JSON.parse(fileContent);
             console.log(loadedFileJson);
             //Draw the elements on screen
-            // renderLines(data, lines, busLines, markers, setLines);
-            // renderBuses(data, markers, markerRefs);
-            setMarkers(loadedFileJson.markers);
-            // setLines(loadedFileJson.components['5']);
+            let newMarkers = loadedFileJson.markers.map((marker) => {
+                marker.icon = iconMapping[marker.type];
+                return marker;
+            });
+            
+            setMarkers(newMarkers);
+            setLines(loadedFileJson.lines);
+            setBusLines(loadedFileJson.busLines);
         };
         reader.readAsText(selectedFile);
+        console.log("refs: "); console.log(markerRefs);
     };
 
     return(

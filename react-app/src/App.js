@@ -64,6 +64,8 @@ export function ReactApp() {
         setDraggedItem(null);
     };
 
+    
+
     const handleMarkerClick = (event, markerIndex) => {
         const targetMarker = event.target;
         if (targetMarker) {
@@ -325,7 +327,18 @@ export function ReactApp() {
                         ))}
                         <ZoomControl position="topright" />
                     </MapContainer>
-                    <ToolElements onLockButtonClick={onLockButtonClick} markers={markers} setMarkers={setMarkers} lines={lines} setLines={setLines} busLines={busLines} setBusLines={setBusLines} mapContainer={mapContainer}></ToolElements>
+                    <ToolElements 
+                        markerRefs={markerRefs}
+                        lineRefs={lineRefs} 
+                        onLockButtonClick={onLockButtonClick} 
+                        markers={markers} 
+                        setMarkers={setMarkers} 
+                        lines={lines} 
+                        setLines={setLines} 
+                        busLines={busLines} 
+                        setBusLines={setBusLines} 
+                        mapContainer={mapContainer}>
+                    </ToolElements>
                     <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs)} />
                 </div>
             </div>
