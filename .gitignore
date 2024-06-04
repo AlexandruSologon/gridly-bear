@@ -15,3 +15,4 @@ react-app/firebase-debug.log
 /.DS_Store
 get-pip.py
 venv/
+/react-app/functions/pyvenv.cfg
