@@ -198,8 +198,14 @@ export function ReactApp() {
     };
 
     const handleParameterChange = (markerId, paramName, value) => {
-        const newValues = {...defaultValues, [markers[markerId].type]: {...defaultValues[markers[markerId].type], [paramName]: value }}
-        setDefaultValues(newValues)
+        if(value !== null && value !== 0 && value !== '')
+        {
+            const newValues = {
+                ...defaultValues,
+                [markers[markerId].type]: {...defaultValues[markers[markerId].type], [paramName]: value}
+            }
+            setDefaultValues(newValues)
+        }
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
                 return {
