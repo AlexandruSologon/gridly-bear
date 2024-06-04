@@ -16,9 +16,8 @@ function LockButton(props) {
                     data-testid = "lockbutton"
                     style={
                         {
-                            width: '40px',
-                            height: '40px',
-                            opacity: '30'
+                            opacity: '30',
+                            marginBottom: '4px'
                         }
                     } 
                     onClick={onLockButtonClick}>

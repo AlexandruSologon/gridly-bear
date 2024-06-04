@@ -7,10 +7,12 @@ function ToolElements({onLockButtonClick, markers, setMarkers, lines, setLines, 
         <div style={
             {
                 position: "absolute",
+                marginRight: '10px',
                 top: '5px',
                 right : '60px',
                 display:'flex',
-                justifyContent:'row'
+                justifyContent:'row',
+                alignItems:'column'
             }
         }>
             <LockButton onLockButtonClick={onLockButtonClick} />

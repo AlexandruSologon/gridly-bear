@@ -48,17 +48,15 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
             aria-label="check"
             data-testid = "lockbutton"
             style={{
-                margin: '5px',
-                width: '40px',
-                height: '40px',
                 opacity: '30'
             }} onClick={() => {exp(markers, lines, busLines, mapContainer)}}>
             <div style={{position: 'relative'}}>
                 <img src={require('../images/export.png')}
                     alt={"import"}
+                    draggable='false'
                     style={{
-                        width: 50,
-                        height: 50
+                        width: 40,
+                        height: 40
                     }}
                 />
             </div>

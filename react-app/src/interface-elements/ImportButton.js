@@ -1,7 +1,7 @@
 import { IconButton } from "@mui/material";
 import { useState, useRef } from "react";
 import { iconMapping } from "../utils/constants";
-import { LatLng, marker } from "leaflet";
+import { LatLng } from "leaflet";
 
 function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
 
@@ -46,20 +46,19 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
 
     return(
         <IconButton 
+            draggable = 'false'
             aria-label="check"
             data-testid = "lockbutton"
             style={{
-                margin: '5px',
-                width: '40px',
-                height: '40px',
                 opacity: '30'
             }} onClick={() => fileRef.current.click()} >
             <div style={{position: 'relative'}}>
                 <img src={require('../images/import.png')}
                     alt={"import"}
+                    draggable='false'
                     style={{
-                        width: 50,
-                        height: 50
+                        width: 40,
+                        height: 40
                     }}
                 />
                 <input id="upload" name="upload" type="file" ref={fileRef} hidden onChange={handleChange} />
