@@ -1,8 +1,9 @@
 import { IconButton } from "@mui/material";
 import { useState, useRef } from "react";
 import { iconMapping } from "../utils/constants";
+import { LatLng, marker } from "leaflet";
 
-function ImportButton({lines, markers, setMarkers, setLines, setBusLines}) {
+function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
 
     const fileRef = useRef(null);
     let [file, setFile] = useState();
@@ -13,6 +14,8 @@ function ImportButton({lines, markers, setMarkers, setLines, setBusLines}) {
         // Read the file content
         const reader = new FileReader();
         reader.onload = (e) => {
+            markerRefs = null;
+            lineRefs = null;
             const fileContent = e.target.result;
             console.log("File content:", fileContent);
             // Now you can parse the JSON content or handle it as needed
@@ -21,11 +24,18 @@ function ImportButton({lines, markers, setMarkers, setLines, setBusLines}) {
             //Draw the elements on screen
             let newMarkers = loadedFileJson.markers.map((marker) => {
                 marker.icon = iconMapping[marker.type];
+                marker.position = new LatLng(marker.position.lat, marker.position.lng);
                 return marker;
+            });
+
+            let newLines = loadedFileJson.lines.map((line) => {
+                line[0] = new LatLng(line[0].lat, line[0].lng);
+                line[1] = new LatLng(line[1].lat, line[1].lng);
+                return line;
             });
             
             setMarkers(newMarkers);
-            setLines(loadedFileJson.lines);
+            setLines(newLines);
             setBusLines(loadedFileJson.busLines);
         };
         reader.readAsText(selectedFile);
