@@ -352,10 +352,11 @@ export function ReactApp() {
         {
             const newValues = {
                 ...defaultValues,
-                [markers[markerId].type]: {...defaultValues[markers[markerId].type], [paramName]: value}
+                [findMarkerById(markerId).type]: {...defaultValues[findMarkerById(markerId).type], [paramName]: value}
             }
             setDefaultValues(newValues)
         }
+
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
                 return {
