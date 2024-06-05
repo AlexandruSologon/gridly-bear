@@ -82,23 +82,25 @@ export function ReactApp() {
         setDraggedItem(null);
     };
 
-    const handleMarkerClick = (event, markerIndex) => {
+    const handleMarkerClick = (event, markerId) => {
         const targetMarker = event.target;
         if (targetMarker) {
             targetMarker.closePopup();
         }
         if (selectedMarker === null) {
-            setSelectedMarker(markerIndex);
+            setSelectedMarker(markerId);
         } else {
-            if (selectedMarker !== markerIndex && (markers[selectedMarker].icon.options.id === "bus" || markers[markerIndex].icon.options.id === "bus")) {
-                if (markers[selectedMarker] && markers[markerIndex]) {
+            let selected = findMarkerById(selectedMarker);
+            let current = findMarkerById(markerId);
+            if (selectedMarker !== markerId && (selected.icon.options.id === "bus" || current.icon.options.id === "bus")) {
+                if (selected && current) {
                     // Logic for creating lines between markers
                         let color = "#358cfb";
-                        if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
+                        if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = "#000"
                     if (lines.length === 0 || lines[lines.length - 1].length === 5) {
-                        let newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color, 'none', [markers[selectedMarker].id, markers[markerIndex].id].sort()];
+                        let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                        const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
+                        const newBusLine = [selected.id, current.id].sort();
                         let found = false;
                         for (let i = 0; i < busLines.length; i++) {
                             const item = busLines[i];
@@ -109,33 +111,31 @@ export function ReactApp() {
                         }
                         let maxTransformer = false;
                         // Check for transformer constraints
-                        if (markers[selectedMarker].name === "Transformer") {
-                            const trans = markers[selectedMarker];
-                            if (trans.connections >= 2) {
+                        if (selected.name === "Transformer") {
+                            if (selected.connections >= 2) {
                                 maxTransformer = true;
                             } else {
-                                if (trans.high === null) {
-                                    trans.high = markers[markerIndex].id;
+                                if (selected.high === null) {
+                                    selected.high = markerId;
                                     newLine[3] = 'high';
-                                } else if (trans.low === null) {
-                                    trans.low = markers[markerIndex].id;
+                                } else if (selected.low === null) {
+                                    selected.low = markerId;
                                     newLine[3] = 'low';
                                 }
-                                trans.connections++;
+                                selected.connections++;
                             }
-                        } else if (markers[markerIndex].name === "Transformer") {
-                            const trans = markers[markerIndex];
-                            if (trans.connections >= 2) {
+                        } else if (current.name === "Transformer") {
+                            if (current.connections >= 2) {
                                 maxTransformer = true;
                             } else {
-                                if (trans.high === null) {
-                                    trans.high = markers[selectedMarker].id;
+                                if (current.high === null) {
+                                    current.high = selectedMarker
                                     newLine[3] = 'high';
-                                } else if (trans.low === null) {
-                                    trans.low = markers[selectedMarker].id;
+                                } else if (current.low === null) {
+                                    current.low = selectedMarker
                                     newLine[3] = 'low';
                                 }
-                                trans.connections++;
+                                current.connections++;
                             }
                         }
 
@@ -146,7 +146,7 @@ export function ReactApp() {
                             lineRefs.current.push(newLine);
                         }
                     } else {
-                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
+                        const newLine = [[selected.position, current.position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                         lineRefs.current.push(newLine);
                     }
@@ -430,7 +430,7 @@ export function ReactApp() {
                                     ref={(ref) => (markerRefs.current[index] = ref)}
                                     className="dot"
                                     eventHandlers={{
-                                        click: (e) => handleMarkerClick(e, index),
+                                        click: (e) => handleMarkerClick(e, marker.id),
                                         contextmenu: (e) => handleMarkerRightClick(e),
                                         dragstart: () => setSelectedMarker(null),
                                         drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
