@@ -14,7 +14,6 @@ import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
-import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import { Button, message } from 'antd';
 
 export function ReactApp() {
