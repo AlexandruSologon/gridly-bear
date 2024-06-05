@@ -24,7 +24,19 @@ Linting:
 Tests:
   stage: test
   script:
-    - echo "testing..."
+    - cd react-app
+    - npm test
+    - cd ..
+
+Build:
+  stage: build
+  script:
+    - cd react-app
+    - npm run build
+    - cd ..
+  only:
+    changes:
+      - src/**/*
 
 Deploy:
   stage: deploy
