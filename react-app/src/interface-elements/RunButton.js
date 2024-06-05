@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
  * @param {*} onRunButtonClick - The function to be called on the button's click.
  * @returns The jsx for the run button.
  */
-function GreenArrow({onRunButtonClick}) {
+function GreenArrow({onRunButtonClick, runClicked}) {
     return (
         <IconButton
             data-testid = "run-button"
@@ -26,7 +26,7 @@ function GreenArrow({onRunButtonClick}) {
             {
                 width: '8vw',
                 height: '8vw',
-                color: '#05a95c',
+                color: runClicked ? 'rgba(5,169,92, 0.3)' : '#05a95c',
                 borderWidth: '1px',
                 borderColor: '#000',
                 opacity: '70'
@@ -71,11 +71,7 @@ function AnnularThrobber() {
  * @returns 
  */
 function RunButton({runClicked, onRunButtonClick}) {
-    if (runClicked) {
-        return AnnularThrobber();
-    } else {
-        return GreenArrow({onRunButtonClick});
-    }
+    return GreenArrow({onRunButtonClick, runClicked});
 }
 
 export default RunButton;

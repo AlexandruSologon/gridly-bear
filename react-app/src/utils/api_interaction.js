@@ -28,7 +28,7 @@ export function cnvs_json_post(data) {
     .catch((error) => {
         //if an error occurs, log it to console
         console.log(error.message + " : " +  error.details);
-        return null;
+        throw new Error(error.message);
     });
 }
 
@@ -36,8 +36,8 @@ function handle_results(result) {
     console.log("Returned from firebase function call: " + JSON.stringify(result.data));
     if(result.data.status === "E") {
         //todo something nicer than an alert to the user
-        alert(result.data.message); //status E=error, S=success
-        return null;
+        //alert(result.data.message); //status E=error, S=success
+        throw new Error(result.data.message);
     } else {
         let simres = result.data.sim_result; //is json
         let busarray = JSON.parse(simres.buses); //json array of busses
