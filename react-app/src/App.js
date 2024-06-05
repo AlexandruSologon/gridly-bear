@@ -331,7 +331,7 @@ export function ReactApp() {
                 <DeleteButton onClick={() => handleMarkerDelete(index)}/>
             </div>
             <div style={{marginBottom: '5px'}}>
-                <ReverseButton onClick={() => handleTransReverse(index)}/>
+                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
             </div>
             </div>
             );
