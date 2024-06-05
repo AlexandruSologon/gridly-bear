@@ -2,23 +2,24 @@ import { IconButton } from "@mui/material";
 import { useState, useRef } from "react";
 import { iconMapping } from "../utils/constants";
 import { useMap } from 'react-leaflet';
-import { LatLng, marker } from "leaflet";
+import { LatLng } from "leaflet";
 
 function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
 
     const fileRef = useRef(null);
-    let [file, setFile] = useState();
+    let [file, setFile] = useState(null);
 
     const map = useMap();
 
     const handleChange = (event) => {
         let selectedFile = event.target.files[0];
+        
         setFile(selectedFile);
         // Read the file content
         const reader = new FileReader();
         reader.onload = (e) => {loadAction(e)};
-        reader.readAsText(selectedFile);
-        
+        if(selectedFile != null) reader.readAsText(selectedFile);
+        event.target.value = null;
     };
 
     const loadAction = (e) => {

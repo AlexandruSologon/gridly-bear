@@ -354,7 +354,6 @@ export function ReactApp() {
                             mapContainer={mapContainer}>
                         </ToolElements>
                     </MapContainer>
-                    <LockButton onLockButtonClick={onLockButtonClick} />
                     <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, defaultValues)} />
                 </div>
             </div>
