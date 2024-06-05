@@ -4,12 +4,15 @@ import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { onRunButtonClick } from './utils/api';
-import {mapCenter, iconMapping, markerParametersConfig, defVal, sidebarItems} from './utils/constants';
+import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, defVal, binarySearch} from './utils/constants';
+import 'leaflet-polylinedecorator';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
 import DeleteButton from './interface-elements/DeleteButton';
+import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
+import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
 
 export function ReactApp() {
@@ -17,6 +20,7 @@ export function ReactApp() {
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
     const lineRefs = useRef([]);
+    // line = [pos1, pos2, color, low/high, [busLine]]
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
@@ -37,6 +41,10 @@ export function ReactApp() {
         event.preventDefault();
     };
 
+    const findMarkerById = (id) => {
+        return binarySearch(markers, id, 0, markers.length - 1);
+    }
+
     const handleDrop = (event) => {
         event.preventDefault();
         if (draggedItem) {
@@ -51,11 +59,16 @@ export function ReactApp() {
                 acc[param] = '';
                 return acc;
             }, {}) : {};
-            console.log(defaultValues)
+
             for (const key in parameters)
                 parameters[key] = defaultValues[draggedItem.type][key]
-            const newMarker = {
-                id: markers.length,
+
+            let markerId = 0;
+            if (markers.length !== 0) {
+                markerId = markers[markers.length - 1].id + 1;
+            }
+            // Add the dropped item as a marker on the map
+            const newMarker = {id: markerId,
                 position: droppedLatLng,
                 name: draggedItem.name,
                 icon,
@@ -63,28 +76,37 @@ export function ReactApp() {
                 parameters,
                 color: '#000'
             };
+            
+
+            if (newMarker.name === "Transformer") {
+                newMarker.connections = 0;
+                newMarker.high = null;
+                newMarker.low = null;
+            }
             setMarkers([...markers, newMarker]);
         }
         setDraggedItem(null);
     };
 
-    
-
-    const handleMarkerClick = (event, markerIndex) => {
+    const handleMarkerClick = (event, markerId) => {
         const targetMarker = event.target;
         if (targetMarker) {
             targetMarker.closePopup();
         }
         if (selectedMarker === null) {
-            setSelectedMarker(markerIndex);
+            setSelectedMarker(markerId);
         } else {
-            if (selectedMarker !== markerIndex && (markers[selectedMarker].icon.options.id === "bus" || markers[markerIndex].icon.options.id === "bus")) {
-                if (markers[selectedMarker] && markers[markerIndex]) {
-                    let color = "#358cfb";
-                    if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
-                    if (lines.length === 0 || lines[lines.length - 1].length === 3) {
-                        const newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color];
-                        const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
+            let selected = findMarkerById(selectedMarker);
+            let current = findMarkerById(markerId);
+            if (selectedMarker !== markerId && (selected.icon.options.id === "bus" || current.icon.options.id === "bus")) {
+                if (selected && current) {
+                    // Logic for creating lines between markers
+                        let color = "#358cfb";
+                        if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = "#000"
+                    if (lines.length === 0 || lines[lines.length - 1].length === 5) {
+                        let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
+                        //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
+                        const newBusLine = [selected.id, current.id].sort();
                         let found = false;
                         for (let i = 0; i < busLines.length; i++) {
                             const item = busLines[i];
@@ -93,13 +115,44 @@ export function ReactApp() {
                                 break;
                             }
                         }
-                        if (!found){
+                        let maxTransformer = false;
+                        // Check for transformer constraints
+                        if (selected.name === "Transformer") {
+                            if (selected.connections >= 2) {
+                                maxTransformer = true;
+                            } else {
+                                if (selected.high === null) {
+                                    selected.high = markerId;
+                                    newLine[3] = 'high';
+                                } else if (selected.low === null) {
+                                    selected.low = markerId;
+                                    newLine[3] = 'low';
+                                }
+                                selected.connections++;
+                            }
+                        } else if (current.name === "Transformer") {
+                            if (current.connections >= 2) {
+                                maxTransformer = true;
+                            } else {
+                                if (current.high === null) {
+                                    current.high = selectedMarker
+                                    newLine[3] = 'high';
+                                } else if (current.low === null) {
+                                    current.low = selectedMarker
+                                    newLine[3] = 'low';
+                                }
+                                current.connections++;
+                            }
+                        }
+
+                        // Add line if it doesn't exist and doesn't break transformer constraints
+                        if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
                         }
                     } else {
-                        const newLine = [[markers[selectedMarker].position, markers[markerIndex].position],  '#000'];
+                        const newLine = [[selected.position, current.position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                         lineRefs.current.push(newLine);
                     }
@@ -130,12 +183,24 @@ export function ReactApp() {
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
+        const oldMarkerId = markers[indexMarker].id;
         const markerRef = markerRefs.current[indexMarker];
         if (markerRef) {
             markerRef.closePopup();
         }
-        const updatedMarkers = [...markers];
+        const updatedMarkers = markers.map(marker => {
+            if (marker.name === "Transformer") {
+                const c = marker.connections;
+                if (marker.low === oldMarkerId) {
+                    return {...marker, low: null, connections: c-1};
+                } else if (marker.high === oldMarkerId) {
+                    return {...marker, high: null, connections: c-1};
+                }
+            }
+            return marker;
+        });
         updatedMarkers.splice(indexMarker, 1);
+        console.log(updatedMarkers);
         setMarkers(updatedMarkers);
         markerRefs.current.splice(indexMarker, 1);
         if (selectedMarker === indexMarker) {
@@ -151,13 +216,71 @@ export function ReactApp() {
         setBusLines(updatedBusLines);
     };
 
+    const handleTransReverse = (markerId) => {
+        const marker = findMarkerById(markerId);
+        const [newHigh, newLow] = [marker.low, marker.high];
+        const updatedMarkers = markers.map(marker => {
+            if (marker.id === markerId) {
+                return {
+                    ...marker,
+                    high: newHigh,
+                    low: newLow
+                };
+            }
+            return marker;
+        });
+        setMarkers(updatedMarkers);
+
+        
+        const updatedLines = lines.map(line => {
+            if(line[0] === marker.position || line[1] === marker.position) {
+                return line.map(point => {
+                    if (point === 'high') {
+                        return 'low';
+                    } else if (point === 'low') {
+                        return 'high';
+                    }
+                    return point;
+                });
+            }
+            return line;
+        })
+        
+
+        setLines(updatedLines);
+    }
+
     const handleLineDelete = (index) => {
         const lineRef = lineRefs.current[index];
+        const oldBusLine = busLines[index];
         if (lineRef) {
             lineRef.closePopup();
         }
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
         const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
+
+        const marker1 = findMarkerById(oldBusLine[0]);
+        const marker2 = findMarkerById(oldBusLine[1]);
+        let oldMarkerId = null;
+        if (marker1.name === "Transformer" || marker2.name === "Transformer") {
+            if (marker1.name === 'Transformer') oldMarkerId = marker2.id;
+            else oldMarkerId = marker1.id;
+
+            const updatedMarkers = markers.map(marker => {
+                if (marker.name === "Transformer") {
+                    const c = marker.connections;
+                    if (marker.low === oldMarkerId) {
+                        return {...marker, low: null, connections: c-1};
+                    } else if (marker.high === oldMarkerId) {
+                        return {...marker, high: null, connections: c-1};
+                    }
+                }
+                return marker;
+            });
+
+            setMarkers(updatedMarkers);
+        }
+
         setBusLines(updatedBusLines);
         setLines(updatedLines);
         lineRefs.current.splice(index, 1);
@@ -203,6 +326,27 @@ export function ReactApp() {
         ));
     };
 
+    const renderRequiredButtons = (marker, index) => {
+        const { id, type } = marker;
+        if (type === 'trafo1') {
+            return (
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <div style={{marginBottom: '5px'}}>
+                <DeleteButton onClick={() => handleMarkerDelete(index)}/>
+            </div>
+            <div style={{marginBottom: '5px'}}>
+                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
+            </div>
+            </div>
+            );
+        }
+        return (
+            <div style={{marginBottom: '5px'}}>
+                <DeleteButton onClick={() => handleMarkerDelete(index)}/>
+            </div>
+        )
+    }
+
     const handleParameterChange = (markerId, paramName, value) => {
         if(value !== null && value !== 0 && value !== '')
         {
@@ -242,6 +386,8 @@ export function ReactApp() {
             markerElement.classList.remove('marker-hover');
         });
     };
+
+    
 
     const onLockButtonClick = () => {
         console.log("markers and lines: ", lines, markers);
@@ -303,7 +449,7 @@ export function ReactApp() {
                                     ref={(ref) => (markerRefs.current[index] = ref)}
                                     className="dot"
                                     eventHandlers={{
-                                        click: (e) => handleMarkerClick(e, index),
+                                        click: (e) => handleMarkerClick(e, marker.id),
                                         contextmenu: (e) => handleMarkerRightClick(e),
                                         dragstart: () => setSelectedMarker(null),
                                         drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
@@ -313,9 +459,7 @@ export function ReactApp() {
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ marginBottom: '5px' }}>{marker.name}</div>
                                         {renderParameterInputs(marker)}
-                                        <div style={{ marginBottom: '5px' }}>
-                                            <DeleteButton onClick={() => handleMarkerDelete(index)} />
-                                        </div>
+                                        {renderRequiredButtons(marker, index)}
                                     </div>
                                 </Popup>
                             </Marker>
@@ -342,6 +486,7 @@ export function ReactApp() {
                                 </Popup>
                             </Polyline>
                         ))}
+                        <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
                         <ZoomControl position="topright" />
                         <ToolElements
                             onLockButtonClick={onLockButtonClick}

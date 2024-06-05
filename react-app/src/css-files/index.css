@@ -10,6 +10,35 @@
   background-color: #ECEFF1;
         }
 
+.triangle {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 32.5px 0 32.5px 56.3px;
+  border-color: transparent transparent transparent #c37777;
+  transform: rotate(0deg);
+}
+
+.arrow {
+	width: 6vmin;
+	height: 6vmin;
+	box-sizing: border-box;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: rotate(45deg);
+	
+	&::before {
+		content: '';
+		width: 100%;
+		height: 100%;
+		border-width: .8vmin .8vmin 0 0;
+		border-style: solid;
+		border-color: #fafafa;
+		display: block;
+		transform-origin: 100% 0;
+	}
+}
 
 .sideIcon {
   width: 80px;
