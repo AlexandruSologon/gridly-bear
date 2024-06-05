@@ -12,8 +12,8 @@ stages:
 
 before_script:
   - cd react-app/
-  - npm install -g firebase-tools
-  - npm install
+  - npm ci -g firebase-tools
+  - npm ci
 
 Linting:
   stage: lint
