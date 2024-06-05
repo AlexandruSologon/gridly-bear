@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);//App initialization
 const functions = getFunctions(app);//Get functions
-//connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
+// connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
 const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
 
 /**
