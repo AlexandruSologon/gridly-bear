@@ -8,9 +8,9 @@ import {mapCenter, iconMapping, markerParametersConfig, defVal, sidebarItems} fr
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
-import LockButton from './interface-elements/LockButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
+import ToolElements from './interface-elements/ToolElements';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -68,6 +68,8 @@ export function ReactApp() {
         setDraggedItem(null);
     };
 
+    
+
     const handleMarkerClick = (event, markerIndex) => {
         const targetMarker = event.target;
         if (targetMarker) {
@@ -116,7 +118,7 @@ export function ReactApp() {
         });
 
         const updatedLines = lines.map(line => line.map(point => {
-            if (point === markers[markerIndex].position && (point === line[0] || point === line[1])) {
+            if ((point.lat === markers[markerIndex].position.lat && point.lng === markers[markerIndex].position.lng) && (point === line[0] || point === line[1])) {
                 return newPosition;
             }
             return point;
@@ -139,9 +141,13 @@ export function ReactApp() {
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
-        const updatedLines = lines.filter(line => !(line[0] === oldMarkerPos || line[1] === oldMarkerPos));
+        const updatedLines = lines.filter(line => 
+            !((line[0].lat === oldMarkerPos.lat && line[0].lng === oldMarkerPos.lng) || 
+            (line[1].lat === oldMarkerPos.lat && line[1].lng === oldMarkerPos.lng)));
         setLines(updatedLines);
-        const updatedBusLines = busLines.filter(line => !(line[0] === indexMarker || line[1] === indexMarker));
+        const updatedBusLines = busLines.filter(line => 
+            !((line[0] === markers[indexMarker].id) || 
+            (line[1] === markers[indexMarker].id)));
         setBusLines(updatedBusLines);
     };
 
@@ -238,6 +244,7 @@ export function ReactApp() {
     };
 
     const onLockButtonClick = () => {
+        console.log("markers and lines: ", lines, markers);
         setIsMapLocked(!isMapLocked);
         const map = mapContainer.current;
         if (isMapLocked) {
@@ -336,8 +343,17 @@ export function ReactApp() {
                             </Polyline>
                         ))}
                         <ZoomControl position="topright" />
+                        <ToolElements
+                            onLockButtonClick={onLockButtonClick}
+                            markers={markers}
+                            setMarkers={setMarkers}
+                            lines={lines}
+                            setLines={setLines}
+                            busLines={busLines}
+                            setBusLines={setBusLines}
+                            mapContainer={mapContainer}>
+                        </ToolElements>
                     </MapContainer>
-                    <LockButton onLockButtonClick={onLockButtonClick} />
                     <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, defaultValues)} />
                 </div>
             </div>
