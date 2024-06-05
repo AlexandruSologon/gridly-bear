@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { onRunButtonClick } from './utils/api';
-import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, lineWeightMap} from './utils/constants';
+import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, lineWeightMap, binarySearch} from './utils/constants';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
@@ -36,6 +36,10 @@ export function ReactApp() {
     const handleDragOver = (event) => {
         event.preventDefault();
     };
+
+    const findMarkerById = (id) => {
+        return binarySearch(markers, id, 0, markers.length - 1);
+    }
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -183,7 +187,7 @@ export function ReactApp() {
                 if (marker.low === oldMarkerId) {
                     return {...marker, low: null, connections: c-1};
                 } else if (marker.high === oldMarkerId) {
-                    return {...marker, high:null, connections: c-1};
+                    return {...marker, high: null, connections: c-1};
                 }
             }
             return marker;
@@ -239,11 +243,35 @@ export function ReactApp() {
 
     const handleLineDelete = (index) => {
         const lineRef = lineRefs.current[index];
+        const oldBusLine = busLines[index];
         if (lineRef) {
             lineRef.closePopup();
         }
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
         const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
+
+        const marker1 = findMarkerById(oldBusLine[0]);
+        const marker2 = findMarkerById(oldBusLine[1]);
+        let oldMarkerId = null;
+        if (marker1.name === "Transformer" || marker2.name === "Transformer") {
+            if (marker1.name === 'Transformer') oldMarkerId = marker2.id;
+            else oldMarkerId = marker1.id;
+
+            const updatedMarkers = markers.map(marker => {
+                if (marker.name === "Transformer") {
+                    const c = marker.connections;
+                    if (marker.low === oldMarkerId) {
+                        return {...marker, low: null, connections: c-1};
+                    } else if (marker.high === oldMarkerId) {
+                        return {...marker, high: null, connections: c-1};
+                    }
+                }
+                return marker;
+            });
+
+            setMarkers(updatedMarkers);
+        }
+
         setBusLines(updatedBusLines);
         setLines(updatedLines);
         lineRefs.current.splice(index, 1);
