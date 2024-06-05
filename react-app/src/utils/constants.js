@@ -66,7 +66,7 @@ export const sidebarItems = [
 
 export const markerParametersConfig = {
     bus: ['voltage'],
-    transformer: ['type'],
+    trafo1: ['type'],
     switch: ['type'],
     load: ['p_mv', 'q_mvar'],
     grid: ['voltage'],
@@ -74,9 +74,22 @@ export const markerParametersConfig = {
     wind: ['power']
 };
 
+export const binarySearch = function(arr, x, start, end) {
+ 
+    if (start > end) return null;
+    let mid = Math.floor((start + end) / 2);
+ 
+    if (arr[mid].id === x) return arr[mid];
+ 
+    if (arr[mid].id > x)
+        return binarySearch(arr, x, start, mid - 1);
+    else
+        return binarySearch(arr, x, mid + 1, end);
+}
+
 export const defVal = {
     bus : {voltage: 1},
-    transformer: {type: "0.4 MVA 10/0.4 kV"},
+    trafo1: {type: "0.4 MVA 10/0.4 kV"},
     load: {p_mv: 0.1, q_mvar: 0.05},
     grid: {voltage: 1.02},
     solar: {power: 1},
