@@ -14,7 +14,6 @@ before_script:
   - cd react-app/
   - npm install -g firebase-tools
   - npm install
-  - cd ..
 
 Linting:
   stage: lint
@@ -24,16 +23,12 @@ Linting:
 Tests:
   stage: test
   script:
-    - cd react-app
     - npm test
-    - cd ..
 
 Build:
   stage: build
   script:
-    - cd react-app
     - npm run build
-    - cd ..
   only:
     changes:
       - src/**/*
@@ -41,24 +36,17 @@ Build:
 Deploy:
   stage: deploy
   script:
-    - cd react-app
-    - npm run build
     - firebase deploy --only hosting --token $FIREBASE_TOKEN
-    - cd ..
   only:
     refs:
-      - main
-    changes:
-      - src/**/*
+      - bugfix-deployment
 
 deploy-functions:
   stage: deploy-functions
   script:
-    - cd react-app
     - firebase deploy --only functions --token $FIREBASE_TOKEN
-    - cd ..
   only:
     refs:
-      - main
+      - bugfix-deployment
     changes:
       - functions/**/*
