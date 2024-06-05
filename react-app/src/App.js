@@ -12,6 +12,7 @@ import RunButton from './interface-elements/RunButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
+import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import { Button, message } from 'antd';
@@ -337,7 +338,7 @@ export function ReactApp() {
                 <DeleteButton onClick={() => handleMarkerDelete(index)}/>
             </div>
             <div style={{marginBottom: '5px'}}>
-                <ReverseButton onClick={() => handleTransReverse(index)}/>
+                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
             </div>
             </div>
             );
