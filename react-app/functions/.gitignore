@@ -1,0 +1,2 @@
+*.local
+src/__pycache__/

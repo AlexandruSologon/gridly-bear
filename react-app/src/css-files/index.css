@@ -1,0 +1,95 @@
+
+.leaflet-control-geosearch {  left: 300px;  z-index: 10002; }
+
+.dot {
+  width: 48px;
+  height: 48px;
+  border: #636363 solid 6px;
+  border-radius: 50%;
+  margin: auto;
+  background-color: #ECEFF1;
+        }
+
+.triangle {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 32.5px 0 32.5px 56.3px;
+  border-color: transparent transparent transparent #c37777;
+  transform: rotate(0deg);
+}
+
+.arrow {
+	width: 6vmin;
+	height: 6vmin;
+	box-sizing: border-box;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: rotate(45deg);
+	
+	&::before {
+		content: '';
+		width: 100%;
+		height: 100%;
+		border-width: .8vmin .8vmin 0 0;
+		border-style: solid;
+		border-color: #fafafa;
+		display: block;
+		transform-origin: 100% 0;
+	}
+}
+
+.sideIcon {
+  width: 80px;
+  height: 80px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
+
+@media screen and (min-width: 768px) {
+  .dndflow {
+    flex-direction: row;
+  }
+
+  .dndflow aside {
+    width: 20%;
+    max-width: 250px;
+  }
+}
+
+.marker-hover {
+  cursor: crosshair;
+}
+
+.marker-draggable {
+  cursor: move;
+}
+
+.delete-button {
+  color: red;
+}
+
+.search-bar {
+    display: flex;
+}
+
+.leaflet-control-geosearch .search-input {
+    display: none;
+    width: 300px;
+}
+
+.leaflet-control-geosearch .glass {
+    background: none;
+    width: 30px;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
