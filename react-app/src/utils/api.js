@@ -1,5 +1,7 @@
 import { cnvs_json_post } from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network} from '../CoreClasses';
+import { message, Button } from 'antd';
+
 
 export const handleExport = (markerInputs, markers, busLines) => {
     const buses = [];
@@ -64,10 +66,19 @@ export const handleExport = (markerInputs, markers, busLines) => {
     return networkData;
 };
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs) => {
+export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
+
+    const key = 'awaitsimalert';
+    messageApi
+        .open({
+            key,
+            type: 'loading',
+            content: 'Awaiting Simulation Results..',
+            duration: 0,
+        });
 
     const markerInputs = markers.map(marker => ({
         id: marker.id,
@@ -80,19 +91,25 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
     console.log('Sent over Data:', dat);
     cnvs_json_post(dat)
         .then((data) => {
-            if(data === null) {
-                return;
-            } else {
-                alert("Results: " + JSON.stringify(data));
-                renderLines(data, lines, busLines, markers, setLines)
-                renderBuses(data, markers, markerRefs)
-            }
+            renderLines(data, lines, busLines, markers, setLines);
+            renderBuses(data, markers, markerRefs);
+            messageApi.open({
+                key,
+                type: 'success',
+                content: 'simulation complete!',
+                duration: 2,
+            });
         }).catch((error) => {
-        console.log(error.message + " : " +  error.details);
-        alert("Error showing results");
-    }).finally(() => {
-        setRunClicked(false);
-    });
+            console.log(error.message + " : " +  error.details);
+            messageApi.open({
+                key,
+                type: 'error',
+                content: error.message,
+                duration: 2,
+            });
+        }).finally(() => {
+            setRunClicked(false);
+        });
 };
 
 const renderLines = (data, lines, busLines, markers, setLines) => {

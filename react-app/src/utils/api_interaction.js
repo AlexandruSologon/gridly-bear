@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);//App initialization
 const functions = getFunctions(app);//Get functions
-connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
+// connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
 const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
 
 /**
@@ -28,19 +28,7 @@ export function cnvs_json_post(data) {
     .catch((error) => {
         //if an error occurs, log it to console
         console.log(error.message + " : " +  error.details);
-        return null;
-    });
-}
-
-/*
-  * This is a helloworld example function, this should not be deployed
-  */
-function runHelloWorld() {
-    const helloWorld = httpsCallable(functions, 'hello_world'); //create callable request
-    helloWorld().then((result) => { //request to server and add callback
-        console.log("Returned from firebase function call: " + result.data);
-    }).catch((error) => {
-        console.log(error.message + " : " +  error.details);
+        throw new Error(error.message);
     });
 }
 
@@ -48,8 +36,8 @@ function handle_results(result) {
     console.log("Returned from firebase function call: " + JSON.stringify(result.data));
     if(result.data.status === "E") {
         //todo something nicer than an alert to the user
-        alert(result.data.message); //status E=error, S=success
-        return null;
+        //alert(result.data.message); //status E=error, S=success
+        throw new Error(result.data.message);
     } else {
         let simres = result.data.sim_result; //is json
         let busarray = JSON.parse(simres.buses); //json array of busses

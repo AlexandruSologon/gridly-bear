@@ -11,6 +11,7 @@ import RunButton from './interface-elements/RunButton';
 import LockButton from './interface-elements/LockButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
+import { Button, message } from 'antd';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -23,6 +24,7 @@ export function ReactApp() {
     const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
     const [draggedItem, setDraggedItem] = useState(null);
+    const [messageApi, contextHolder] = message.useMessage();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -326,7 +328,8 @@ export function ReactApp() {
                         <ZoomControl position="topright" />
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick} />
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs)} />
+                    {contextHolder}
+                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi)} />
                 </div>
             </div>
         </div>
