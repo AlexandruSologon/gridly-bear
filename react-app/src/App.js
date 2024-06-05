@@ -137,9 +137,13 @@ export function ReactApp() {
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
-        const updatedLines = lines.filter(line => !(line[0] === oldMarkerPos || line[1] === oldMarkerPos));
+        const updatedLines = lines.filter(line => 
+            !((line[0].lat === oldMarkerPos.lat && line[0].lng === oldMarkerPos.lng) || 
+            (line[1].lat === oldMarkerPos.lat && line[1].lng === oldMarkerPos.lng)));
         setLines(updatedLines);
-        const updatedBusLines = busLines.filter(line => !(line[0] === indexMarker || line[1] === indexMarker));
+        const updatedBusLines = busLines.filter(line => 
+            !((line[0] === markers[indexMarker].id) || 
+            (line[1] === markers[indexMarker].id)));
         setBusLines(updatedBusLines);
     };
 
