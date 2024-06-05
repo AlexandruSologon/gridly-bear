@@ -14,6 +14,7 @@ import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
+import { Button, message } from 'antd';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -28,6 +29,7 @@ export function ReactApp() {
     const [runClicked, setRunClicked] = useState(false);
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
+    const [messageApi, contextHolder] = message.useMessage();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -500,7 +502,8 @@ export function ReactApp() {
                             mapContainer={mapContainer}>
                         </ToolElements>
                     </MapContainer>
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, defaultValues)} />
+                    {contextHolder}
+                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, defaultValues)} />
                 </div>
             </div>
         </div>
