@@ -1,7 +1,9 @@
 import { cnvs_json_post } from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
+import { binarySearch } from './constants';
 
 export const handleExport = (markerInputs, markers, busLines) => {
+    console.log(markers);
     const buses = [];
     const components = [];
     let indices = [0, 0, 0, 0, 0, 0, 0];
@@ -22,10 +24,9 @@ export const handleExport = (markerInputs, markers, busLines) => {
     })
     for (let i = 0; i < busLines.length; i++) {
         const line = busLines[i];
-        //const bus1Loc = markers[line[0]].getLatLng();
-        //const bus2Loc = markers[line[1]].getLatLng();
-        let item1 = markers[line[0]]
-        let item2 = markers[line[1]]
+        console.log(line);
+        let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
+        let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
         if (item1.name === 'Bus' && item2.name === 'Bus') {
             components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), item1.position.distanceTo(item2.position)/1000, 'NAYY 4x50 SE'));
             indices[1] += 1;
@@ -73,7 +74,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
         components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
         indices[4] +=1;
     }
-    
+
     const total = buses.concat(components);
     const networkData = JSON.stringify(new Network(total));
     console.log('Exported Data:', networkData);

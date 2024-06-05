@@ -78,3 +78,16 @@ export const lineWeightMap = {
     'high' : 12,
     'low' : 8
 }
+
+export const binarySearch = function(arr, x, start, end) {
+ 
+    if (start > end) return null;
+    let mid = Math.floor((start + end) / 2);
+ 
+    if (arr[mid].id === x) return arr[mid];
+ 
+    if (arr[mid].id > x)
+        return binarySearch(arr, x, start, mid - 1);
+    else
+        return binarySearch(arr, x, mid + 1, end);
+}

@@ -89,8 +89,8 @@ export function ReactApp() {
                     // Logic for creating lines between markers
                         let color = "#358cfb";
                         if(markers[selectedMarker].icon.options.id === "bus" && markers[markerIndex].icon.options.id === "bus") color = "#000"
-                    if (lines.length === 0 || lines[lines.length - 1].length === 4) {
-                        let newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color, 'none'];
+                    if (lines.length === 0 || lines[lines.length - 1].length === 5) {
+                        let newLine = [markers[selectedMarker].position, markers[markerIndex].position,  color, 'none', [markers[selectedMarker].id, markers[markerIndex].id].sort()];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const newBusLine = [markers[selectedMarker].id, markers[markerIndex].id].sort();
                         let found = false;
@@ -104,36 +104,32 @@ export function ReactApp() {
                         let maxTransformer = false;
                         // Check for transformer constraints
                         if (markers[selectedMarker].name === "Transformer") {
-                            switch(markers[selectedMarker].connections) {
-                                case 2:
-                                    maxTransformer = true;
-                                    break;
-                                case 1:
-                                    markers[selectedMarker].low = markerIndex;
-                                    markers[selectedMarker].connections = 2;
-                                    newLine[3] = 'low';
-                                    break;
-                                case 0:
-                                    markers[selectedMarker].high = markerIndex;
-                                    markers[selectedMarker].connections = 1;
+                            const trans = markers[selectedMarker];
+                            if (trans.connections >= 2) {
+                                maxTransformer = true;
+                            } else {
+                                if (trans.high === null) {
+                                    trans.high = markers[markerIndex].id;
                                     newLine[3] = 'high';
-                                    break;
+                                } else if (trans.low === null) {
+                                    trans.low = markers[markerIndex].id;
+                                    newLine[3] = 'low';
+                                }
+                                trans.connections++;
                             }
                         } else if (markers[markerIndex].name === "Transformer") {
-                            switch(markers[markerIndex].connections) {
-                                case 2:
-                                    maxTransformer = true;
-                                    break;
-                                case 1:
-                                    markers[markerIndex].low = selectedMarker;
-                                    markers[markerIndex].connections = 2;
-                                    newLine[3] = 'low';
-                                    break;
-                                case 0:
-                                    markers[markerIndex].high = selectedMarker;
-                                    markers[markerIndex].connections = 1;
+                            const trans = markers[markerIndex];
+                            if (trans.connections >= 2) {
+                                maxTransformer = true;
+                            } else {
+                                if (trans.high === null) {
+                                    trans.high = markers[selectedMarker].id;
                                     newLine[3] = 'high';
-                                    break;
+                                } else if (trans.low === null) {
+                                    trans.low = markers[selectedMarker].id;
+                                    newLine[3] = 'low';
+                                }
+                                trans.connections++;
                             }
                         }
 
@@ -176,12 +172,24 @@ export function ReactApp() {
 
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
+        const oldMarkerId = markers[indexMarker].id;
         const markerRef = markerRefs.current[indexMarker];
         if (markerRef) {
             markerRef.closePopup();
         }
-        const updatedMarkers = [...markers];
+        const updatedMarkers = markers.map(marker => {
+            if (marker.name === "Transformer") {
+                const c = marker.connections;
+                if (marker.low === oldMarkerId) {
+                    return {...marker, low: null, connections: c-1};
+                } else if (marker.high === oldMarkerId) {
+                    return {...marker, high:null, connections: c-1};
+                }
+            }
+            return marker;
+        });
         updatedMarkers.splice(indexMarker, 1);
+        console.log(updatedMarkers);
         setMarkers(updatedMarkers);
         markerRefs.current.splice(indexMarker, 1);
         if (selectedMarker === indexMarker) {
@@ -194,6 +202,7 @@ export function ReactApp() {
     };
 
     const handleTransReverse = (markerId) => {
+        console.log(lines);
         const marker = markers[markerId];
         const [newHigh, newLow] = [marker.low, marker.high];
         const updatedMarkers = markers.map(marker => {
@@ -207,6 +216,25 @@ export function ReactApp() {
             return marker;
         });
         setMarkers(updatedMarkers);
+
+        /*
+        const updatedLines = lines.map(line => {
+            if(line[0] === marker.position || line[1] === marker.position) {
+                return line.map(point => {
+                    if (point === 'high') {
+                        return 'low';
+                    } else if (point === 'low') {
+                        return 'high';
+                    }
+                });
+            }
+            return line;
+        })
+        
+
+        setLines(updatedLines);
+        */
+        console.log(lines);
     }
 
     const handleLineDelete = (index) => {
