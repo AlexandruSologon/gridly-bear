@@ -89,7 +89,7 @@ export const binarySearch = function(arr, x, start, end) {
 
 export const defVal = {
     bus : {voltage: 1},
-    transformer: {type: "0.4 MVA 10/0.4 kV"},
+    trafo1: {type: "0.4 MVA 10/0.4 kV"},
     load: {p_mv: 0.1, q_mvar: 0.05},
     grid: {voltage: 1.02},
     solar: {power: 1},

@@ -4,9 +4,8 @@ import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { onRunButtonClick } from './utils/api';
-import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, lineWeightMap, binarySearch} from './utils/constants';
+import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, defVal, binarySearch} from './utils/constants';
 import 'leaflet-polylinedecorator';
-import {mapCenter, iconMapping, markerParametersConfig, defVal, sidebarItems} from './utils/constants';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
@@ -65,7 +64,7 @@ export function ReactApp() {
                 parameters[key] = defaultValues[draggedItem.type][key]
 
             let markerId = 0;
-            if (markers.length != 0) {
+            if (markers.length !== 0) {
                 markerId = markers[markers.length - 1].id + 1;
             }
             // Add the dropped item as a marker on the map
