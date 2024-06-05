@@ -7,6 +7,7 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 function SingleDraggable({state, item}) {
 
     const [mousedOver, setMousedOver] = useState(false);
+    const testid = "draggable-"+item.type;
 
     const unset = () => {
         setMousedOver(false);
@@ -17,6 +18,7 @@ function SingleDraggable({state, item}) {
     }
 
     return (<div
+        data-testid={testid}
         key={item.id}
         draggable={true}
         onDragStart={(event) => state.handleDragStart(event, item)}
@@ -35,7 +37,8 @@ function SingleDraggable({state, item}) {
         }}
     >
         {/* Container for icon and text */}
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100vh'}}>
+        <div
+            style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100vh'}}>
             {/* Render the icon based on item.type */}
             <img src={state.iconMapping[item.type].options.iconRetinaUrl}
                  alt={item.name}
@@ -65,6 +68,7 @@ function Draggables({state}) {
 function CollapseButton({onSidebarToggle, isSidebarOn}) {
     return (
         <IconButton
+            data-testid="retract-sidebar"
             style={{
                 position: 'absolute',
                 width: '30px',
@@ -75,7 +79,8 @@ function CollapseButton({onSidebarToggle, isSidebarOn}) {
             }} 
             onClick={onSidebarToggle}
         >
-            <KeyboardDoubleArrowRightIcon 
+            <KeyboardDoubleArrowRightIcon
+                data-testid="retract-sidebar-icon-right"
                 className="KeyboardDoubleArrowRightIcon"
                 style={{
                     display: !isSidebarOn ? 'flex' : 'none',
@@ -83,7 +88,8 @@ function CollapseButton({onSidebarToggle, isSidebarOn}) {
                     height: '30px'
                 }}
             />
-            <KeyboardDoubleArrowLeftIcon 
+            <KeyboardDoubleArrowLeftIcon
+                data-testid="retract-sidebar-icon-left"
                 className="KeyboardDoubleArrowLeftIcon"
                 style={{
                     display: isSidebarOn ? 'flex' : 'none',
@@ -104,7 +110,8 @@ function Sidebar(state) {
 
     return (
         <div>
-            <Drawer 
+            <Drawer
+                data-testid= "sidebar"
                 PaperProps={{
                     sx: {
                         backgroundColor: "rgba(253, 253, 253, 0.7)",
