@@ -81,7 +81,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
     return networkData;
 };
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs) => {
+export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked,lines, setLines, setBusLines, setMarkers, markerRefs) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -100,7 +100,6 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
             if(data === null) {
                 return;
             } else {
-                alert("Results: " + JSON.stringify(data));
                 renderLines(data, lines, busLines, markers, setLines)
                 renderBuses(data, markers, markerRefs)
             }

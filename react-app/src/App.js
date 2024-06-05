@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'r
 import { onRunButtonClick } from './utils/api';
 import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, lineWeightMap, binarySearch} from './utils/constants';
 import 'leaflet-polylinedecorator';
+import {mapCenter, iconMapping, markerParametersConfig, defVal, sidebarItems} from './utils/constants';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
@@ -27,6 +28,7 @@ export function ReactApp() {
     const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
     const [draggedItem, setDraggedItem] = useState(null);
+    const [defaultValues, setDefaultValues] =  useState(defVal);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -58,7 +60,10 @@ export function ReactApp() {
                 acc[param] = '';
                 return acc;
             }, {}) : {};
-            
+
+            for (const key in parameters)
+                parameters[key] = defaultValues[draggedItem.type][key]
+
             let markerId = 0;
             if (markers.length != 0) {
                 markerId = markers[markers.length - 1].id + 1;
@@ -72,6 +77,8 @@ export function ReactApp() {
                 parameters,
                 color: '#000'
             };
+            
+
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
                 newMarker.high = null;
@@ -338,6 +345,14 @@ export function ReactApp() {
     }
 
     const handleParameterChange = (markerId, paramName, value) => {
+        if(value !== null && value !== 0 && value !== '')
+        {
+            const newValues = {
+                ...defaultValues,
+                [markers[markerId].type]: {...defaultValues[markers[markerId].type], [paramName]: value}
+            }
+            setDefaultValues(newValues)
+        }
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
                 return {
@@ -471,7 +486,7 @@ export function ReactApp() {
                         <ZoomControl position="topright" />
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick} />
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs)} />
+                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, defaultValues)} />
                 </div>
             </div>
         </div>

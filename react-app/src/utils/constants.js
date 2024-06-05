@@ -63,6 +63,7 @@ export const sidebarItems = [
     { id: 6, name: 'Bus', type: 'bus' }
 ];
 
+
 export const markerParametersConfig = {
     bus: ['voltage'],
     trafo1: ['type'],
@@ -72,12 +73,6 @@ export const markerParametersConfig = {
     solar: ['power'],
     wind: ['power']
 };
-
-export const lineWeightMap = {
-    'none' : 10,
-    'high' : 12,
-    'low' : 8
-}
 
 export const binarySearch = function(arr, x, start, end) {
  
@@ -90,4 +85,13 @@ export const binarySearch = function(arr, x, start, end) {
         return binarySearch(arr, x, start, mid - 1);
     else
         return binarySearch(arr, x, mid + 1, end);
+}
+
+export const defVal = {
+    bus : {voltage: 1},
+    transformer: {type: "0.4 MVA 10/0.4 kV"},
+    load: {p_mv: 0.1, q_mvar: 0.05},
+    grid: {voltage: 1.02},
+    solar: {power: 1},
+    wind: {power: 1},
 }
