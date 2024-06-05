@@ -47,7 +47,7 @@ Deploy:
     - cd ..
   only:
     refs:
-      - master
+      - main
     changes:
       - src/**/*
 
@@ -59,6 +59,6 @@ deploy-functions:
     - cd ..
   only:
     refs:
-      - master
+      - main
     changes:
       - functions/**/*
