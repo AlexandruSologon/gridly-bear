@@ -116,7 +116,7 @@ const renderLines = (data, lines, busLines, markers, setLines) => {
     const uL = lines.map((line) =>  {
             if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
             {   nr++
-                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)']}
+                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)', line[3], line[4]]}
             else return line
         }
     );
