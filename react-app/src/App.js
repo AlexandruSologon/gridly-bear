@@ -5,6 +5,7 @@ import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { onRunButtonClick } from './utils/api';
 import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, lineWeightMap, binarySearch} from './utils/constants';
+import 'leaflet-polylinedecorator';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
@@ -19,6 +20,7 @@ export function ReactApp() {
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
     const lineRefs = useRef([]);
+    // line = [pos1, pos2, color, low/high, [busLine]]
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
@@ -71,7 +73,6 @@ export function ReactApp() {
                 color: '#000'
             };
             if (newMarker.name === "Transformer") {
-                console.log("Initializing transformer");
                 newMarker.connections = 0;
                 newMarker.high = null;
                 newMarker.low = null;
@@ -140,7 +141,6 @@ export function ReactApp() {
 
                         // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!found && !maxTransformer){
-                            console.log(newLine);
                             setLines([...lines, newLine]);
                             setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
@@ -207,8 +207,7 @@ export function ReactApp() {
     };
 
     const handleTransReverse = (markerId) => {
-        console.log(lines);
-        const marker = markers[markerId];
+        const marker = findMarkerById(markerId);
         const [newHigh, newLow] = [marker.low, marker.high];
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
@@ -222,7 +221,7 @@ export function ReactApp() {
         });
         setMarkers(updatedMarkers);
 
-        /*
+        
         const updatedLines = lines.map(line => {
             if(line[0] === marker.position || line[1] === marker.position) {
                 return line.map(point => {
@@ -231,6 +230,7 @@ export function ReactApp() {
                     } else if (point === 'low') {
                         return 'high';
                     }
+                    return point;
                 });
             }
             return line;
@@ -238,8 +238,6 @@ export function ReactApp() {
         
 
         setLines(updatedLines);
-        */
-        console.log(lines);
     }
 
     const handleLineDelete = (index) => {
@@ -452,7 +450,7 @@ export function ReactApp() {
                                       positions={[line[0], line[1]]}
                                       pathOptions={{ color: line[2] }}
                                       clickable={true}
-                                      weight={lineWeightMap[line[3]]}
+                                      weight={10}
                                       ref={(ref) => (lineRefs.current[index] = ref)}
                                       eventHandlers={{
                                           click: (e) => handleLineClick(e),
@@ -469,7 +467,7 @@ export function ReactApp() {
                                 </Popup>
                             </Polyline>
                         ))}
-                        <PolylineDecorator lines = {lines}> </PolylineDecorator>
+                        <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
                         <ZoomControl position="topright" />
                     </MapContainer>
                     <LockButton onLockButtonClick={onLockButtonClick} />
