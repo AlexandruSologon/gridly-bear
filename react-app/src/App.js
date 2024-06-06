@@ -9,11 +9,11 @@ import 'leaflet-polylinedecorator';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
+import ToolElements from './interface-elements/ToolElements';
 import DeleteButton from './interface-elements/DeleteButton';
 import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
-import ToolElements from './interface-elements/ToolElements';
 import { Button, message } from 'antd';
 
 export function ReactApp() {
@@ -78,7 +78,6 @@ export function ReactApp() {
                 parameters,
                 color: '#000'
             };
-            
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
@@ -174,11 +173,12 @@ export function ReactApp() {
 
         const updatedLines = lines.map(line => line.map(point => {
             if ((point.lat === markers[markerIndex].position.lat && point.lng === markers[markerIndex].position.lng) && (point === line[0] || point === line[1])) {
+                const lineRef = lineRefs.current[lines.indexOf(line)];
+                if (lineRef) lineRef.closePopup();
                 return newPosition;
             }
             return point;
         }));
-
         setMarkers(updatedMarkers);
         setLines(updatedLines);
     }, 100);
