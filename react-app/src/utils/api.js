@@ -1,6 +1,6 @@
 import { cnvs_json_post } from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
-import { binarySearch } from './constants';
+import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
 
 
 export const handleExport = (markerInputs, markers, busLines) => {
@@ -130,9 +130,11 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
 };
 
 const renderLines = (data, lines, busLines, markers, setLines) => {
+    console.log('reached this')
     let nr = -1;
     const uL = lines.map((line) => {
-            if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
+        console.log((findMarkerById(line[4][0], markers).type))
+            if((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus') )
             {   nr++
                 return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)', line[3], line[4]]}
             else return line
@@ -144,15 +146,46 @@ const renderLines = (data, lines, busLines, markers, setLines) => {
 const renderBuses = (data, markers, markerRefs) => {
     let nr = 0;
     markerRefs.current.forEach(marker => {
+        if(marker !== null) {
         const  style = marker.valueOf()._icon.style;
-        console.log(style.backgroundColor);
         if (marker.options.icon.options.id === "bus"){
-            style.backgroundColor = '#fff'
-            style.width = '48px'
-            style.height = '48px'
             style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%)' + ' solid 6px'
             style.borderRadius = '50%'
             nr++;
+
+        }else {
+            style.border = ''
+            style.borderRadius = ''
         }
-    })
-};
+    }})
+}
+
+export const resetMarkerRender = (markerRefs) => {
+    markerRefs.current.forEach(marker => {
+        if(marker !== null) {
+            const style = marker.valueOf()._icon.style;
+            if (marker.options.icon.options.id === "bus") {
+                style.border = busDefaultColor + ' solid 6px'
+                style.borderRadius = '50%'
+
+            } else {
+                style.border = 'none'
+                style.borderRadius = '0'
+            }
+        }
+    })}
+
+export const resetLinesRender = (lines, markers) => {
+        const uL = lines.map((line) => {
+            if((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus') )
+            {
+                return [line[0],line[1],lineDefaultColor , line[3], line[4]]}
+            else return line
+        }
+    );
+        return uL;
+    }
+
+export const findMarkerById = (id,markers) => {
+        return binarySearch(markers, id, 0, markers.length - 1);
+    }
