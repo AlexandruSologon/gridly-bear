@@ -14,6 +14,7 @@ import DeleteButton from './interface-elements/DeleteButton';
 import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
+import LineSettings from "./interface-elements/LineSettings";
 import { Button, message } from 'antd';
 
 export function ReactApp() {
@@ -289,6 +290,7 @@ export function ReactApp() {
     };
 
     const handleMarkerRightClick = (event) => {
+        event.originalEvent.preventDefault();
         const targetMarker = event.target;
         if (targetMarker && targetMarker.getPopup()) {
             targetMarker.openPopup();
@@ -349,9 +351,31 @@ export function ReactApp() {
         )
     }
 
+    const renderLineSettings = (line, index) => {
+        if (line[2] === "#000") {
+            return (
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <div style={{marginBottom: '5px'}}>{"Electrical line"}</div>
+                    <div style={{marginBottom: '5px'}}>
+                        <DeleteButton onClick={() => handleLineDelete(index)}/>
+                    </div>
+                    <div style={{marginBottom: '5px'}}>
+                        <LineSettings ></LineSettings>
+                    </div>
+                </div>
+            )
+        } else return (
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <div style={{marginBottom: '5px'}}>{"Electrical line"}</div>
+                <div style={{marginBottom: '5px'}}>
+                    <DeleteButton onClick={() => handleLineDelete(index)}/>
+                </div>
+            </div>
+        )
+    }
+
     const handleParameterChange = (markerId, paramName, value) => {
-        if(value !== null && value !== 0 && value !== '')
-        {
+        if (value !== null && value !== 0 && value !== '') {
             const newValues = {
                 ...defaultValues,
                 [findMarkerById(markerId).type]: {...defaultValues[findMarkerById(markerId).type], [paramName]: value}
@@ -480,17 +504,14 @@ export function ReactApp() {
                                       }}
                             >
                                 <Popup>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ marginBottom: '5px' }}>{"Connection"}</div>
-                                        <div style={{ marginBottom: '5px' }}>
-                                            <DeleteButton onClick={() => handleLineDelete(index)} />
-                                        </div>
+                                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                        {renderLineSettings(line, index)}
                                     </div>
                                 </Popup>
                             </Polyline>
                         ))}
-                        <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
-                        <ZoomControl position="topright" />
+                        <PolylineDecorator lines={lines} markers={markers}> </PolylineDecorator>
+                        <ZoomControl position="topright"/>
                         <ToolElements
                             onLockButtonClick={onLockButtonClick}
                             markers={markers}
