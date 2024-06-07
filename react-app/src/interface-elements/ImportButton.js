@@ -57,16 +57,16 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
           alt="Import Icon"
           draggable="false"
           style={{
-            width: 16,
-            height: 16,
+            width: 20,
+            height: 20,
           }}
         />
       );      
 
     return(
         <Tooltip title="import">
-            <Button size={'large'} onClick={() => fileRef.current.click()} type="default" shape="square" icon={<ImportIcon/>}>
-                <input id="upload" name="upload" type="file" ref={fileRef} hidden onChange={handleChange} />
+            <Button style={{width: 40}} size={'large'} onClick={() => fileRef.current.click()} type="default" shape="square" icon={<ImportIcon/>}>
+                <input style={{display: 'none'}} id="upload" name="upload" type="file" ref={fileRef} hidden onChange={handleChange} />
             </Button>
         </Tooltip>
     );

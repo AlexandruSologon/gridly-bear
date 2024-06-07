@@ -1,8 +1,10 @@
-﻿import React, { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import '../css-files/index.css';
+import { Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 function Search() {
     //map hook
@@ -23,22 +25,17 @@ function Search() {
 
         const searchElement = document.querySelector('.leaflet-control-geosearch');
         const searchButton = searchElement.querySelector('.glass');
-
-        // magnifying glass/search icon
-
-        searchButton.innerHTML = fetch('ícon.svg');
-        /*fetch('icon.svg')
-            .then(response => response.text())
-            .then(svgContent => {
-                searchButton.innerHTML = svgContent;
-            });*/
+        searchButton.innerHTML = '<span class="anticon"><SearchOutlined /></span>'; // Use Ant Design icon
 
         return () => {
             map.removeControl(searchControl);
         };
     }, []);
 
-    return null;
+    return (
+        <Button style={{width: 40}} size={'large'} type="default" shape="square" icon={<SearchOutlined/>}>
+        </Button>
+    );
 };
 
 export default Search;

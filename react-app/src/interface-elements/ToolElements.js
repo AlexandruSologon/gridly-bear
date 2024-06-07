@@ -1,25 +1,28 @@
 import LockButton from "./LockButton";
 import ImportButton from "./ImportButton";
 import ExportButton from "./ExportButton";
-import { Button, Flex } from "antd";
+import { Flex } from "antd";
+import { onRunButtonClick } from '../utils/api';
+import RunButton from "./RunButton";
 
-function ToolElements({onLockButtonClick, markers, setMarkers, lines, setLines, busLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
+function ToolElements(props) {
     return (
         <div style={
             {
                 position: "absolute",
-                marginRight: '10px',
-                top: '5px',
-                right : '60px',
+                top: '20px',
+                right : '20px',
                 display:'flex',
                 justifyContent:'row',
-                alignItems:'column'
+                alignItems:'column',
+                zIndex: 500
             }
         }>
-            <Flex gap="small" wrap>
-                <LockButton onLockButtonClick={onLockButtonClick} />
-                <ImportButton markerRefs={markerRefs} lineRefs={lineRefs} setMarkers={setMarkers} setLines={setLines} setBusLines={setBusLines} mapContainer={mapContainer}></ImportButton>
-                <ExportButton markers={markers} lines={lines} busLines={busLines} mapContainer={mapContainer}></ExportButton>
+            <Flex gap="middle" wrap>
+                <LockButton onLockButtonClick={props.onLockButtonClick} />
+                <ImportButton markerRefs={props.markerRefs} lineRefs={props.lineRefs} setMarkers={props.setMarkers} setLines={props.setLines} setBusLines={props.setBusLines} mapContainer={props.mapContainer}></ImportButton>
+                <ExportButton markers={props.markers} lines={props.lines} busLines={props.busLines} mapContainer={props.mapContainer}></ExportButton>
+                <RunButton runClicked={props.runClicked} onRunButtonClick={() => onRunButtonClick(props.markers, props.busLines, props.runClicked, props.setRunClicked, props.setIsMapLocked, props.lines, props.setLines, props.setBusLines, props.setMarkers, props.markerRefs, props.messageApi, props.defaultValues)} />
             </Flex>
             
         </div>

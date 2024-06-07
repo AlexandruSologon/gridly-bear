@@ -3,12 +3,10 @@ import 'leaflet/dist/leaflet.css';
 import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
-import { onRunButtonClick } from './utils/api';
 import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, defVal, binarySearch} from './utils/constants';
 import 'leaflet-polylinedecorator';
 import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
-import RunButton from './interface-elements/RunButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
@@ -390,8 +388,6 @@ export function ReactApp() {
         });
     };
 
-    
-
     const onLockButtonClick = () => {
         console.log("markers and lines: ", lines, markers);
         setIsMapLocked(!isMapLocked);
@@ -490,7 +486,7 @@ export function ReactApp() {
                             </Polyline>
                         ))}
                         <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
-                        <ZoomControl position="topright" />
+                        <ZoomControl position="bottomright" />
                         <ToolElements
                             onLockButtonClick={onLockButtonClick}
                             markers={markers}
@@ -499,11 +495,16 @@ export function ReactApp() {
                             setLines={setLines}
                             busLines={busLines}
                             setBusLines={setBusLines}
-                            mapContainer={mapContainer}>
-                        </ToolElements>
+                            mapContainer={mapContainer}
+                            runClicked={runClicked}
+                            setRunClicked={setRunClicked}
+                            setIsMapLocked={setIsMapLocked}
+                            markerRefs={markerRefs}
+                            messageApi={messageApi}
+                            defaultValues={defaultValues}
+                        ></ToolElements>
                     </MapContainer>
                     {contextHolder}
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, defaultValues)} />
                 </div>
             </div>
         </div>

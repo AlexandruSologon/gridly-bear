@@ -52,8 +52,8 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
             alt="Export Icon"
             draggable="false"
             style={{
-            width: 16,
-            height: 16,
+            width: 20,
+            height: 20,
             }}
         />
     );
