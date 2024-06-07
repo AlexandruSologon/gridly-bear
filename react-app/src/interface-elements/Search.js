@@ -32,10 +32,7 @@ function Search() {
         };
     }, []);
 
-    return (
-        <Button style={{width: 40}} size={'large'} type="default" shape="square" icon={<SearchOutlined/>}>
-        </Button>
-    );
+    return null;
 };
 
 export default Search;
