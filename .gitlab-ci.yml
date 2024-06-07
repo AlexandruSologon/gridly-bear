@@ -32,7 +32,7 @@ Build:
   stage: build
   script:
     - cd react-app
-    - CI=false npm run build
+    - npm run build
     - cd ..
   only:
     changes:

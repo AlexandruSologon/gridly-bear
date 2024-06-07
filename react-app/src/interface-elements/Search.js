@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
@@ -36,7 +36,7 @@ function Search() {
         return () => {
             map.removeControl(searchControl);
         };
-    }, []);
+    }, [map]);
 
     return null;
 };

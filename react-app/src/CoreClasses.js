@@ -28,13 +28,13 @@ export class Transformer {
     }
 }
 
-class Switch {
-    constructor(from, to, type) {
-        this.from = from
-        this.to = to
-        this.type = type
-    }
-}
+// class Switch {
+//     constructor(from, to, type) {
+//         this.from = from
+//         this.to = to
+//         this.type = type
+//     }
+// }
 
 export class Load {
     constructor(id, bus, p_mv, q_mvar) {

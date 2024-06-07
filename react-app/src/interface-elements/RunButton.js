@@ -1,11 +1,12 @@
 import React from "react";
 import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
 import IconButton from '@mui/material/IconButton';
-import CircularProgress from '@mui/material/CircularProgress';
+//import CircularProgress from '@mui/material/CircularProgress';
 
 /**
  * Renders a green arrow run button.
  * @param {*} onRunButtonClick - The function to be called on the button's click.
+ * @param runClicked
  * @returns The jsx for the run button.
  */
 function GreenArrow({onRunButtonClick, runClicked}) {
@@ -39,30 +40,30 @@ function GreenArrow({onRunButtonClick, runClicked}) {
  * Render a rotating waiting icon (aka an annular throbber).
  * @returns the jsx content for rendering the loading icon.
  */
-function AnnularThrobber() {
-    return (
-        <div data-testid = 'run-circle'
-            style = {
-            { 
-                position: 'absolute', 
-                right: '0px', 
-                top: '78%', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                height: '8vh'
-            }
-        }>
-            <CircularProgress style = {
-                { 
-                    color: '#05a95c', 
-                    width: '8vw', 
-                    height: '8vw' 
-                }
-            } 
-            />
-        </div>
-    );
-}
+// function AnnularThrobber() {
+//     return (
+//         <div data-testid = 'run-circle'
+//             style = {
+//             {
+//                 position: 'absolute',
+//                 right: '0px',
+//                 top: '78%',
+//                 justifyContent: 'center',
+//                 alignItems: 'center',
+//                 height: '8vh'
+//             }
+//         }>
+//             <CircularProgress style = {
+//                 {
+//                     color: '#05a95c',
+//                     width: '8vw',
+//                     height: '8vw'
+//                 }
+//             }
+//             />
+//         </div>
+//     );
+// }
 
 /**
  * Renders both a run button and a loading icon (annular throbber) depending on the state of the canvas.
