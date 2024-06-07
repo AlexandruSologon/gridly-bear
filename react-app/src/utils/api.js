@@ -1,11 +1,15 @@
 import { cnvs_json_post } from './api_interaction';
-import {Bus, ExtGrid, Generator, Line, Load, Network} from '../CoreClasses';
+import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
+import { binarySearch } from './constants';
+
 
 export const handleExport = (markerInputs, markers, busLines) => {
+    console.log(markers);
     const buses = [];
     const components = [];
     let indices = [0, 0, 0, 0, 0, 0, 0];
     const busIdMap = new Map();
+    const transLines = [];
 
     markerInputs.forEach((marker) => {
         if(marker.name === "Bus")
@@ -21,10 +25,9 @@ export const handleExport = (markerInputs, markers, busLines) => {
     })
     for (let i = 0; i < busLines.length; i++) {
         const line = busLines[i];
-        //const bus1Loc = markers[line[0]].getLatLng();
-        //const bus2Loc = markers[line[1]].getLatLng();
-        let item1 = markers[line[0]]
-        let item2 = markers[line[1]]
+        console.log(line);
+        let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
+        let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
         if (item1.name === 'Bus' && item2.name === 'Bus') {
             components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), item1.position.distanceTo(item2.position)/1000, 'NAYY 4x50 SE'));
             indices[1] += 1;
@@ -47,27 +50,52 @@ export const handleExport = (markerInputs, markers, busLines) => {
                     components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
                     indices[6] += 1;
                     break;
-                /*
+
                 case 'Transformer':
-                    components.push(new Transformer(indices[4], busIndex, 5, 20));
-                    indices[4] +=1;
-                    break;
-                    */
+                    let newTransLine = [item1.high, item1.low];
+                    let found = false;
+                    for (let i = 0; i < transLines.length; i++) {
+                        const item = transLines[i];
+                        if (item[0] === newTransLine[0] && item[1] === newTransLine[1]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        transLines.push(newTransLine);
+                    }
                 default:
                     break;
             }
         }
     }
+
+    for (let i = 0; i < transLines.length; i++) {
+        const line = transLines[i];
+        components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
+        indices[4] +=1;
+    }
+
     const total = buses.concat(components);
     const networkData = JSON.stringify(new Network(total));
     console.log('Exported Data:', networkData);
     return networkData;
 };
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked,lines, setLines, setBusLines, setMarkers, markerRefs) => {
+
+export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
+
+    const key = 'awaitsimalert';
+    messageApi
+        .open({
+            key,
+            type: 'loading',
+            content: 'Awaiting Simulation Results..',
+            duration: 0,
+        });
 
     const markerInputs = markers.map(marker => ({
         id: marker.id,
@@ -80,26 +108,33 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
     console.log('Sent over Data:', dat);
     cnvs_json_post(dat)
         .then((data) => {
-            if(data === null) {
-                return;
-            } else {
-                renderLines(data, lines, busLines, markers, setLines)
-                renderBuses(data, markers, markerRefs)
-            }
+            renderLines(data, lines, busLines, markers, setLines);
+            renderBuses(data, markers, markerRefs);
+            messageApi.open({
+                key,
+                type: 'success',
+                content: 'simulation complete!',
+                duration: 2,
+            });
         }).catch((error) => {
-        console.log(error.message + " : " +  error.details);
-        alert("Error showing results");
-    }).finally(() => {
-        setRunClicked(false);
-    });
+            console.log(error.message + " : " +  error.details);
+            messageApi.open({
+                key,
+                type: 'error',
+                content: error.message,
+                duration: 2,
+            });
+        }).finally(() => {
+            setRunClicked(false);
+        });
 };
 
 const renderLines = (data, lines, busLines, markers, setLines) => {
     let nr = -1;
-    const uL = lines.map((line) =>  {
+    const uL = lines.map((line) => {
             if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
             {   nr++
-                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)']}
+                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)', line[3], line[4]]}
             else return line
         }
     );

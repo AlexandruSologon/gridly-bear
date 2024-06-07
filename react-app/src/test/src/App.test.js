@@ -55,6 +55,6 @@ test('Run Button', () => {
 
 test('Run Button Clicked', () => {
     render(<RunButton onRunButtonClick={jest.fn()} runClicked={true} />)
-    expect(screen.getByTestId('run-circle')).toBeInTheDocument()
+    expect(screen.getByTestId('run-button')).toBeInTheDocument()
 })
 

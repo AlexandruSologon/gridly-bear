@@ -43,13 +43,13 @@ def get_line_color(line,  safe_below=70, bad_above=90):
     hue = 120
     # move towards yellow the closer line gets to safe_below
     if( line <= safe_below):
-        hue = hue - line * (45/safe_below)
+        hue = hue - line * (45/70)
     # move towards red the closer line gets to bad_above
     elif( line <= bad_above):
-        hue = hue - 55 - line * (50/(bad_above - safe_below))
+        hue = hue - 55 - (line-safe_below) * (50/bad_above - safe_below)
     else:
     # when line > bad_above red return max value red
-        hue = max(hue - 95 - line * (25 / (120-bad_above)), 0)
+        hue = max(hue - 95 - (line-bad_above) * (25 / (120-bad_above)), 0)
     return (hue, 100, 50)
 
 
@@ -61,17 +61,16 @@ def get_line_color(line,  safe_below=70, bad_above=90):
 def get_bus_color(bus, safe_within=0.05, danger_zone=0.1):
     # color starts from bright green
     hue = 120
-    safe_below = abs(safe_within)
-    bad_above = abs(danger_zone)
+    bus = abs(bus-1)
     # move towards yellow the closer bus gets to safe_within
-    if( bus <= safe_below):
-        hue = hue - bus * (45/safe_below)
+    if( bus <= safe_within):
+        hue = hue - bus * (0.45/safe_within)
     # move towards red the closer bus gets to danger_zone
-    elif( bus <= bad_above):
-        hue = hue - 55 - bus * (50/(bad_above - safe_below))
+    elif( bus <= danger_zone):
+        hue = hue - 55 - (bus-safe_within) * (0.50/(danger_zone - safe_within))
     else:
         # when bus > danger_zone red return max value red
-        hue = max(hue - 95 - bus * (25 / (1.2-bad_above)), 0)
+        hue = max(hue - 95 - (bus-danger_zone) * (0.25 / (0.12-danger_zone)), 0)
     return (hue, 100, 50)
 
 def all_bus_colors(net):
