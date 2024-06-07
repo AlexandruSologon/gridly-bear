@@ -13,16 +13,16 @@ export const iconMapping = {
     }),
     solar: new L.icon({
         id: 'solar',
-        iconRetinaUrl: require('../images/solarPanel.png'),
-        iconUrl: require('../images/solarPanel.png'),
+        iconRetinaUrl: require('../images/solar.png'),
+        iconUrl: require('../images/solar.png'),
         iconAnchor: [30, 25],
         popupAnchor:[0, -35],
         iconSize: [60, 50]
     }),
     bus: new L.icon({
         id: 'bus',
-        iconUrl: require('../images/busIcon.png'),
-        iconRetinaUrl: require('../images/busIcon.png'),
+        iconUrl: require('../images/bus.png'),
+        iconRetinaUrl: require('../images/bus.png'),
         iconAnchor: [24, 24],
         popupAnchor:[0, -32],
         iconSize: [48, 48],
@@ -38,16 +38,16 @@ export const iconMapping = {
     }),
     wind: new L.icon({
         id: 'wind',
-        iconRetinaUrl: require('../images/windTurbine.png'),
-        iconUrl: require('../images/windTurbine.png'),
+        iconRetinaUrl: require('../images/wind.png'),
+        iconUrl: require('../images/wind.png'),
         iconAnchor: [35, 35],
         popupAnchor: [0, -35],
         iconSize: [70, 70]
     }),
     trafo1: new L.icon({
         id: 'trafo1',
-        iconRetinaUrl: require('../images/energy.png'),
-        iconUrl: require('../images/energy.png'),
+        iconRetinaUrl: require('../images/trafo1.png'),
+        iconUrl: require('../images/trafo1.png'),
         iconAnchor: [32, 32],
         popupAnchor: [0, -32],
         iconSize: [64, 64]
