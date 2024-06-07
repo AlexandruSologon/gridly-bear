@@ -14,7 +14,7 @@ function LockButton(props) {
 
     return(
         <Tooltip title="import">
-            <Button size={'large'} onClick={onLockButtonClick} type="default" shape="square" icon={!isMapLocked ? <LockIcon/> : <LockOpenIcon/>}>
+            <Button className={'hasShadow'} size={'large'} onClick={onLockButtonClick} type="default" shape="square" icon={!isMapLocked ? <LockIcon/> : <LockOpenIcon/>}>
             </Button>
         </Tooltip>
     );

@@ -43,9 +43,11 @@ function GreenArrow({onRunButtonClick, runClicked}) {
  * @returns 
  */
 function RunButton({runClicked, onRunButtonClick}) {
-    return <Button icon={<CaretRightFilled />} size={'large'} type="primary" onClick={onRunButtonClick} loading={runClicked}>
-                Run
-            </Button>;
+    return (
+        <Button defaultBg={'#193156'} className={'hasShadow'} icon={<CaretRightFilled />} size={'large'} type="primary" onClick={onRunButtonClick} loading={runClicked}>
+            Run
+        </Button>
+    );
 }
 
 export default RunButton;

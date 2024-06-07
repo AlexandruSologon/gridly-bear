@@ -74,6 +74,10 @@
   color: red;
 }
 
+.hasShadow {
+  box-shadow: 5px 8px 8px rgba(0, 0, 0, 0.1);
+}
+
 .search-bar {
     display: flex;
 }
