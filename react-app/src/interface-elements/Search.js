@@ -1,15 +1,34 @@
 ﻿import { useEffect, useState } from 'react';
 import { useMap } from 'react-leaflet';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import '../css-files/index.css';
 import { Button, Space, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 function Search() {
+    
     //map hook
     const map = useMap();
     const [searchField, setSearchField] = useState('');
+
+    useEffect(() => {
+        const provider = new OpenStreetMapProvider();
+
+        const searchControl = new GeoSearchControl({
+            style: {display:'hidden'},
+            provider,
+            searchLabel: 'Enter address',
+            showMarker: false,
+        });
+
+        //adding search functionality to map
+        map.addControl(searchControl);
+
+        return () => {
+            map.removeControl(searchControl);
+        };
+    }, []);
         
     const handleSearch = async (query) => {
         const provider = new OpenStreetMapProvider();
