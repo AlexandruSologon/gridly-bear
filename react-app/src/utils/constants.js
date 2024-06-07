@@ -96,6 +96,6 @@ export const defVal = {
     solar: {power: 1},
     wind: {power: 1},
 }
-export const lineDefaultColor = '#000'
-export const connectionDefaultColor = '#000'
+export const lineDefaultColor = '#706E6E'
+export const connectionDefaultColor = '#1f3c6a'
 export const busDefaultColor = '#636363'
