@@ -1,11 +1,11 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import debounce from 'lodash.debounce';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, defVal, binarySearch} from './utils/constants';
 import 'leaflet-polylinedecorator';
-import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
 import DeleteButton from './interface-elements/DeleteButton';
 import ReverseButton from './interface-elements/ReverseButton';
@@ -19,7 +19,6 @@ export function ReactApp() {
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
     const lineRefs = useRef([]);
-    // line = [pos1, pos2, color, low/high, [busLine]]
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
@@ -28,6 +27,7 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
+    let provider = new OpenStreetMapProvider();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
