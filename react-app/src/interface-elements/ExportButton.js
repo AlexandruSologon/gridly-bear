@@ -1,5 +1,7 @@
 import { IconButton } from '@mui/material';
 import { useMap } from 'react-leaflet';
+import exportIcon from '../images/export.png';
+import { Tooltip, Button } from 'antd';
 
 function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContainer}) {
     const map = useMap();
@@ -30,7 +32,7 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
         console.log(exportData);
 
         //download to users file system
-        //https://stackoverflow.com/questions/66078335/how-do-i-save-a-file-on-my-desktop-using-reactjs
+        //reference https://stackoverflow.com/questions/66078335/how-do-i-save-a-file-on-my-desktop-using-reactjs
         const blob = new Blob([stringData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -44,24 +46,23 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
         document.body.removeChild(link);
     }
 
-    return(
-        <IconButton 
-            aria-label="check"
-            data-testid = "lockbutton"
+    const ExportIcon = () => (
+        <img
+            src={exportIcon}
+            alt="Export Icon"
+            draggable="false"
             style={{
-                opacity: '30'
-            }} onClick={() => {exp(markers, lines, busLines, mapContainer)}}>
-            <div style={{position: 'relative'}}>
-                <img src={require('../images/export.png')}
-                    alt={"import"}
-                    draggable='false'
-                    style={{
-                        width: 40,
-                        height: 40
-                    }}
-                />
-            </div>
-        </IconButton>
+            width: 16,
+            height: 16,
+            }}
+        />
+    );
+
+    return(
+        <Tooltip title="export">
+            <Button size={'large'} onClick={() => {exp(markers, lines, busLines, mapContainer)}} type="default" shape="square" icon={<ExportIcon/>}>
+            </Button>
+        </Tooltip>
     );
 
 }

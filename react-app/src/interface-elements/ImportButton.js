@@ -3,6 +3,8 @@ import { useState, useRef } from "react";
 import { iconMapping } from "../utils/constants";
 import { useMap } from 'react-leaflet';
 import { LatLng } from "leaflet";
+import { Button, Tooltip } from "antd";
+import impIcon from '../images/import.png';
 
 function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
 
@@ -49,26 +51,24 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
         setBusLines(loadedFileJson.busLines);
     };
 
+    const ImportIcon = () => (
+        <img
+          src={impIcon}
+          alt="Import Icon"
+          draggable="false"
+          style={{
+            width: 16,
+            height: 16,
+          }}
+        />
+      );      
+
     return(
-        <IconButton 
-            draggable = 'false'
-            aria-label="check"
-            data-testid = "lockbutton"
-            style={{
-                opacity: '30'
-            }} onClick={() => fileRef.current.click()} >
-            <div style={{position: 'relative'}}>
-                <img src={require('../images/import.png')}
-                    alt={"import"}
-                    draggable='false'
-                    style={{
-                        width: 40,
-                        height: 40
-                    }}
-                />
+        <Tooltip title="import">
+            <Button size={'large'} onClick={() => fileRef.current.click()} type="default" shape="square" icon={<ImportIcon/>}>
                 <input id="upload" name="upload" type="file" ref={fileRef} hidden onChange={handleChange} />
-            </div>
-        </IconButton>
+            </Button>
+        </Tooltip>
     );
 }
 
