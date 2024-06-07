@@ -1,5 +1,6 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import debounce from 'lodash.debounce';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
@@ -19,6 +20,7 @@ export function ReactApp() {
     const lineRefs = useRef([]);
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const [highlightedMarker, setHighlightedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
     const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
@@ -71,6 +73,7 @@ export function ReactApp() {
         }
         if (selectedMarker === null) {
             setSelectedMarker(markerIndex);
+            setHighlightedMarker(markerIndex);
         } else {
             if (selectedMarker !== markerIndex && (markers[selectedMarker].icon.options.id === "bus" || markers[markerIndex].icon.options.id === "bus")) {
                 if (markers[selectedMarker] && markers[markerIndex]) {
@@ -100,6 +103,7 @@ export function ReactApp() {
                 }
             }
             setSelectedMarker(null);
+            setHighlightedMarker(null);
         }
     };
 
@@ -241,6 +245,19 @@ export function ReactApp() {
         return isMapLocked;
     };
 
+    /*Making sure that all markers stay the right size when highlighted by taking the icon's size*/
+    const getHighlightedIconHTML = (icon) => {
+        /*Every icon gets custom html with their width and height*/
+        const iconSize = icon.options.iconSize;
+        return `
+            <div class="highlighted-icon-container" style="width: ${iconSize[0]}px; height: ${iconSize[1]}px;">
+                <div class="highlighted-icon-content" style="position: relative; width: ${iconSize[0]}px; height: ${iconSize[1]}px;">
+                    <img src="${icon.options.iconUrl}" style="width: ${iconSize[0]}px; height: ${iconSize[1]}px;" />
+                </div>
+            </div>
+        `;
+    };
+
     return (
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
@@ -275,32 +292,40 @@ export function ReactApp() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             opacity={0.4}
                         />
-                        {markers.map((marker, index) => (
-                            <Marker key={index}
+                        {markers.map((marker, index) => {
+                            return (
+                                <Marker key={index}
                                     position={marker.position}
-                                    icon={marker.icon}
+                                    icon={L.divIcon({
+                                        classname: '',
+                                        html: (highlightedMarker === index) ? getHighlightedIconHTML(marker.icon) : `<img src="${marker.icon.options.iconUrl}" />`,
+                                        /*Making sure that icon stays the same size if not highlighted*/
+                                        iconSize: marker.icon.options.iconSize
+                                    })}
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
-                                    className="dot"
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, index),
                                         contextmenu: (e) => handleMarkerRightClick(e),
                                         dragstart: () => setSelectedMarker(null),
                                         drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
                                     }}
-                            >
-                                <Popup>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ marginBottom: '5px' }}>{marker.name}</div>
-                                        {renderParameterInputs(marker)}
-                                        <div style={{ marginBottom: '5px' }}>
-                                            <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                >
+                                    <Popup>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ marginBottom: '5px' }}>{marker.name}</div>
+                                            {renderParameterInputs(marker)}
+                                            <div style={{ marginBottom: '5px' }}>
+                                                <DeleteButton onClick={() => handleMarkerDelete(index)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                </Popup>
-                            </Marker>
-                        ))}
+                                    </Popup>
+
+                                </Marker>
+                            );
+                        })}
+
                         {lines.map((line, index) => (
                             <Polyline key={index}
                                       positions={[line[0], line[1]]}
