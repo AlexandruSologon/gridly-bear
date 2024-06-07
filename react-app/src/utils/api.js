@@ -4,7 +4,6 @@ import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
 
 
 export const handleExport = (markerInputs, markers, busLines) => {
-    console.log(markers);
     const buses = [];
     const components = [];
     let indices = [0, 0, 0, 0, 0, 0, 0];
@@ -25,7 +24,6 @@ export const handleExport = (markerInputs, markers, busLines) => {
     })
     for (let i = 0; i < busLines.length; i++) {
         const line = busLines[i];
-        console.log(line);
         let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
         let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
         if (item1.name === 'Bus' && item2.name === 'Bus') {
@@ -131,10 +129,8 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
 };
 
 const renderLines = (data, lines, busLines, markers, setLines) => {
-    console.log('reached this')
     let nr = -1;
     const uL = lines.map((line) => {
-        console.log((findMarkerById(line[4][0], markers).type))
             if((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus') )
             {   nr++
                 return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)', line[3], line[4]]}
@@ -161,17 +157,20 @@ const renderBuses = (data, markers, markerRefs) => {
     }})
 }
 
-export const resetMarkerRender = (markerRefs) => {
-    markerRefs.current.forEach(marker => {
-        if(marker !== null) {
-            const style = marker.valueOf()._icon.style;
-            if (marker.options.icon.options.id === "bus") {
+export const resetMarkerRender = (markers, markerRefs) => {
+    markers.forEach(marker => {
+        if(marker !== null)
+        if(markerRefs.current[markers.indexOf(marker)] !== null) {
+            const style = markerRefs.current[markers.indexOf(marker)].valueOf()._icon.style;
+            if (marker.type === 'bus') {
+                console.log(' buse ')
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
 
             } else {
+                console.log('not bus')
                 style.border = 'none'
-                style.borderRadius = '0'
+                style.borderRadius = ''
             }
         }
     })}

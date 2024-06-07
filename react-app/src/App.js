@@ -10,7 +10,7 @@ import {
     markerParametersConfig,
     sidebarItems,
     defVal,
-    connectionDefaultColor, lineDefaultColor
+    connectionDefaultColor, lineDefaultColor, busDefaultColor
 } from './utils/constants';
 import 'leaflet-polylinedecorator';
 import Search from './interface-elements/Search';
@@ -186,20 +186,26 @@ export function ReactApp() {
         }));
 
         setMarkers(updatedMarkers);
-        resetMarkerRender(markerRefs)
+        resetMarkerRender(updatedMarkers, markerRefs)
         setLines(resetLinesRender(updatedLines, updatedMarkers));
     }, 100);
 
+    const deleteMarker = (indexMarker) => {
+        handleMarkerDelete(indexMarker)
+    }
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
         const oldMarkerId = markers[indexMarker].id;
-        resetMarkerRender(markerRefs)
         const markerRef = markerRefs.current[indexMarker];
         if (markerRef) {
-            markerRef.valueOf()._icon.style.border = 'none';
-            markerRef.valueOf()._icon.style.borderRadius = '0'
+        {
+            console.log(markerRef)
+            markerRef.valueOf()._icon.style.border = ''
+            markerRef.valueOf()._icon.style.borderWidth = ''
+        }
             markerRef.closePopup();
         }
+
         const updatedMarkers = markers.map(marker => {
             if (marker.name === "Transformer") {
                 const c = marker.connections;
@@ -213,7 +219,7 @@ export function ReactApp() {
         });
         updatedMarkers.splice(indexMarker, 1);
         setMarkers(updatedMarkers);
-        markerRefs.current.splice(indexMarker, 1);
+
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
@@ -225,6 +231,9 @@ export function ReactApp() {
             !((line[0] === markers[indexMarker].id) || 
             (line[1] === markers[indexMarker].id)));
         setBusLines(updatedBusLines);
+        //if(markers[0])
+        //handleMarkerDrag(0,markers[0].position)
+        resetMarkerRender(updatedMarkers, markerRefs)
     };
 
     const handleTransReverse = (markerId) => {
@@ -256,9 +265,10 @@ export function ReactApp() {
             }
             return line;
         })
-        
 
         setLines(updatedLines);
+        resetMarkerRender(updatedMarkers, markerRefs);
+        resetLinesRender(updatedLines, updatedMarkers);
     }
 
     const handleLineDelete = (index) => {
@@ -343,7 +353,7 @@ export function ReactApp() {
             return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => {handleMarkerDelete(index)}}/>
+                <DeleteButton onClick={() => {deleteMarker(index)}}/>
             </div>
             <div style={{marginBottom: '5px'}}>
                 <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
@@ -353,7 +363,7 @@ export function ReactApp() {
         }
         return (
             <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => {handleMarkerDelete(index)}}/>
+                <DeleteButton onClick={() => {deleteMarker(index); }}/>
             </div>
         )
     }
@@ -454,12 +464,13 @@ export function ReactApp() {
                         />
                         {markers.map((marker, index) => (
                             <Marker key={index}
+                                    type={marker.type}
                                     position={marker.position}
                                     icon={marker.icon}
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
-                                    className="dot"
+
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, marker.id),
                                         contextmenu: (e) => handleMarkerRightClick(e),
