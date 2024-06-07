@@ -1,4 +1,4 @@
-import { cnvs_json_post } from './api_interaction';
+import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
 
@@ -64,6 +64,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
                     if (!found) {
                         transLines.push(newTransLine);
                     }
+                    break;
                 default:
                     break;
             }
@@ -149,7 +150,7 @@ const renderBuses = (data, markers, markerRefs) => {
         if(marker !== null) {
         const  style = marker.valueOf()._icon.style;
         if (marker.options.icon.options.id === "bus"){
-            style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%)' + ' solid 6px'
+            style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%) solid 6px'
             style.borderRadius = '50%'
             nr++;
 
@@ -176,14 +177,12 @@ export const resetMarkerRender = (markerRefs) => {
     })}
 
 export const resetLinesRender = (lines, markers) => {
-        const uL = lines.map((line) => {
-            if((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus') )
-            {
-                return [line[0],line[1],lineDefaultColor , line[3], line[4]]}
-            else return line
-        }
-    );
-        return uL;
+    return lines.map((line) => {
+                if ((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus')) {
+                    return [line[0], line[1], lineDefaultColor, line[3], line[4]]
+                } else return line
+            }
+        );
     }
 
 export const findMarkerById = (id,markers) => {

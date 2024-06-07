@@ -21,9 +21,9 @@ import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
-import { Button, message } from 'antd';
 import {findMarkerById} from "./utils/api";
-import {waitFor} from "@testing-library/react";
+import {message} from "antd";
+
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -304,7 +304,7 @@ export function ReactApp() {
         }
     };
 
-    const handleLineClick = (event, markerIndex) => {
+    const handleLineClick = (event) => {
         const targetLine = event.target;
         if (targetLine) {
             targetLine.closePopup();
@@ -338,7 +338,7 @@ export function ReactApp() {
     };
 
     const renderRequiredButtons = (marker, index) => {
-        const { id, type } = marker;
+        const {type } = marker;
         if (type === 'trafo1') {
             return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
