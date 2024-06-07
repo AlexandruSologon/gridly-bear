@@ -11,10 +11,10 @@ import Sidebar from './interface-elements/Sidebar';
 import RunButton from './interface-elements/RunButton';
 import ToolElements from './interface-elements/ToolElements';
 import DeleteButton from './interface-elements/DeleteButton';
+import LineSettings from "./interface-elements/LineSettings";
 import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
-import LineSettings from "./interface-elements/LineSettings";
 import { Button, message } from 'antd';
 
 export function ReactApp() {
@@ -283,7 +283,6 @@ export function ReactApp() {
 
             setMarkers(updatedMarkers);
         }
-
         setBusLines(updatedBusLines);
         setLines(updatedLines);
         lineRefs.current.splice(index, 1);
@@ -305,6 +304,7 @@ export function ReactApp() {
     };
 
     const handleLineRightClick = (event) => {
+        event.originalEvent.preventDefault();
         const targetLine = event.target;
         if (targetLine && targetLine.getPopup()) {
             targetLine.openPopup();
@@ -351,29 +351,6 @@ export function ReactApp() {
         )
     }
 
-    const renderLineSettings = (line, index) => {
-        if (line[2] === "#000") {
-            return (
-                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                    <div style={{marginBottom: '5px'}}>{"Electrical line"}</div>
-                    <div style={{marginBottom: '5px'}}>
-                        <DeleteButton onClick={() => handleLineDelete(index)}/>
-                    </div>
-                    <div style={{marginBottom: '5px'}}>
-                        <LineSettings ></LineSettings>
-                    </div>
-                </div>
-            )
-        } else return (
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <div style={{marginBottom: '5px'}}>{"Electrical line"}</div>
-                <div style={{marginBottom: '5px'}}>
-                    <DeleteButton onClick={() => handleLineDelete(index)}/>
-                </div>
-            </div>
-        )
-    }
-
     const handleParameterChange = (markerId, paramName, value) => {
         if (value !== null && value !== 0 && value !== '') {
             const newValues = {
@@ -397,24 +374,6 @@ export function ReactApp() {
         });
         setMarkers(updatedMarkers);
     };
-
-    const handleMarkerHover = (markerIndex) => {
-        if (selectedMarker !== null) {
-            const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
-            if (markerElement) {
-                markerElement.classList.add('marker-hover');
-            }
-        }
-    };
-
-    const handleMarkerLeave = () => {
-        const markerElements = document.querySelectorAll('.leaflet-marker-icon');
-        markerElements.forEach(markerElement => {
-            markerElement.classList.remove('marker-hover');
-        });
-    };
-
-    
 
     const onLockButtonClick = () => {
         console.log("markers and lines: ", lines, markers);
@@ -504,9 +463,7 @@ export function ReactApp() {
                                       }}
                             >
                                 <Popup>
-                                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                        {renderLineSettings(line, index)}
-                                    </div>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
                                 </Popup>
                             </Polyline>
                         ))}
