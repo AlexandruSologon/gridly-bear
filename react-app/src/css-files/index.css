@@ -1,5 +1,5 @@
 
-.leaflet-control-geosearch {  left: 300px;  z-index: 10002; }
+.leaflet-control-geosearch {  display:none; left: 300px;  z-index: 10002; }
 
 .dot {
   width: 48px;
