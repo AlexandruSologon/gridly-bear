@@ -39,7 +39,7 @@ Deploy:
     - firebase deploy --only hosting --token $FIREBASE_TOKEN
   only:
     refs:
-      - bugfix-deployment
+      - main
 
 deploy-functions:
   stage: deploy-functions
@@ -47,6 +47,6 @@ deploy-functions:
     - firebase deploy --only functions --token $FIREBASE_TOKEN
   only:
     refs:
-      - bugfix-deployment
+      - main
     changes:
       - functions/**/*
