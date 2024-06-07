@@ -12,7 +12,7 @@ stages:
 
 before_script:
   - cd react-app/
-  - npm ci -g firebase-tools
+  - npm i -g firebase-tools
   - npm ci
 
 Linting:
