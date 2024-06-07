@@ -10,39 +10,38 @@ function Search() {
     //map hook
     const map = useMap();
     const [searchResults, setSearchResults] = useState([]);
+    const [searchField, setSearchField] = useState('');
     const provider = new OpenStreetMapProvider();
 
-    // useEffect(() => {
-    //     const searchControl = new GeoSearchControl({
-    //         style: 'button',
-    //         provider,
-    //         searchLabel: 'Enter address',
-    //         showMarker: false,
-    //     });
+    useEffect(() => {
+        const searchControl = new GeoSearchControl({
+            style: 'button',
+            provider,
+            searchLabel: 'Enter address',
+            showMarker: false,
+        });
 
-    //     //adding search functionality to map
-    //     map.addControl(searchControl);
+        //adding search functionality to map
+        map.addControl(searchControl);
 
-    //     const searchElement = document.querySelector('.leaflet-control-geosearch');
-    //     const searchButton = searchElement.querySelector('.glass');
+        const searchElement = document.querySelector('.searchbar');
+        const searchButton = searchElement.querySelector('.searchbutton');
 
-    //     return () => {
-    //         map.removeControl(searchControl);
-    //     };
-    // }, []);
-
+        return () => {
+            map.removeControl(searchControl);
+        };
+    }, []);
         
     const handleSearch = async (query) => {
-        const results = await provider.search({ query });
+        const results = await provider.search({ searchField });
         setSearchResults(results);
-        // Update map markers with search results (e.g., add markers to the map)
     };
 
     //(<div><GeoSearchControl provider={provider}></GeoSearchControl></div>)
     return (
         <Space.Compact style={{ width: '300px' }}>
-            <Input defaultValue="Search" onClick={() => {handleSearch()}}/>
-            <Button type="default" icon={<SearchOutlined />} size='large'></Button>
+            <Input className={'searchbar'} placeholder="Search" onChange={(e) => setSearchField(e.target.value)}/>
+            <Button className={'searchbutton'} onClick={handleSearch} type="default" icon={<SearchOutlined />} size='large'></Button>
         </Space.Compact>
     );
 };
