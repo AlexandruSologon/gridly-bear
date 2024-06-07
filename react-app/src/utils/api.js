@@ -163,12 +163,11 @@ export const resetMarkerRender = (markers, markerRefs) => {
         if(markerRefs.current[markers.indexOf(marker)] !== null) {
             const style = markerRefs.current[markers.indexOf(marker)].valueOf()._icon.style;
             if (marker.type === 'bus') {
-                console.log(' buse ')
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
 
             } else {
-                console.log('not bus')
+
                 style.border = 'none'
                 style.borderRadius = ''
             }

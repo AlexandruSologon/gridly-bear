@@ -199,7 +199,6 @@ export function ReactApp() {
         const markerRef = markerRefs.current[indexMarker];
         if (markerRef) {
         {
-            console.log(markerRef)
             markerRef.valueOf()._icon.style.border = ''
             markerRef.valueOf()._icon.style.borderWidth = ''
         }
