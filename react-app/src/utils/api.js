@@ -64,6 +64,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
                     if (!found) {
                         transLines.push(newTransLine);
                     }
+                    break;
                 default:
                     break;
             }
@@ -150,7 +151,10 @@ const renderBuses = (data, markers, markerRefs) => {
             style.backgroundColor = '#fff'
             style.width = '48px'
             style.height = '48px'
-            style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%)' + ' solid 6px'
+            const hue = data.buses[nr][0];
+            const saturation = data.buses[nr][1];
+            const lightness = data.buses[nr][2];
+            style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
             style.borderRadius = '50%'
             nr++;
         }

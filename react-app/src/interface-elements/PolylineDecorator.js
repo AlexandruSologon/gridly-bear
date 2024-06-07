@@ -70,7 +70,7 @@ export function PolylineDecorator({ lines, markers }) {
                 map.removeLayer(decorator);
             });
         };
-    }, [map, lines]);
+    }, [map, lines, markers]);
 
     return null;
 }

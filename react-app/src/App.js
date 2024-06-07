@@ -1,7 +1,7 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import debounce from 'lodash.debounce';
-import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+//import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, defVal, binarySearch} from './utils/constants';
@@ -27,7 +27,7 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
-    let provider = new OpenStreetMapProvider();
+    //let provider = new OpenStreetMapProvider();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -327,7 +327,7 @@ export function ReactApp() {
     };
 
     const renderRequiredButtons = (marker, index) => {
-        const { id, type } = marker;
+        const { type } = marker;
         if (type === 'trafo1') {
             return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -370,22 +370,6 @@ export function ReactApp() {
             return marker;
         });
         setMarkers(updatedMarkers);
-    };
-
-    const handleMarkerHover = (markerIndex) => {
-        if (selectedMarker !== null) {
-            const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
-            if (markerElement) {
-                markerElement.classList.add('marker-hover');
-            }
-        }
-    };
-
-    const handleMarkerLeave = () => {
-        const markerElements = document.querySelectorAll('.leaflet-marker-icon');
-        markerElements.forEach(markerElement => {
-            markerElement.classList.remove('marker-hover');
-        });
     };
 
     const onLockButtonClick = () => {
@@ -436,7 +420,7 @@ export function ReactApp() {
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            opacity={0.7}
+                            opacity={0.8}
                         />
                         {markers.map((marker, index) => (
                             <Marker key={index}

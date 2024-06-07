@@ -1,40 +1,41 @@
 import React from "react";
-import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
-import IconButton from '@mui/material/IconButton';
+//import PlayArrowTwoToneIcon from '@mui/icons-material/PlayArrowTwoTone';
+//import IconButton from '@mui/material/IconButton';
 import { Button } from "antd";
 import {CaretRightFilled} from '@ant-design/icons';
 
 /**
  * Renders a green arrow run button.
  * @param {*} onRunButtonClick - The function to be called on the button's click.
+ * @param runClicked
  * @returns The jsx for the run button.
  */
-function GreenArrow({onRunButtonClick, runClicked}) {
-    return (
-        <IconButton
-            data-testid = "run-button"
-            aria-label="check" style = {
-            {
-                position: 'absolute',
-                right: '0px',
-                top: '78%',
-                width: '8vw',
-                height: '8vw',
-                opacity: '70'
-            }
-        } onClick={onRunButtonClick}>
-        <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style = {
-            {
-                width: '8vw',
-                height: '8vw',
-                color: runClicked ? 'rgba(5,169,92, 0.3)' : '#05a95c',
-                borderWidth: '1px',
-                borderColor: '#000',
-                opacity: '70'
-            }
-        }/>
-    </IconButton>);
-}
+// function GreenArrow({onRunButtonClick, runClicked}) {
+//     return (
+//         <IconButton
+//             data-testid = "run-button"
+//             aria-label="check" style = {
+//             {
+//                 position: 'absolute',
+//                 right: '0px',
+//                 top: '78%',
+//                 width: '8vw',
+//                 height: '8vw',
+//                 opacity: '70'
+//             }
+//         } onClick={onRunButtonClick}>
+//         <PlayArrowTwoToneIcon className="PlayArrowTwoToneIcon" style = {
+//             {
+//                 width: '8vw',
+//                 height: '8vw',
+//                 color: runClicked ? 'rgba(5,169,92, 0.3)' : '#05a95c',
+//                 borderWidth: '1px',
+//                 borderColor: '#000',
+//                 opacity: '70'
+//             }
+//         }/>
+//     </IconButton>);
+// }
 
 /**
  * Renders both a run button and a loading icon (annular throbber) depending on the state of the canvas.

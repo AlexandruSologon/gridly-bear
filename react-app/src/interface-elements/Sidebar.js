@@ -1,10 +1,13 @@
 import {Drawer} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
+//import IconButton from "@mui/material/IconButton";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import { Button } from "antd";
 
 function SingleDraggable({state, item}) {
+    const w = '60px';
+    const h = '60px';
 
     const [mousedOver, setMousedOver] = useState(false);
     const testid = "draggable-"+item.type;
@@ -38,24 +41,24 @@ function SingleDraggable({state, item}) {
     >
         {/* Container for icon and text */}
         <div
-            style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100vh'}}>
+            style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: h, width: w}}>
             {/* Render the icon based on item.type */}
             <img src={state.iconMapping[item.type].options.iconRetinaUrl}
                  alt={item.name}
                  style={{
-                     width: state.iconMapping[item.type].options.iconSize[0],
-                     height: state.iconMapping[item.type].options.iconSize[1],
+                     width: w,
+                     height: h
                  }}
             />
-            {/* Render the text */}
         </div>
-        <div>{item.name}</div>
+        {/* Render the text */}
+        <div style={{marginTop: '7px', fontSize: '13px'}}>{item.name}</div>
     </div>);
 }
 
 function Draggables({state}) {
     return (
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', marginLeft: 'auto', marginRight:'auto'}}>
             {state.sidebarItems.map((item) => (
                 <SingleDraggable state={state} item={item}/>
             ))}
@@ -63,20 +66,18 @@ function Draggables({state}) {
     );
 }
 
-
-
 function CollapseButton({onSidebarToggle, isSidebarOn}) {
     return (
-        <IconButton
+        <Button
             data-testid="retract-sidebar"
             style={{
                 position: 'absolute',
-                width: '30px',
-                height: '30px',
-                left: '100px',
-                top: '0px',
+                width: '40px',
+                height: '40px',
+                left: '30px',
+                top: '20px',
                 zIndex: 1001
-            }} 
+            }}
             onClick={onSidebarToggle}
         >
             <KeyboardDoubleArrowRightIcon
@@ -97,7 +98,7 @@ function CollapseButton({onSidebarToggle, isSidebarOn}) {
                     height: '30px'
                 }}
             />
-        </IconButton>
+        </Button>
     );
 }
 
@@ -114,10 +115,15 @@ function Sidebar(state) {
                 data-testid= "sidebar"
                 PaperProps={{
                     sx: {
-                        backgroundColor: "rgba(253, 253, 253, 0.7)",
+                        backgroundColor: "rgba(253, 253, 253, 1)",
                         color: "#000",
-                        width: '150px',
-                        textAlign: 'center'
+                        width: '210px',
+                        textAlign: 'center',
+                        marginLeft: '30px',
+                        height: '600px',
+                        marginTop: '80px',
+                        borderRadius: '8px',
+                        boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'
                     }
                 }}
                 style={{
@@ -130,12 +136,15 @@ function Sidebar(state) {
             >
                 <div style={{height: '3%'}}></div>
                 <h2 style={{
-                        fontSize: '16px', // Increased font size
+                        fontSize: '18px', // Increased font size
                         fontFamily: 'Helvetica, sans-serif', // Changed font family
                         margin: '10px 0', // Added margin for spacing
+                        padding: '10px',
+                        textAlign: 'left',
+                        marginLeft: '10px'
                     }}
                 >
-                    Drag & Drop
+                    Drag and drop
                 </h2>
                 <Draggables state={state}></Draggables>
             </Drawer>
