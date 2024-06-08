@@ -4,7 +4,15 @@ import debounce from 'lodash.debounce';
 //import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
-import {mapCenter, iconMapping, markerParametersConfig, sidebarItems, defVal, binarySearch} from './utils/constants';
+import {onRunButtonClick, resetLinesRender, resetMarkerRender} from './utils/api';
+import {
+    mapCenter,
+    iconMapping,
+    markerParametersConfig,
+    sidebarItems,
+    defVal,
+    connectionDefaultColor, lineDefaultColor, busDefaultColor
+} from './utils/constants';
 import 'leaflet-polylinedecorator';
 import Sidebar from './interface-elements/Sidebar';
 import DeleteButton from './interface-elements/DeleteButton';
@@ -12,7 +20,9 @@ import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
-import { message } from 'antd';
+import {findMarkerById} from "./utils/api";
+import {message} from "antd";
+
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -41,9 +51,6 @@ export function ReactApp() {
         event.preventDefault();
     };
 
-    const findMarkerById = (id) => {
-        return binarySearch(markers, id, 0, markers.length - 1);
-    }
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -96,13 +103,13 @@ export function ReactApp() {
         if (selectedMarker === null) {
             setSelectedMarker(markerId);
         } else {
-            let selected = findMarkerById(selectedMarker);
-            let current = findMarkerById(markerId);
+            let selected = findMarkerById(selectedMarker,markers);
+            let current = findMarkerById(markerId,markers);
             if (selectedMarker !== markerId && (selected.icon.options.id === "bus" || current.icon.options.id === "bus")) {
                 if (selected && current) {
                     // Logic for creating lines between markers
-                        let color = "#358cfb";
-                        if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = "#000"
+                        let color = connectionDefaultColor;
+                        if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = lineDefaultColor
                     if (lines.length === 0 || lines[lines.length - 1].length === 5) {
                         let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
@@ -178,16 +185,25 @@ export function ReactApp() {
         }));
 
         setMarkers(updatedMarkers);
-        setLines(updatedLines);
+        resetMarkerRender(updatedMarkers, markerRefs)
+        setLines(resetLinesRender(updatedLines, updatedMarkers));
     }, 100);
 
+    const deleteMarker = (indexMarker) => {
+        handleMarkerDelete(indexMarker)
+    }
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
         const oldMarkerId = markers[indexMarker].id;
         const markerRef = markerRefs.current[indexMarker];
         if (markerRef) {
+        {
+            markerRef.valueOf()._icon.style.border = ''
+            markerRef.valueOf()._icon.style.borderWidth = ''
+        }
             markerRef.closePopup();
         }
+
         const updatedMarkers = markers.map(marker => {
             if (marker.name === "Transformer") {
                 const c = marker.connections;
@@ -200,24 +216,26 @@ export function ReactApp() {
             return marker;
         });
         updatedMarkers.splice(indexMarker, 1);
-        console.log(updatedMarkers);
         setMarkers(updatedMarkers);
-        markerRefs.current.splice(indexMarker, 1);
+
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
-        const updatedLines = lines.filter(line => 
+        const updatedLines = lines.filter(line =>
             !((line[0].lat === oldMarkerPos.lat && line[0].lng === oldMarkerPos.lng) || 
             (line[1].lat === oldMarkerPos.lat && line[1].lng === oldMarkerPos.lng)));
-        setLines(updatedLines);
+        setLines(resetLinesRender(updatedLines, updatedMarkers));
         const updatedBusLines = busLines.filter(line => 
             !((line[0] === markers[indexMarker].id) || 
             (line[1] === markers[indexMarker].id)));
         setBusLines(updatedBusLines);
+        //if(markers[0])
+        //handleMarkerDrag(0,markers[0].position)
+        resetMarkerRender(updatedMarkers, markerRefs)
     };
 
     const handleTransReverse = (markerId) => {
-        const marker = findMarkerById(markerId);
+        const marker = findMarkerById(markerId,markers);
         const [newHigh, newLow] = [marker.low, marker.high];
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
@@ -245,9 +263,10 @@ export function ReactApp() {
             }
             return line;
         })
-        
 
         setLines(updatedLines);
+        resetMarkerRender(updatedMarkers, markerRefs);
+        resetLinesRender(updatedLines, updatedMarkers);
     }
 
     const handleLineDelete = (index) => {
@@ -259,8 +278,8 @@ export function ReactApp() {
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
         const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
 
-        const marker1 = findMarkerById(oldBusLine[0]);
-        const marker2 = findMarkerById(oldBusLine[1]);
+        const marker1 = findMarkerById(oldBusLine[0],markers);
+        const marker2 = findMarkerById(oldBusLine[1],markers);
         let oldMarkerId = null;
         if (marker1.name === "Transformer" || marker2.name === "Transformer") {
             if (marker1.name === 'Transformer') oldMarkerId = marker2.id;
@@ -293,7 +312,7 @@ export function ReactApp() {
         }
     };
 
-    const handleLineClick = (event, markerIndex) => {
+    const handleLineClick = (event) => {
         const targetLine = event.target;
         if (targetLine) {
             targetLine.closePopup();
@@ -332,7 +351,7 @@ export function ReactApp() {
             return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => handleMarkerDelete(index)}/>
+                <DeleteButton onClick={() => {deleteMarker(index)}}/>
             </div>
             <div style={{marginBottom: '5px'}}>
                 <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
@@ -342,7 +361,7 @@ export function ReactApp() {
         }
         return (
             <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => handleMarkerDelete(index)}/>
+                <DeleteButton onClick={() => {deleteMarker(index); }}/>
             </div>
         )
     }
@@ -352,7 +371,7 @@ export function ReactApp() {
         {
             const newValues = {
                 ...defaultValues,
-                [findMarkerById(markerId).type]: {...defaultValues[findMarkerById(markerId).type], [paramName]: value}
+                [findMarkerById(markerId,markers).type]: {...defaultValues[findMarkerById(markerId,markers).type], [paramName]: value}
             }
             setDefaultValues(newValues)
         }
@@ -424,12 +443,13 @@ export function ReactApp() {
                         />
                         {markers.map((marker, index) => (
                             <Marker key={index}
+                                    type={marker.type}
                                     position={marker.position}
                                     icon={marker.icon}
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
-                                    className="dot"
+
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, marker.id),
                                         contextmenu: (e) => handleMarkerRightClick(e),
