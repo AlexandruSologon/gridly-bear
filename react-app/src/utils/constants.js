@@ -24,8 +24,8 @@ export const iconMapping = {
     }),
     bus: new L.icon({
         id: 'bus',
-        iconUrl: require('../images/Blank.png'),
-        iconRetinaUrl: require('../images/busIcon.png'),
+        iconUrl: require('../images/Group 15.png'),
+        iconRetinaUrl: require('../images/Group 15.png'),
         iconAnchor: [24, 24],
         popupAnchor:[0, -32],
         iconSize: [48, 48],
