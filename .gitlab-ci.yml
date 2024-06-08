@@ -30,8 +30,8 @@ Build:
   script:
     - npm run build
   only:
-    changes:
-      - src/**/*
+    refs:
+      - main
 
 Deploy:
   stage: deploy
