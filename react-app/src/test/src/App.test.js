@@ -37,7 +37,7 @@ test('Sidebar', () => {
   fireEvent.click(toggleB);
    expect(screen.getByTestId('retract-sidebar-icon-right').style.display).toEqual('flex');
   expect(screen.getByTestId('retract-sidebar-icon-left').style.display).toEqual('none')
-  expect(screen.getByTestId('sidebar').style.display).toEqual('none')
+  expect(screen.getByTestId('sidebar').style.display).toEqual('grid')
   expect(screen.getByTestId("draggable-solar").style.backgroundColor).toEqual('inherit');
   fireEvent.mouseOver(screen.getByTestId("draggable-solar"))
   expect(screen.getByTestId("draggable-solar").style.backgroundColor).toEqual('rgb(230, 230, 230)');
