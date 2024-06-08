@@ -5,7 +5,7 @@ import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import { Button } from "antd";
 
-function SingleDraggable({state, item}) {
+function SingleDraggable({state, item, isSidebarOn}) {
     const w = '60px';
     const h = '60px';
 
@@ -32,8 +32,9 @@ function SingleDraggable({state, item}) {
             backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit',
             margin: '2px ',
             cursor: 'grab',
-            width: '96px',
-            height: '96px',
+            width: isSidebarOn ? '96px' : '0',
+            height: isSidebarOn ? '96px' : '0',
+            transition: 'height 0.2s, width 0.4s',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center'
@@ -46,21 +47,24 @@ function SingleDraggable({state, item}) {
             <img src={state.iconMapping[item.type].options.iconRetinaUrl}
                  alt={item.name}
                  style={{
-                     width: w,
-                     height: h
+                     width: isSidebarOn ? w : '0',
+                     height: isSidebarOn ? h : '0',
+                     transition: 'height 0.4s, width 0.4s'
                  }}
             />
         </div>
         {/* Render the text */}
-        <div style={{marginTop: '7px', fontSize: '13px'}}>{item.name}</div>
+        <div style={{marginTop: '7px',
+                     fontSize: isSidebarOn ? '13px' : '0px' ,
+                     transition: 'font-size 0.4s' }}>{item.name}</div>
     </div>);
 }
 
-function Draggables({state}) {
+function Draggables({state, isSidebarOn}) {
     return (
         <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', marginLeft: 'auto', marginRight:'auto'}}>
             {state.sidebarItems.map((item) => (
-                <SingleDraggable state={state} item={item}/>
+                <SingleDraggable state={state} item={item} isSidebarOn={isSidebarOn}/>
             ))}
         </div>
     );
@@ -118,11 +122,11 @@ function Sidebar(state) {
                     sx: {
                         backgroundColor: "rgba(253, 253, 253, 1)",
                         color: "#000",
-                        width: isSidebarOn ? '210px' : '0' ,
+                        width: isSidebarOn ? '210px' : '0px' ,
                         textAlign: 'center',
                         transition: 'height 0.3s, width 0.3s',
                         marginLeft: '30px',
-                        height:isSidebarOn ? '600px' : '0' ,
+                        height:isSidebarOn ? '600px' : '0px' ,
                         marginTop: '80px',
                         borderRadius: '8px',
                         boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)',
@@ -139,7 +143,8 @@ function Sidebar(state) {
             >
                 <div style={{height: '3%'}}></div>
                 <h2 style={{
-                        fontSize: '18px', // Increased font size
+                        fontSize: isSidebarOn ? '18px' : '0px' ,
+                        transition: 'font-size 0.2s' , // Increased font size
                         fontFamily: 'Helvetica, sans-serif', // Changed font family
                         margin: '10px 0', // Added margin for spacing
                         padding: '10px',
@@ -149,7 +154,7 @@ function Sidebar(state) {
                 >
                     Drag and drop
                 </h2>
-                <Draggables state={state}></Draggables>
+                <Draggables state={state} isSidebarOn={isSidebarOn}></Draggables>
             </Drawer>
             <CollapseButton onSidebarToggle={onSidebarToggle} isSidebarOn={isSidebarOn}></CollapseButton>
         </div>
