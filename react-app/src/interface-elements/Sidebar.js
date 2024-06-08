@@ -71,6 +71,7 @@ function CollapseButton({onSidebarToggle, isSidebarOn}) {
         <Button
             data-testid="retract-sidebar"
             style={{
+                transform: 'rotate(90deg)',
                 position: 'absolute',
                 width: '40px',
                 height: '40px',
@@ -117,17 +118,19 @@ function Sidebar(state) {
                     sx: {
                         backgroundColor: "rgba(253, 253, 253, 1)",
                         color: "#000",
-                        width: '210px',
+                        width: isSidebarOn ? '210px' : '0' ,
                         textAlign: 'center',
+                        transition: 'height 0.3s, width 0.3s',
                         marginLeft: '30px',
-                        height: '600px',
+                        height:isSidebarOn ? '600px' : '0' ,
                         marginTop: '80px',
                         borderRadius: '8px',
-                        boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'
+                        boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)',
+                        scrollbarWidth: 'none'
                     }
                 }}
                 style={{
-                    display: isSidebarOn ? 'grid' : 'none',
+                    display: 'grid',
                     position: 'absolute',
                     zIndex: 1000,
                 }}
