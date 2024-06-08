@@ -45,7 +45,7 @@ import {CaretRightFilled} from '@ant-design/icons';
  */
 function RunButton({runClicked, onRunButtonClick}) {
     return (
-        <Button className={'hasShadow'} icon={<CaretRightFilled />} size={'large'} type="primary" onClick={onRunButtonClick} loading={runClicked}>
+        <Button data-testid="run-button" className={'hasShadow'} icon={<CaretRightFilled />} size={'large'} type="primary" onClick={onRunButtonClick} loading={runClicked}>
             Run
         </Button>
     );
