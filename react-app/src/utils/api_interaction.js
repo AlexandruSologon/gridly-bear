@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app"; //Import the functions you need from the SDKs you need for firebase
-import { getFunctions, httpsCallable, connectFunctionsEmulator } from "firebase/functions";
+import { getFunctions, httpsCallable} from "firebase/functions";
+//import {connecFunctionsEmulator } from "firebase/functions";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD7n865HujlU9MJe9uQ1H4rxMjv_dTIDqQ",
@@ -40,7 +41,7 @@ function handle_results(result) {
         throw new Error(result.data.message);
     } else {
         let simres = result.data.sim_result; //is json
-        let busarray = JSON.parse(simres.buses); //json array of busses
+        let busarray = JSON.parse(simres.buses); //json array of buses
         let linearray = JSON.parse(simres.lines); //json array of lines
         return {'buses':busarray, 'lines':linearray};
     }
