@@ -432,14 +432,13 @@ export function ReactApp() {
                         minZoom={3}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
-                        attributionControl={false}
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                     >
                         <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            opacity={0.8}
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a href="https://carto.com/attributions">CARTO</a>'
+                            url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+                            opacity={1}
                         />
                         {markers.map((marker, index) => (
                             <Marker key={index}
