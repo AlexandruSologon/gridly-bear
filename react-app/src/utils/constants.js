@@ -1,28 +1,31 @@
 import L from 'leaflet';
 
+const size = 60;
+const anchor = 30;
+
 export const mapCenter = [51.91145215945188, 4.478236914116433];
 
 export const iconMapping = {
     grid: new L.icon({
         id: 'grid',
-        iconRetinaUrl: require('../images/grid.png'),
-        iconUrl: require('../images/grid.png'),
-        iconAnchor: [32, 32],
-        popupAnchor:[0, -32],
-        iconSize: [80, 80]
+        iconRetinaUrl: require('../images/Group 16.png'),
+        iconUrl: require('../images/Group 16.png'),
+        iconAnchor: [anchor, anchor],
+        popupAnchor:[0, -anchor],
+        iconSize: [size, size]
     }),
     solar: new L.icon({
         id: 'solar',
-        iconRetinaUrl: require('../images/solarPanel.png'),
-        iconUrl: require('../images/solarPanel.png'),
-        iconAnchor: [30, 25],
-        popupAnchor:[0, -35],
-        iconSize: [60, 50]
+        iconRetinaUrl: require('../images/Group 12.png'),
+        iconUrl: require('../images/Group 12.png'),
+        iconAnchor: [anchor, anchor],
+        popupAnchor:[0, -anchor],
+        iconSize: [size, size]
     }),
     bus: new L.icon({
         id: 'bus',
-        iconUrl: require('../images/Blank.png'),
-        iconRetinaUrl: require('../images/busIcon.png'),
+        iconUrl: require('../images/Group 15.png'),
+        iconRetinaUrl: require('../images/Group 15.png'),
         iconAnchor: [24, 24],
         popupAnchor:[0, -32],
         iconSize: [48, 48],
@@ -31,27 +34,35 @@ export const iconMapping = {
     }),
     load: new L.icon({
         id: 'load',
-        iconRetinaUrl: require('../images/load.png'),
-        iconUrl: require('../images/load.png'),
-        iconAnchor: [32, 28.5],
-        popupAnchor: [0, -32],
-        iconSize: [64, 57]
+        iconRetinaUrl: require('../images/Group 13.png'),
+        iconUrl: require('../images/Group 13.png'),
+        iconAnchor: [anchor, anchor],
+        popupAnchor:[0, -anchor],
+        iconSize: [size, size]
     }),
     wind: new L.icon({
         id: 'wind',
-        iconRetinaUrl: require('../images/windTurbine.png'),
-        iconUrl: require('../images/windTurbine.png'),
-        iconAnchor: [35, 35],
-        popupAnchor: [0, -35],
-        iconSize: [70, 70]
+        iconRetinaUrl: require('../images/Group 11.png'),
+        iconUrl: require('../images/Group 11.png'),
+        iconAnchor: [anchor, anchor],
+        popupAnchor:[0, -anchor],
+        iconSize: [size, size]
     }),
     trafo1: new L.icon({
         id: 'trafo1',
-        iconRetinaUrl: require('../images/energy.png'),
-        iconUrl: require('../images/energy.png'),
-        iconAnchor: [32, 32],
-        popupAnchor: [0, -32],
-        iconSize: [64, 64]
+        iconRetinaUrl: require('../images/Group 14.png'),
+        iconUrl: require('../images/Group 14.png'),
+        iconAnchor: [anchor, anchor],
+        popupAnchor:[0, -anchor],
+        iconSize: [size, size]
+    }),
+    battery: new L.icon({
+        id: 'battery',
+        iconRetinaUrl: require('../images/Group 17.png'),
+        iconUrl: require('../images/Group 17.png'),
+        iconAnchor: [anchor, anchor],
+        popupAnchor:[0, -anchor],
+        iconSize: [size, size]
     })
 };
 
@@ -61,7 +72,8 @@ export const sidebarItems = [
     { id: 3, name: 'Load', type: 'load' },
     { id: 4, name: 'Transformer', type: 'trafo1' },
     { id: 5, name: 'External Grid', type: 'grid' },
-    { id: 6, name: 'Bus', type: 'bus' }
+    { id: 6, name: 'Bus', type: 'bus' },
+    { id: 7, name: 'Battery', type: 'battery'}
 ];
 
 
@@ -72,7 +84,8 @@ export const markerParametersConfig = {
     load: ['p_mv', 'q_mvar'],
     grid: ['voltage'],
     solar: ['power'],
-    wind: ['power']
+    wind: ['power'],
+    //battery: ['net', 'p_mw']
 };
 
 export const binarySearch = function(arr, x, start, end) {

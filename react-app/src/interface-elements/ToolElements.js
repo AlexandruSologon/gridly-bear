@@ -1,24 +1,36 @@
 import LockButton from "./LockButton";
 import ImportButton from "./ImportButton";
 import ExportButton from "./ExportButton";
+import { ConfigProvider, Flex } from "antd";
+import { onRunButtonClick } from '../utils/api';
+import RunButton from "./RunButton";
+import Search from "./Search";
 
-function ToolElements({onLockButtonClick, markers, setMarkers, lines, setLines, busLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
+function ToolElements(props) {
+    
     return (
-        <div style={
-            {
-                position: "absolute",
-                marginRight: '10px',
-                top: '5px',
-                right : '60px',
-                display:'flex',
-                justifyContent:'row',
-                alignItems:'column'
-            }
-        }>
-            <LockButton onLockButtonClick={onLockButtonClick} />
-            <ImportButton markerRefs={markerRefs} lineRefs={lineRefs} setMarkers={setMarkers} setLines={setLines} setBusLines={setBusLines} mapContainer={mapContainer}></ImportButton>
-            <ExportButton markers={markers} lines={lines} busLines={busLines} mapContainer={mapContainer}></ExportButton>
-        </div>
+        <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
+            <div style={
+                {
+                    position: "absolute",
+                    top: '20px',
+                    right : '20px',
+                    display:'flex',
+                    justifyContent:'row',
+                    alignItems:'column',
+                    zIndex: 500
+                }
+            }>
+                <Flex gap="middle" wrap>
+                    <Search />
+                    <LockButton onLockButtonClick={props.onLockButtonClick} />
+                    <ImportButton markerRefs={props.markerRefs} lineRefs={props.lineRefs} setMarkers={props.setMarkers} setLines={props.setLines} setBusLines={props.setBusLines} mapContainer={props.mapContainer}></ImportButton>
+                    <ExportButton markers={props.markers} lines={props.lines} busLines={props.busLines} mapContainer={props.mapContainer}></ExportButton>
+                    <RunButton runClicked={props.runClicked} onRunButtonClick={() => onRunButtonClick(props.markers, props.busLines, props.runClicked, props.setRunClicked, props.setIsMapLocked, props.lines, props.setLines, props.setBusLines, props.setMarkers, props.markerRefs, props.messageApi, props.defaultValues)} />
+                </Flex>
+                
+            </div>
+        </ConfigProvider>
     );
 }
 

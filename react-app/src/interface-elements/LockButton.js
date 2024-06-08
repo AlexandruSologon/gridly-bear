@@ -1,7 +1,8 @@
-import IconButton from "@mui/material/IconButton";
+//import IconButton from "@mui/material/IconButton";
 import LockIcon from "@mui/icons-material/LockOutlined";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import React from "react";
+import { Tooltip, Button } from "antd";
 
 function LockButton(props) {
     const [isMapLocked, setIsMapLocked] = React.useState(true);
@@ -12,38 +13,12 @@ function LockButton(props) {
     }
 
     return(
-        <IconButton aria-label="check"
-                    data-testid = "lockbutton"
-                    style={
-                        {
-                            opacity: '30',
-                            marginBottom: '4px'
-                        }
-                    } 
-                    onClick={onLockButtonClick}>
-                        <div style={{position: 'relative'}}>
-                            <LockIcon data-testid = "lock-close-icon"
-                                className="LockIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: !isMapLocked ? 'flex' : 'none'
-                            }}/>
-                            <LockOpenIcon data-testid = "lock-open-icon"
-                                className="LockOpenIcon" style={{
-                                width: '40px',
-                                height: '40px',
-                                color: '#000',
-                                borderWidth: '1px',
-                                borderColor: '#000',
-                                opacity: '30',
-                                display: isMapLocked ? 'flex' : 'none'
-                            }}/>
-                        </div>
-                    </IconButton>)
+        <Tooltip title="import">
+            <Button data-testid = "lockbutton" className={'hasShadow'} size={'large'} onClick={onLockButtonClick} type="default" shape="square"
+                    icon={!isMapLocked ? <LockIcon data-testid = "lock-close-icon"/> : <LockOpenIcon data-testid = "lock-open-icon"/>}>
+            </Button>
+        </Tooltip>
+    );
 }
 
 export default LockButton;

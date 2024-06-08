@@ -1,6 +1,7 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import debounce from 'lodash.debounce';
+//import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import {onRunButtonClick, resetLinesRender, resetMarkerRender} from './utils/api';
@@ -13,9 +14,7 @@ import {
     connectionDefaultColor, lineDefaultColor, busDefaultColor
 } from './utils/constants';
 import 'leaflet-polylinedecorator';
-import Search from './interface-elements/Search';
 import Sidebar from './interface-elements/Sidebar';
-import RunButton from './interface-elements/RunButton';
 import DeleteButton from './interface-elements/DeleteButton';
 import ReverseButton from './interface-elements/ReverseButton';
 import WaitingOverlay from './interface-elements/WaitingOverlay';
@@ -30,7 +29,6 @@ export function ReactApp() {
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
     const lineRefs = useRef([]);
-    // line = [pos1, pos2, color, low/high, [busLine]]
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
@@ -39,6 +37,7 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
+    //let provider = new OpenStreetMapProvider();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -347,7 +346,7 @@ export function ReactApp() {
     };
 
     const renderRequiredButtons = (marker, index) => {
-        const {type } = marker;
+        const { type } = marker;
         if (type === 'trafo1') {
             return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -391,24 +390,6 @@ export function ReactApp() {
         });
         setMarkers(updatedMarkers);
     };
-
-    const handleMarkerHover = (markerIndex) => {
-        if (selectedMarker !== null) {
-            const markerElement = document.querySelector(`.leaflet-marker-icon[title="Marker ${markerIndex + 1}"]`);
-            if (markerElement) {
-                markerElement.classList.add('marker-hover');
-            }
-        }
-    };
-
-    const handleMarkerLeave = () => {
-        const markerElements = document.querySelectorAll('.leaflet-marker-icon');
-        markerElements.forEach(markerElement => {
-            markerElement.classList.remove('marker-hover');
-        });
-    };
-
-    
 
     const onLockButtonClick = () => {
         console.log("markers and lines: ", lines, markers);
@@ -455,11 +436,10 @@ export function ReactApp() {
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                     >
-                        <Search />
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            opacity={0.4}
+                            opacity={0.8}
                         />
                         {markers.map((marker, index) => (
                             <Marker key={index}
@@ -509,7 +489,7 @@ export function ReactApp() {
                             </Polyline>
                         ))}
                         <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
-                        <ZoomControl position="topright" />
+                        <ZoomControl position="bottomright" />
                         <ToolElements
                             onLockButtonClick={onLockButtonClick}
                             markers={markers}
@@ -518,11 +498,16 @@ export function ReactApp() {
                             setLines={setLines}
                             busLines={busLines}
                             setBusLines={setBusLines}
-                            mapContainer={mapContainer}>
-                        </ToolElements>
+                            mapContainer={mapContainer}
+                            runClicked={runClicked}
+                            setRunClicked={setRunClicked}
+                            setIsMapLocked={setIsMapLocked}
+                            markerRefs={markerRefs}
+                            messageApi={messageApi}
+                            defaultValues={defaultValues}
+                        ></ToolElements>
                     </MapContainer>
                     {contextHolder}
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, defaultValues)} />
                 </div>
             </div>
         </div>
