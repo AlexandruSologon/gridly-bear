@@ -21,11 +21,12 @@ export const iconMapping = {
     }),
     bus: new L.icon({
         id: 'bus',
-        iconUrl: require('../images/busIcon.png'),
+        iconUrl: require('../images/Blank.png'),
         iconRetinaUrl: require('../images/busIcon.png'),
         iconAnchor: [24, 24],
         popupAnchor:[0, -32],
         iconSize: [48, 48],
+        className: 'dot'
 
     }),
     load: new L.icon({
@@ -95,3 +96,6 @@ export const defVal = {
     solar: {power: 1},
     wind: {power: 1},
 }
+export const lineDefaultColor = '#706E6E'
+export const connectionDefaultColor = '#1f3c6a'
+export const busDefaultColor = '#636363'
