@@ -36,6 +36,7 @@ Build:
 Deploy:
   stage: deploy
   script:
+    - npm run build
     - firebase deploy --only hosting --token $FIREBASE_TOKEN
   only:
     refs:
