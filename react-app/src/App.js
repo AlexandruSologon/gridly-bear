@@ -4,14 +4,14 @@ import debounce from 'lodash.debounce';
 //import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
-import {onRunButtonClick, resetLinesRender, resetMarkerRender} from './utils/api';
+import { resetLinesRender, resetMarkerRender} from './utils/api';
 import {
     mapCenter,
     iconMapping,
     markerParametersConfig,
     sidebarItems,
     defVal,
-    connectionDefaultColor, lineDefaultColor, busDefaultColor
+    connectionDefaultColor, lineDefaultColor,
 } from './utils/constants';
 import 'leaflet-polylinedecorator';
 import Sidebar from './interface-elements/Sidebar';
@@ -197,10 +197,8 @@ export function ReactApp() {
         const oldMarkerId = markers[indexMarker].id;
         const markerRef = markerRefs.current[indexMarker];
         if (markerRef) {
-        {
             markerRef.valueOf()._icon.style.border = ''
             markerRef.valueOf()._icon.style.borderWidth = ''
-        }
             markerRef.closePopup();
         }
 
