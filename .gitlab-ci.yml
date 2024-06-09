@@ -27,6 +27,8 @@ Tests:
 
 Build:
   stage: build
+  env: 
+    CI: false
   script:
     - npm run build
   only:
