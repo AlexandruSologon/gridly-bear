@@ -1,7 +1,7 @@
 import React from 'react';
-import {markerParametersConfig} from "../utils/constants";
-import DeleteButton from "./DeleteButton";
 import {Popup} from "react-leaflet";
+import DeleteButton from "./DeleteButton";
+import {markerParametersConfig} from "../utils/constants";
 
 function ReverseButton({ onClick }) {
     return (
@@ -46,7 +46,7 @@ function MarkerParameters({marker, handleParameterChange}) {
     ));
 }
 
-export default function MarkerSettings({marker, index, handleParameterChange, handleMarkerDelete, handleTransReverse}) {
+export default function MarkerSettings({index, marker, handleParameterChange, handleMarkerDelete, handleTransReverse}) {
     return (
         <Popup>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

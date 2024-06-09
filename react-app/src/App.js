@@ -4,8 +4,7 @@ import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
 import {message} from "antd";
 import React, { useState, useRef } from 'react';
-import { resetLinesRender, resetMarkerRender} from './utils/api';
-import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import {defVal,
         mapCenter,
         iconMapping,
@@ -13,6 +12,7 @@ import {defVal,
         lineDefaultColor,
         connectionDefaultColor,
         markerParametersConfig} from './utils/constants';
+import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
 import ToolElements from './interface-elements/ToolElements';
 import DeleteButton from './interface-elements/DeleteButton';
@@ -20,6 +20,7 @@ import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
 import {findMarkerById} from "./utils/api";
+import {resetLinesRender, resetMarkerRender} from './utils/api';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -237,7 +238,6 @@ export function ReactApp() {
             return marker;
         });
         setMarkers(updatedMarkers);
-
         
         const updatedLines = lines.map(line => {
             if(line[0] === marker.position || line[1] === marker.position) {
@@ -341,7 +341,6 @@ export function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-        console.log("markers and lines: ", lines, markers);
         setIsMapLocked(!isMapLocked);
         const map = mapContainer.current;
         if (isMapLocked) {
@@ -361,100 +360,84 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
-            <div
-                style={{
-                    position: 'relative',
-                    flex: '1',
-                    height: '100%',
-                    marginLeft: '5px'
-                }}
+            <div style={{ position: 'relative', flex: '1', height: '100%', marginLeft: '5px' }}
                 onDragOver={handleDragOver}
-                onDrop={handleDrop}
-            >
+                onDrop={handleDrop}>
                 <div style={{ position: 'relative', flex: '1', height: '100%' }}>
                     <MapContainer
-                        dragging={isMapLocked}
+                        zoom={13}
+                        minZoom={3}
+                        maxNativeZoom={19}
                         ref={mapContainer}
                         center={mapCenter}
-                        zoom={13}
-                        maxNativeZoom={19}
-                        minZoom={3}
-                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
+                        dragging={isMapLocked}
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
-                    >
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a href="https://carto.com/attributions">CARTO</a>'
-                            url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-                            opacity={1}
-                        />
-                        {markers.map((marker, index) => (
-                            <Marker key={index}
-                                    type={marker.type}
-                                    position={marker.position}
-                                    icon={marker.icon}
-                                    draggable={true}
-                                    clickable={true}
-                                    ref={(ref) => (markerRefs.current[index] = ref)}
-                                    eventHandlers={{
-                                        click: (e) => handleMarkerClick(e, marker.id),
-                                        contextmenu: (e) => handleMarkerRightClick(e),
-                                        dragstart: () => setSelectedMarker(null),
-                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
-                                    }}
-                            >
-                                <MarkerSettings
-                                    marker={marker}
-                                    index={index}
-                                    handleParameterChange={handleParameterChange}
-                                    handleMarkerDelete={handleMarkerDelete}
-                                    handleTransReverse={handleTransReverse}
-                                />
-                            </Marker>
-                        ))}
-                        {lines.map((line, index) => (
-                            <Polyline key={index}
-                                      positions={[line[0], line[1]]}
-                                      pathOptions={{ color: line[2] }}
-                                      clickable={true}
-                                      weight={10}
-                                      ref={(ref) => (lineRefs.current[index] = ref)}
-                                      eventHandlers={{
-                                          click: (e) => handleLineClick(e),
-                                          contextmenu: (e) => handleLineRightClick(e)
-                                      }}
-                            >
-                                <Popup>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ marginBottom: '5px' }}>{"Connection"}</div>
-                                        <div style={{ marginBottom: '5px' }}>
-                                            <DeleteButton onClick={() => handleLineDelete(index)} />
+                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
+                            <Tile/>
+                            {markers.map((marker, index) => (
+                                <Marker key={index}
+                                        draggable={true}
+                                        clickable={true}
+                                        type={marker.type}
+                                        icon={marker.icon}
+                                        position={marker.position}
+                                        ref={(ref) => (markerRefs.current[index] = ref)}
+                                        eventHandlers={{
+                                            click: (e) => handleMarkerClick(e, marker.id),
+                                            contextmenu: (e) => handleMarkerRightClick(e),
+                                            dragstart: () => setSelectedMarker(null),
+                                            drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
+                                        }}>
+                                    <MarkerSettings
+                                        index={index}
+                                        marker={marker}
+                                        handleParameterChange={handleParameterChange}
+                                        handleMarkerDelete={handleMarkerDelete}
+                                        handleTransReverse={handleTransReverse}/>
+                                </Marker>))}
+                            {lines.map((line, index) => (
+                                <Polyline key={index}
+                                          weight={10}
+                                          clickable={true}
+                                          positions={ [line[0], line[1]] }
+                                          pathOptions={{ color: line[2] }}
+                                          ref={(ref) => (lineRefs.current[index] = ref)}
+                                          eventHandlers={{
+                                              click: (e) => handleLineClick(e),
+                                              contextmenu: (e) => handleLineRightClick(e)
+                                          }}>
+                                    <Popup>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ marginBottom: '5px' }}>{"Connection"}</div>
+                                            <div style={{ marginBottom: '5px' }}>
+                                                <DeleteButton onClick={() => handleLineDelete(index)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                </Popup>
-                            </Polyline>
-                        ))}
-                        <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
-                        <ZoomControl position="bottomright" />
-                        <ToolElements
-                            onLockButtonClick={onLockButtonClick}
-                            markers={markers}
-                            setMarkers={setMarkers}
-                            lines={lines}
-                            setLines={setLines}
-                            busLines={busLines}
-                            setBusLines={setBusLines}
-                            mapContainer={mapContainer}
-                            runClicked={runClicked}
-                            setRunClicked={setRunClicked}
-                            setIsMapLocked={setIsMapLocked}
-                            markerRefs={markerRefs}
-                            messageApi={messageApi}
-                            defaultValues={defaultValues}
-                        ></ToolElements>
-                    </MapContainer>
-                    {contextHolder}
+                                    </Popup>
+                                </Polyline>
+                            ))}
+                            <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
+                            <ZoomControl position="bottomright" />
+                            <ToolElements
+                                onLockButtonClick={onLockButtonClick}
+                                markers={markers}
+                                setMarkers={setMarkers}
+                                lines={lines}
+                                setLines={setLines}
+                                busLines={busLines}
+                                setBusLines={setBusLines}
+                                mapContainer={mapContainer}
+                                runClicked={runClicked}
+                                setRunClicked={setRunClicked}
+                                setIsMapLocked={setIsMapLocked}
+                                markerRefs={markerRefs}
+                                messageApi={messageApi}
+                                defaultValues={defaultValues}
+                            ></ToolElements>
+                        </MapContainer>
+                        {contextHolder}
                 </div>
             </div>
         </div>
