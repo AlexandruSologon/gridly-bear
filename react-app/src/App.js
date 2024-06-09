@@ -1,7 +1,6 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import debounce from 'lodash.debounce';
-//import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
 import { resetLinesRender, resetMarkerRender} from './utils/api';
