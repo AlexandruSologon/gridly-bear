@@ -1,9 +1,11 @@
 import React from 'react';
 
 const DeleteButton = ({ onClick }) => (
-    <button style={{ color: 'red' }} onClick={onClick}>
-        Delete
-    </button>
+    <div style={{marginBottom: '5px'}}>
+        <button style={{color: 'red'}} onClick={onClick}>
+            Delete
+        </button>
+    </div>
 );
 
 export default DeleteButton;

@@ -1,5 +1,4 @@
 import {Drawer} from "@mui/material";
-//import IconButton from "@mui/material/IconButton";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import React, {useState} from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
@@ -81,6 +80,7 @@ function CollapseButton({onSidebarToggle, isSidebarOn}) {
                 height: '40px',
                 left: '30px',
                 top: '20px',
+                boxShadow: '4px -4px 8px rgba(0, 0, 0, 0.3)',
                 zIndex: 1001
             }}
             onClick={onSidebarToggle}
@@ -156,7 +156,10 @@ function Sidebar(state) {
                 </h2>
                 <Draggables state={state} isSidebarOn={isSidebarOn}></Draggables>
             </Drawer>
-            <CollapseButton onSidebarToggle={onSidebarToggle} isSidebarOn={isSidebarOn}></CollapseButton>
+            <CollapseButton
+                onSidebarToggle={onSidebarToggle}
+                isSidebarOn={isSidebarOn}>
+            </CollapseButton>
         </div>
     );
 }

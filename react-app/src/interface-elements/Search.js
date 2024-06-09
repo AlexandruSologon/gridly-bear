@@ -58,7 +58,7 @@ function Search() {
     };
 
     return (
-        <Space direction="vertical" style={{ width: '300px' }}>
+        <Space direction="vertical" style={{ width: '300px', borderRadius: '10px', boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)', }}>
             <Input.Group compact>
                 <Input
                     style={{ width: 260, height:40 }}

@@ -3,7 +3,7 @@ import {useMap} from "react-leaflet";
 import L from "leaflet";
 import { binarySearch } from "../utils/constants";
 
-export function PolylineDecorator({ lines, markers }) {
+export default function PolylineDecorator({ lines, markers }) {
     const map = useMap();
     const polylineRefs = useRef([]);
 

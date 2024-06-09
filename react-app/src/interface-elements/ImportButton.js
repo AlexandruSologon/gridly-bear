@@ -9,14 +9,11 @@ import impIcon from '../images/import.png';
 function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
 
     const fileRef = useRef(null);
-    //let [file, setFile] = useState(null);
-
     const map = useMap();
 
     const handleChange = (event) => {
         let selectedFile = event.target.files[0];
-        
-        //setFile(selectedFile);
+
         // Read the file content
         const reader = new FileReader();
         reader.onload = (e) => {loadAction(e)};
@@ -65,7 +62,12 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
 
     return(
         <Tooltip title="import">
-            <Button className={'hasShadow'} style={{width: 40}} size={'large'} onClick={() => fileRef.current.click()} type="default" shape="square" icon={<ImportIcon/>}>
+            <Button className={'hasShadow'}
+                    style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
+                    size={'large'}
+                    onClick={() => fileRef.current.click()}
+                    type="default"
+                    shape="square" icon={<ImportIcon/>}>
                 <input style={{display: 'none'}} id="upload" name="upload" type="file" ref={fileRef} hidden onChange={handleChange} />
             </Button>
         </Tooltip>

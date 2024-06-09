@@ -2,8 +2,8 @@ import '@testing-library/jest-dom';
 import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
 import Sidebar  from "../../interface-elements/Sidebar";
-import LockButton from "../../interface-elements/LockButton";
 import RunButton from "../../interface-elements/RunButton";
+import LockButton from "../../interface-elements/LockButton";
 import {iconMappingMock} from "../mocks/iconMappingMock";
 
   jest.mock('react-leaflet', () => jest.fn());
@@ -12,12 +12,6 @@ import {iconMappingMock} from "../mocks/iconMappingMock";
 test('Lock', () => {
   render (<LockButton onLockButtonClick={jest.fn()} />);
   const button = screen.getByTestId('lockbutton');
-   // fireEvent.click(button);
-   // expect(screen.getByTestId('lock-open-icon').style.display).toEqual('none');
-   // expect(screen.getByTestId('lock-close-icon').style.display).toEqual('flex');
-   // fireEvent.click(button);
-   // expect(screen.getByTestId('lock-open-icon').style.display).toEqual('flex');
-   // expect(screen.getByTestId('lock-close-icon').style.display).toEqual('none');
     fireEvent.click(button);
     expect(screen.getByTestId('lock-close-icon')).toBeInTheDocument();
     fireEvent.click(button);

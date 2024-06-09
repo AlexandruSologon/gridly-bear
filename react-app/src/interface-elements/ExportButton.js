@@ -60,7 +60,12 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
 
     return(
         <Tooltip title="export">
-            <Button className={'hasShadow'} size={'large'} onClick={() => {exp(markers, lines, busLines, mapContainer)}} type="default" shape="square" icon={<ExportIcon/>}>
+            <Button className={'hasShadow'}
+                    size={'large'}
+                    onClick={() => {exp(markers, lines, busLines, mapContainer)}}
+                    type="default" shape="square"
+                    style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
+                    icon={<ExportIcon/>}>
             </Button>
         </Tooltip>
     );

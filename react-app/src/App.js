@@ -1,27 +1,25 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
-import debounce from 'lodash.debounce';
-import React, { useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
-import { resetLinesRender, resetMarkerRender} from './utils/api';
-import {
-    mapCenter,
-    iconMapping,
-    markerParametersConfig,
-    sidebarItems,
-    defVal,
-    connectionDefaultColor, lineDefaultColor,
-} from './utils/constants';
 import 'leaflet-polylinedecorator';
-import Sidebar from './interface-elements/Sidebar';
-import DeleteButton from './interface-elements/DeleteButton';
-import ReverseButton from './interface-elements/ReverseButton';
-import WaitingOverlay from './interface-elements/WaitingOverlay';
-import {PolylineDecorator} from './interface-elements/PolylineDecorator';
-import ToolElements from './interface-elements/ToolElements';
-import {findMarkerById} from "./utils/api";
+import debounce from 'lodash.debounce';
 import {message} from "antd";
-
+import React, { useState, useRef } from 'react';
+import { resetLinesRender, resetMarkerRender} from './utils/api';
+import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
+import {defVal,
+        mapCenter,
+        iconMapping,
+        sidebarItems,
+        lineDefaultColor,
+        connectionDefaultColor,
+        markerParametersConfig} from './utils/constants';
+import Sidebar from './interface-elements/Sidebar';
+import ToolElements from './interface-elements/ToolElements';
+import DeleteButton from './interface-elements/DeleteButton';
+import MarkerSettings from "./interface-elements/MarkerSettings";
+import WaitingOverlay from './interface-elements/WaitingOverlay';
+import PolylineDecorator from './interface-elements/PolylineDecorator';
+import {findMarkerById} from "./utils/api";
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -36,7 +34,6 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
-    //let provider = new OpenStreetMapProvider();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -188,9 +185,6 @@ export function ReactApp() {
         setLines(resetLinesRender(updatedLines, updatedMarkers));
     }, 100);
 
-    const deleteMarker = (indexMarker) => {
-        handleMarkerDelete(indexMarker)
-    }
     const handleMarkerDelete = (indexMarker) => {
         const oldMarkerPos = markers[indexMarker].position;
         const oldMarkerId = markers[indexMarker].id;
@@ -226,8 +220,6 @@ export function ReactApp() {
             !((line[0] === markers[indexMarker].id) || 
             (line[1] === markers[indexMarker].id)));
         setBusLines(updatedBusLines);
-        //if(markers[0])
-        //handleMarkerDrag(0,markers[0].position)
         resetMarkerRender(updatedMarkers, markerRefs)
     };
 
@@ -323,46 +315,6 @@ export function ReactApp() {
         }
     };
 
-    const renderParameterInputs = (marker) => {
-        const { id, type, parameters } = marker;
-        const parameterFields = markerParametersConfig[type];
-        if (!parameterFields) {
-            console.log('Parameters configuration not found for marker type:', type);
-            return null;
-        }
-        return parameterFields.map(param => (
-            <div key={param} style={{ marginBottom: '5px' }}>
-                <input
-                    type="text"
-                    placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
-                    value={parameters[param] || ''}
-                    onChange={(e) => handleParameterChange(id, param, e.target.value)}
-                />
-            </div>
-        ));
-    };
-
-    const renderRequiredButtons = (marker, index) => {
-        const { type } = marker;
-        if (type === 'trafo1') {
-            return (
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => {deleteMarker(index)}}/>
-            </div>
-            <div style={{marginBottom: '5px'}}>
-                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
-            </div>
-            </div>
-            );
-        }
-        return (
-            <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => {deleteMarker(index); }}/>
-            </div>
-        )
-    }
-
     const handleParameterChange = (markerId, paramName, value) => {
         if(value !== null && value !== 0 && value !== '')
         {
@@ -445,7 +397,6 @@ export function ReactApp() {
                                     draggable={true}
                                     clickable={true}
                                     ref={(ref) => (markerRefs.current[index] = ref)}
-
                                     eventHandlers={{
                                         click: (e) => handleMarkerClick(e, marker.id),
                                         contextmenu: (e) => handleMarkerRightClick(e),
@@ -453,13 +404,13 @@ export function ReactApp() {
                                         drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
                                     }}
                             >
-                                <Popup>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ marginBottom: '5px' }}>{marker.name}</div>
-                                        {renderParameterInputs(marker)}
-                                        {renderRequiredButtons(marker, index)}
-                                    </div>
-                                </Popup>
+                                <MarkerSettings
+                                    marker={marker}
+                                    index={index}
+                                    handleParameterChange={handleParameterChange}
+                                    handleMarkerDelete={handleMarkerDelete}
+                                    handleTransReverse={handleTransReverse}
+                                />
                             </Marker>
                         ))}
                         {lines.map((line, index) => (
