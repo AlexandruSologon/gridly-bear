@@ -4,7 +4,7 @@ import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
 import { message } from "antd";
 import React, {useState, useRef} from 'react';
-import { MapContainer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
 
 import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
