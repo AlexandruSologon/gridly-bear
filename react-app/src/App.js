@@ -2,16 +2,10 @@ import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
-import {message} from "antd";
-import React, { useState, useRef } from 'react';
+import { message } from "antd";
+import React, {useState, useRef} from 'react';
 import { MapContainer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
-import {defVal,
-        mapCenter,
-        iconMapping,
-        sidebarItems,
-        lineDefaultColor,
-        connectionDefaultColor,
-        markerParametersConfig} from './utils/constants';
+
 import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
 import ToolElements from './interface-elements/ToolElements';
@@ -19,8 +13,15 @@ import DeleteButton from './interface-elements/DeleteButton';
 import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
-import {findMarkerById} from "./utils/api";
-import {resetLinesRender, resetMarkerRender} from './utils/api';
+
+import {resetLinesRender, resetMarkerRender, findMarkerById} from './utils/api';
+import {defVal,
+        mapCenter,
+        iconMapping,
+        sidebarItems,
+        lineDefaultColor,
+        connectionDefaultColor,
+        markerParametersConfig} from './utils/constants';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
