@@ -5,6 +5,7 @@ import { ConfigProvider, Flex } from "antd";
 import { onRunButtonClick } from '../utils/api';
 import RunButton from "./RunButton";
 import Search from "./Search";
+import HistoryButton from "./HistoryButton.js";
 
 function ToolElements(props) {
     
@@ -26,6 +27,7 @@ function ToolElements(props) {
                     <LockButton onLockButtonClick={props.onLockButtonClick} />
                     <ImportButton markerRefs={props.markerRefs} lineRefs={props.lineRefs} setMarkers={props.setMarkers} setLines={props.setLines} setBusLines={props.setBusLines} mapContainer={props.mapContainer}></ImportButton>
                     <ExportButton markers={props.markers} lines={props.lines} busLines={props.busLines} mapContainer={props.mapContainer}></ExportButton>
+                    <HistoryButton isHistoryOn={props.isHistoryOn} setIsHistoryOn={props.setIsHistoryOn}></HistoryButton>
                     <RunButton runClicked={props.runClicked} onRunButtonClick={() => onRunButtonClick(props.markers, props.busLines, props.runClicked, props.setRunClicked, props.setIsMapLocked, props.lines, props.setLines, props.setBusLines, props.setMarkers, props.markerRefs, props.messageApi, props.defaultValues)} />
                 </Flex>
                 

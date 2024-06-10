@@ -22,6 +22,7 @@ import {PolylineDecorator} from './interface-elements/PolylineDecorator';
 import ToolElements from './interface-elements/ToolElements';
 import {findMarkerById} from "./utils/api";
 import {message} from "antd";
+import HistoryDrawer from './interface-elements/HistoryDrawer';
 
 
 export function ReactApp() {
@@ -37,7 +38,7 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
-    //let provider = new OpenStreetMapProvider();
+    const [isHistoryOn, setIsHistoryOn] = useState(false);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -410,6 +411,7 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
+            <HistoryDrawer isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn}></HistoryDrawer>
             <div
                 style={{
                     position: 'relative',
@@ -502,6 +504,8 @@ export function ReactApp() {
                             markerRefs={markerRefs}
                             messageApi={messageApi}
                             defaultValues={defaultValues}
+                            isHistoryOn={isHistoryOn}
+                            setIsHistoryOn={setIsHistoryOn}
                         ></ToolElements>
                     </MapContainer>
                     {contextHolder}
