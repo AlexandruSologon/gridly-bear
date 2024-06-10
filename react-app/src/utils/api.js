@@ -81,7 +81,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
 };
 
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, history, setHistory) => {
+export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, history, setHistory, map) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -114,18 +114,16 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
                 content: 'simulation complete!',
                 duration: 2,
             });
-            // let map = useMap();
-            // let zoom = map.getZoom();
-            // let center = map.getCenter();
+            let zoom = map.getZoom();
+            let center = map.getCenter();
             //TODO make shallow copies instead
             setHistory([{
                 markers,
                 lines,
                 busLines,
-                center:0,
-                zoom:0
+                center,
+                zoom
             }, ...history]);
-            console.log("hist and sethist: ", history, setHistory);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             messageApi.open({

@@ -412,7 +412,7 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
-            <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines} setBusLines={setBusLines}></HistoryDrawer>
+            
             <div
                 style={{
                     position: 'relative',
@@ -436,6 +436,7 @@ export function ReactApp() {
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                     >
+                        <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines} setBusLines={setBusLines}></HistoryDrawer>
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a href="https://carto.com/attributions">CARTO</a>'
                             url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'

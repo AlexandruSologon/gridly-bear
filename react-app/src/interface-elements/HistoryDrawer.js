@@ -1,5 +1,6 @@
 import { Drawer } from "@mui/material";
 import { useState } from "react";
+import { useMap } from "react-leaflet";
 
 function HistoryDrawer(props) {
 
@@ -34,7 +35,7 @@ function HistoryDrawer(props) {
         >
             <div style={{height: '3%'}}></div>
             <h2 style={{
-                    fontSize: props.isHistoryOn ? '18px' : '0px' ,
+                    fontSize: props.isHistoryOn ? '18px' : '0px',
                     transition: 'font-size 0.2s' , // Increased font size
                     fontFamily: 'Helvetica, sans-serif', // Changed font family
                     margin: '10px 0', // Added margin for spacing
@@ -51,31 +52,34 @@ function HistoryDrawer(props) {
 }
 
 function HistoryList(p) {
-    return <div
-        style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'center'
-        }}
-    >
-        {
-            p.history.map((h) => (
-                <SingleHistoryItem item={h} setMarkers={p.setMarkers} setLines={p.setLines} setBusLines={p.setBusLines}/>
-            ))
-        };
-    </div>
+    return (
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'center'
+            }}
+        >
+            {
+                p.history.map((h) => (
+                    <SingleHistoryItem item={h} setMarkers={p.setMarkers} setLines={p.setLines} setBusLines={p.setBusLines}/>
+                ))
+            }
+        </div>
+    );
 }
 
 function SingleHistoryItem(p) {
 
     const [hovered, setHovered] = useState(false);
+    const map = useMap();
 
     return (
         <div 
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => setStates(p)}
+        onClick={() => setStates(p, map)}
         style={
             {
                 width: '95%',
@@ -92,9 +96,8 @@ function SingleHistoryItem(p) {
     );
 }
 
-function setStates(p) {
-    // const map = useMap();
-    // map.setView(p.item.center, historyItem.zoom);
+function setStates(p, map) {
+    map.setView(p.item.center, p.item.zoom);
     p.setMarkers(p.item.markers);
     p.setLines(p.item.lines);
     p.setBusLines(p.item.busLines);
