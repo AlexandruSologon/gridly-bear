@@ -36,12 +36,12 @@ function ImportButton({setMarkers, setLines, mapContainer, markerRefs, lineRefs}
             return marker;
         });
 
-        let newLines = loadedFileJson.lines.map((line) => {
-            line[0] = new LatLng(line[0].lat, line[0].lng);
-            line[1] = new LatLng(line[1].lat, line[1].lng);
+        let newLines = loadedFileJson.lines.map(line => {
+            line.position1 = new LatLng(line.position1.lat, line.position1.lng);
+            line.position2 = new LatLng(line.position2.lat, line.position2.lng);
             return line;
         });
-
+        
         map.setView(loadedFileJson.center, loadedFileJson.zoom);
         setMarkers(newMarkers);
         setLines(newLines);
