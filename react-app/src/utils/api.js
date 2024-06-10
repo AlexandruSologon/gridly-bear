@@ -26,7 +26,11 @@ export const handleExport = (markerInputs, markers, lines) => {
         let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
         let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
         if (item1.name === 'Bus' && item2.name === 'Bus') {
-            components.push(new Line(indices[1],busIdMap.get(line[0]), busIdMap.get(line[1]), item1.position.distanceTo(item2.position)/1000, 'NAYY 4x50 SE'));
+            components.push(new Line(indices[1],
+                                busIdMap.get(line[0]),
+                                busIdMap.get(line[1]),
+                                item1.position.distanceTo(item2.position)/1000,
+                                'NAYY 4x50 SE'));
             indices[1] += 1;
         } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
             if (item1.name === 'Bus') {

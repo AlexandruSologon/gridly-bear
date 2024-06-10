@@ -107,7 +107,7 @@ export const defVal = {
     grid: {voltage: 1.02},
     solar: {power: 1},
     wind: {power: 1},
-    line: {type: "0.25 MVA 20/0.4 kV"}
+    line: {type: "NAYY 4x50 SE"}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

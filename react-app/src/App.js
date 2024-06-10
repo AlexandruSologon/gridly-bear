@@ -164,7 +164,6 @@ export function ReactApp() {
         }
     };
 
-    // TODO fix this method
     const handleMarkerDrag = debounce((markerId, newPosition) => {
         const oldPosition = findMarkerById(markerId, markers).position;
         const updatedMarkers = markers.map(marker => {
@@ -175,6 +174,9 @@ export function ReactApp() {
         });
 
         const updatedLines = lines.map(line => {
+            const lineRef = lineRefs.current[lines.indexOf(line)];
+            if (lineRef) lineRef.closePopup();
+
             if (line.position1.lat === oldPosition.lat && line.position1.lng === oldPosition.lng) {
                 return {...line, position1: newPosition};
             } else if (line.position2.lat === oldPosition.lat && line.position2.lng === oldPosition.lng) {
@@ -183,13 +185,6 @@ export function ReactApp() {
                 return line;
             }
         })
-
-        // const updatedLines = lines.map(line => line.map(point => {
-        //     if ((point.lat === markers[markerId].position.lat && point.lng === markers[markerId].position.lng) && (point === line[0] || point === line[1])) {
-        //         return newPosition;
-        //     }
-        //     return point;
-        // }));
 
         setMarkers(updatedMarkers);
         resetMarkerRender(updatedMarkers, markerRefs)
@@ -406,9 +401,7 @@ export function ReactApp() {
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <Popup>
-                                        <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
-                                    </Popup>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
                                 </Polyline>
                             ))}
                             <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>

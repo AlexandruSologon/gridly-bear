@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
+import {connectionDefaultColor} from "../utils/constants";
 
-function Menu() {
+function Menu({ line }) {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const options = [
@@ -61,6 +63,7 @@ function Menu() {
 
     const handleChange = (selectedOption) => {
         setSelectedOption(selectedOption);
+        line.type = selectedOption;
     };
 
     return (
@@ -84,22 +87,24 @@ function Menu() {
 }
 
 const LineSettings = ({ line, index, handleLineDelete }) => {
-    const isElectricalLine = line.color !== "#358cfb";
+    const isElectricalLine = line.color !== connectionDefaultColor;
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ marginBottom: '5px' }}>
-                {isElectricalLine ? "Electrical line" : "Direct Connection"}
-            </div>
-            <div style={{ marginBottom: '5px' }}>
-                <DeleteButton onClick={() => handleLineDelete(index)} />
-            </div>
-            {isElectricalLine && (
+        <Popup>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ marginBottom: '5px' }}>
-                    <Menu />
+                    {isElectricalLine ? "Electrical line" : "Direct Connection"}
                 </div>
-            )}
-        </div>
+                <div style={{ marginBottom: '5px' }}>
+                    <DeleteButton onClick={() => handleLineDelete(index)} />
+                </div>
+                {isElectricalLine && (
+                    <div style={{ marginBottom: '5px' }}>
+                        <Menu line={line} />
+                    </div>
+                )}
+            </div>
+        </Popup>
     );
 };
 
