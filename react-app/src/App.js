@@ -191,10 +191,11 @@ export function ReactApp() {
         setLines(resetLinesRender(updatedLines, updatedMarkers));
     }, 100);
 
-    const handleMarkerDelete = (indexMarker) => {
-        const oldMarkerPos = markers[indexMarker].position;
-        const oldMarkerId = markers[indexMarker].id;
-        const markerRef = markerRefs.current[indexMarker];
+    const handleMarkerDelete = (markerId) => {
+        const oldMarker = findMarkerById(markerId, markers);
+        const oldMarkerPos = oldMarker.position;
+        const oldMarkerId = oldMarker.id;
+        const markerRef = markerRefs.current[markers.indexOf(oldMarker)];
         if (markerRef) {
             markerRef.valueOf()._icon.style.border = ''
             markerRef.valueOf()._icon.style.borderWidth = ''
@@ -212,10 +213,10 @@ export function ReactApp() {
             }
             return marker;
         });
-        updatedMarkers.splice(indexMarker, 1);
+        updatedMarkers.splice(markers.indexOf(oldMarker), 1);
         setMarkers(updatedMarkers);
 
-        if (selectedMarker === indexMarker) {
+        if (selectedMarker === markerId) {
             setSelectedMarker(null);
         }
         const updatedLines = lines.filter(line => 
@@ -370,7 +371,7 @@ export function ReactApp() {
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
                             <Tile/>
                             {markers.map((marker, index) => (
-                                <Marker key={index}
+                                <Marker key={marker.id}
                                         draggable={true}
                                         clickable={true}
                                         type={marker.type}
@@ -381,7 +382,7 @@ export function ReactApp() {
                                             click: (e) => handleMarkerClick(e, marker.id),
                                             contextmenu: (e) => handleMarkerRightClick(e),
                                             dragstart: () => setSelectedMarker(null),
-                                            drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
+                                            drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
                                         }}>
                                     <MarkerSettings
                                         index={index}

@@ -16,7 +16,6 @@ function ReverseButton({ onClick }) {
                     display: 'flex',
                     alignItems: 'center'}}
                 onClick={onClick}>
-
                 Reverse
             </Button>
         </div>
@@ -27,7 +26,7 @@ function MarkerButtons({marker, index, handleMarkerDelete, handleTransReverse}) 
     const { type } = marker;
     const isTransformer = (type === 'trafo1');
     const buttonsStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center' };
-    const deleteButton = <DeleteButton onClick={() => { handleMarkerDelete(index); }}/>;
+    const deleteButton = <DeleteButton onClick={() => { handleMarkerDelete(marker.id); }}/>;
 
     return (
         <div style={buttonsStyle}>
