@@ -1,4 +1,6 @@
 import { Drawer } from "@mui/material";
+import { useState } from "react";
+import { useMap } from "react-leaflet";
 
 function HistoryDrawer(props) {
 
@@ -44,29 +46,43 @@ function HistoryDrawer(props) {
             >
                 History of succesful simulations
             </h2>
-            <HistoryList history={props.history}></HistoryList>
+            <HistoryList history={props.history} setMarkers={props.setMarkers} setLines={props.setLines} setBusLines={props.setBusLines}></HistoryList>
         </Drawer>
     );
 }
 
 function HistoryList(p) {
-    return <div>
+    return <div
+        style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'center'
+        }}
+    >
         {
             p.history.map((h) => (
-                <SingleHistoryItem item={h}/>
+                <SingleHistoryItem item={h} setMarkers={p.setMarkers} setLines={p.setLines} setBusLines={p.setBusLines}/>
             ))
         };
     </div>
 }
 
 function SingleHistoryItem(p) {
+
+    const [hovered, setHovered] = useState(false);
+
     return (
-        <div style={
+        <div 
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={() => setStates(p)}
+        style={
             {
-                width: '90%',
-                borderColor: 'black',
-                border: '2px',
-                background: 'grey'
+                width: '95%',
+                border: '2px solid lightgrey',
+                margin: '8px',
+                background: hovered ? 'lightgray' : 'white'
             }
         }>
             {/* TODO: calculate relevant stats here from the available data,
@@ -75,6 +91,14 @@ function SingleHistoryItem(p) {
             <p> Markers on element: {p.item.markers.length} </p>
         </div>
     );
+}
+
+function setStates(p) {
+    // const map = useMap();
+    // map.setView(p.item.center, historyItem.zoom);
+    p.setMarkers(p.item.markers);
+    p.setLines(p.item.lines);
+    p.setBusLines(p.item.busLines);
 }
 
 export default HistoryDrawer;
