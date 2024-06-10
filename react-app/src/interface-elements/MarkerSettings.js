@@ -1,14 +1,24 @@
 import React from 'react';
-import {Popup} from "react-leaflet";
+import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
-import {markerParametersConfig} from "../utils/constants";
+import { markerParametersConfig } from "../utils/constants";
+import {Button} from "antd";
+import { SwapOutlined } from "@ant-design/icons";
 
 function ReverseButton({ onClick }) {
     return (
-        <div style={{marginBottom: '5px'}}>
-            <button style={{color: 'blue'}} onClick={onClick}>
+        <div style={{marginBottom: '5px', marginTop: '5px'}}>
+            <Button
+                icon={<SwapOutlined style={{ color: 'dodgerblue' }} />}
+                style={{
+                    border: '1px solid black',
+                    color: 'dodgerblue',
+                    display: 'flex',
+                    alignItems: 'center'}}
+                onClick={onClick}>
+
                 Reverse
-            </button>
+            </Button>
         </div>
     );
 }
@@ -21,8 +31,8 @@ function MarkerButtons({marker, index, handleMarkerDelete, handleTransReverse}) 
 
     return (
         <div style={buttonsStyle}>
-            {deleteButton}
             {isTransformer && <ReverseButton onClick={() => handleTransReverse(marker.id)} />}
+            {deleteButton}
         </div>
     );
 }

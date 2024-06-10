@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
 const DeleteButton = ({ onClick }) => (
-    <div style={{ marginBottom: '5px' }}>
+    <div style={{ marginBottom: '5px', marginTop: '5px' }}>
         <Button
             onClick={onClick}
             icon={<DeleteOutlined style={{ color: 'red' }} />}
