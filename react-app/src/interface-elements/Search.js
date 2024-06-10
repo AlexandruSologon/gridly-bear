@@ -67,7 +67,7 @@ function Search() {
                     placeholder="Search..."
                     onChange={handleInputChange}
                 />
-                <Tooltip title="search">
+                <Tooltip title="Search">
                     <Button
                         onClick={handleSearch}
                         type="default"

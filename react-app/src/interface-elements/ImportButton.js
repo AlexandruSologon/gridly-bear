@@ -60,7 +60,7 @@ function ImportButton({setMarkers, setLines, mapContainer, markerRefs, lineRefs}
       );      
 
     return(
-        <Tooltip title="import">
+        <Tooltip title="Import">
             <Button className={'hasShadow'}
                     style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
                     size={'large'}

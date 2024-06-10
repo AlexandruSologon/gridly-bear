@@ -56,7 +56,7 @@ function ExportButton({markerRefs, lineRefs, markers, lines, mapContainer}) {
     );
 
     return(
-        <Tooltip title="export">
+        <Tooltip title="Export">
             <Button className={'hasShadow'}
                     size={'large'}
                     onClick={() => {exp(markers, lines, mapContainer)}}
