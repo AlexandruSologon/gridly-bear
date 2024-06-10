@@ -6,7 +6,7 @@ import { LatLng } from "leaflet";
 import { Button, Tooltip } from "antd";
 import impIcon from '../images/import.png';
 
-function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
+function ImportButton({setMarkers, setLines, mapContainer, markerRefs, lineRefs}) {
 
     const fileRef = useRef(null);
     const map = useMap();
@@ -45,7 +45,6 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
         map.setView(loadedFileJson.center, loadedFileJson.zoom);
         setMarkers(newMarkers);
         setLines(newLines);
-        setBusLines(loadedFileJson.busLines);
     };
 
     const ImportIcon = () => (

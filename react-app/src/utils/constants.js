@@ -89,7 +89,6 @@ export const markerParametersConfig = {
 };
 
 export const binarySearch = function(arr, x, start, end) {
- 
     if (start > end) return null;
     let mid = Math.floor((start + end) / 2);
  
@@ -108,6 +107,7 @@ export const defVal = {
     grid: {voltage: 1.02},
     solar: {power: 1},
     wind: {power: 1},
+    line: {type: "0.25 MVA 20/0.4 kV"}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

@@ -2,14 +2,13 @@ import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
 
-
-export const handleExport = (markerInputs, markers, busLines) => {
+export const handleExport = (markerInputs, markers, lines) => {
     const buses = [];
     const components = [];
     let indices = [0, 0, 0, 0, 0, 0, 0];
     const busIdMap = new Map();
     const transLines = [];
-
+    const busLines = lines.map(line => line.busLine);
     markerInputs.forEach((marker) => {
         if(marker.name === "Bus")
         {
@@ -82,7 +81,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
 };
 
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi) => {
+export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -103,11 +102,11 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
         name: marker.name
     }));
 
-    const dat = handleExport(markerInputs, markers, busLines);
+    const dat = handleExport(markerInputs, markers, lines);
     console.log('Sent over Data:', dat);
     cnvs_json_post(dat)
         .then((data) => {
-            renderLines(data, lines, busLines, markers, setLines);
+            renderLines(data, lines, markers, setLines);
             renderBuses(data, markers, markerRefs);
             messageApi.open({
                 key,
@@ -128,13 +127,15 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
         });
 };
 
-const renderLines = (data, lines, busLines, markers, setLines) => {
+const renderLines = (data, lines, markers, setLines) => {
+    const busLines = lines.map(line => line.busLine);
     let nr = -1;
     const uL = lines.map((line) => {
-            if((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus') )
-            {   nr++
-                return [line[0],line[1],'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)', line[3], line[4]]}
-            else return line
+            if (markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name) {
+                nr++;
+                line.color = 'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)';
+            }
+            return line
         }
     );
     setLines(uL) ;
@@ -146,11 +147,16 @@ const renderBuses = (data, markers, markerRefs) => {
         if(marker !== null) {
         const  style = marker.valueOf()._icon.style;
         if (marker.options.icon.options.id === "bus"){
-            style.border = 'hsl('+data.buses[nr][0]+','+data.buses[nr][1]+'%,'+data.buses[nr][2]+'%) solid 6px'
+            style.backgroundColor = '#fff';
+            style.width = '48px';
+            style.height = '48px';
+            const hue = data.buses[nr][0];
+            const saturation = data.buses[nr][1];
+            const lightness = data.buses[nr][2];
+            style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
             style.borderRadius = '50%'
             nr++;
-
-        }else {
+        } else {
             style.border = ''
             style.borderRadius = ''
         }
@@ -167,7 +173,6 @@ export const resetMarkerRender = (markers, markerRefs) => {
                 style.borderRadius = '50%'
 
             } else {
-
                 style.border = 'none'
                 style.borderRadius = ''
             }
@@ -176,13 +181,15 @@ export const resetMarkerRender = (markers, markerRefs) => {
 
 export const resetLinesRender = (lines, markers) => {
     return lines.map((line) => {
-                if ((findMarkerById(line[4][0], markers).type === 'bus') && (findMarkerById(line[4][1], markers).type === 'bus')) {
-                    return [line[0], line[1], lineDefaultColor, line[3], line[4]]
-                } else return line
+                if ((findMarkerById(line.busLine[0], markers).type === 'bus')
+                    && (findMarkerById(line.busLine[1], markers).type === 'bus')) {
+                    line.color = lineDefaultColor;
+                }
+                return line
             }
         );
     }
 
 export const findMarkerById = (id,markers) => {
-        return binarySearch(markers, id, 0, markers.length - 1);
-    }
+    return binarySearch(markers, id, 0, markers.length - 1);
+}
