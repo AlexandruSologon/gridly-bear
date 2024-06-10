@@ -5,14 +5,10 @@ import { Tooltip, Button } from 'antd';
 
 function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContainer}) {
     const map = useMap();
-    const exp = () => {
 
-        console.log(mapContainer);
+    const exp = () => {
         let center = map.getCenter();
         let zoom = map.getZoom();
-
-        console.log("are there actual buslines? " + busLines);
-
         let newMarkers = markers.map((marker) => {
             let newmarker = Object.assign({}, marker);
             newmarker.icon = marker.type;
@@ -28,8 +24,6 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
         }
 
         const stringData = JSON.stringify(exportData);
-
-        console.log(exportData);
 
         //download to users file system
         //reference https://stackoverflow.com/questions/66078335/how-do-i-save-a-file-on-my-desktop-using-reactjs

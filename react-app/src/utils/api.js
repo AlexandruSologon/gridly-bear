@@ -1,7 +1,7 @@
 import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
-
+import { useMap } from 'react-leaflet';
 
 export const handleExport = (markerInputs, markers, busLines) => {
     const buses = [];
@@ -82,7 +82,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
 };
 
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi) => {
+export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, history, setHistory) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -115,6 +115,18 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
                 content: 'simulation complete!',
                 duration: 2,
             });
+            // let map = useMap();
+            // let zoom = map.getZoom();
+            // let center = map.getCenter();
+            //TODO make shallow copies instead
+            setHistory([{
+                markers,
+                lines,
+                busLines,
+                center:0,
+                zoom:0
+            }, ...history]);
+            console.log("hist and sethist: ", history, setHistory);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             messageApi.open({

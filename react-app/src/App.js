@@ -39,6 +39,7 @@ export function ReactApp() {
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
     const [isHistoryOn, setIsHistoryOn] = useState(false);
+    const [history, setHistory] = useState([]);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -411,7 +412,7 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
-            <HistoryDrawer isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn}></HistoryDrawer>
+            <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn}></HistoryDrawer>
             <div
                 style={{
                     position: 'relative',
@@ -506,6 +507,8 @@ export function ReactApp() {
                             defaultValues={defaultValues}
                             isHistoryOn={isHistoryOn}
                             setIsHistoryOn={setIsHistoryOn}
+                            setHistory={setHistory}
+                            history={history}
                         ></ToolElements>
                     </MapContainer>
                     {contextHolder}

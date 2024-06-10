@@ -42,9 +42,38 @@ function HistoryDrawer(props) {
                     marginLeft: '10px'
                 }}
             >
-                History
+                History of succesful simulations
             </h2>
+            <HistoryList history={props.history}></HistoryList>
         </Drawer>
+    );
+}
+
+function HistoryList(p) {
+    return <div>
+        {
+            p.history.map((h) => (
+                <SingleHistoryItem item={h}/>
+            ))
+        };
+    </div>
+}
+
+function SingleHistoryItem(p) {
+    return (
+        <div style={
+            {
+                width: '90%',
+                borderColor: 'black',
+                border: '2px',
+                background: 'grey'
+            }
+        }>
+            {/* TODO: calculate relevant stats here from the available data,
+                TODO: return canvas back to state it was in for this particular history element
+            */}
+            <p> Markers on element: {p.item.markers.length} </p>
+        </div>
     );
 }
 
