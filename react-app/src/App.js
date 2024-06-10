@@ -105,7 +105,8 @@ export function ReactApp() {
                     // Logic for creating lines between markers
                         let color = "#358cfb";
                         if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = "#000"
-                    if (lines.length === 0 || lines[lines.length - 1].length === 5) {
+                    // @oahn what does this mean man
+                    if (selected.position !== current.position) {
                         let newLine = {
                             position1: selected.position,
                             position2: current.position,
@@ -114,7 +115,6 @@ export function ReactApp() {
                             busLine: [selected.id, current.id].sort(),
                             arrow: 'none'
                         };
-                        console.log(newLine);
                         //let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
                         const sameLines = lines.filter(line => 
