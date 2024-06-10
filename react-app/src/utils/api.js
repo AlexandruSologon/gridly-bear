@@ -1,7 +1,6 @@
 import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
-import { useMap } from 'react-leaflet';
 
 export const handleExport = (markerInputs, markers, busLines) => {
     const buses = [];

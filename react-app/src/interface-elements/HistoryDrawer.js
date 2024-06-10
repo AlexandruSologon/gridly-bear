@@ -1,6 +1,5 @@
 import { Drawer } from "@mui/material";
 import { useState } from "react";
-import { useMap } from "react-leaflet";
 
 function HistoryDrawer(props) {
 
