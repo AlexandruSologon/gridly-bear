@@ -105,7 +105,6 @@ export function ReactApp() {
                     // Logic for creating lines between markers
                         let color = connectionDefaultColor;
                         if(selected.type === "bus" && current.type === "bus") color = lineDefaultColor
-                    if (lines.length === 0 || lines[lines.length - 1].length === 5) {
                         let newLine = {
                             position1: selected.position,
                             position2: current.position,
@@ -160,7 +159,6 @@ export function ReactApp() {
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                         lineRefs.current.push(newLine);
                     }
-                }
             }
             setSelectedMarker(null);
         }
