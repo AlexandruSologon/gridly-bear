@@ -84,7 +84,7 @@ function Menu() {
 }
 
 const LineSettings = ({ line, index, handleLineDelete }) => {
-    const isElectricalLine = line[2] !== "#358cfb";
+    const isElectricalLine = line.color !== "#358cfb";
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

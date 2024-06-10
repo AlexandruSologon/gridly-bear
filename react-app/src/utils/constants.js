@@ -94,4 +94,5 @@ export const defVal = {
     grid: {voltage: 1.02},
     solar: {power: 1},
     wind: {power: 1},
+    line: {type: "0.25 MVA 20/0.4 kV"}
 }

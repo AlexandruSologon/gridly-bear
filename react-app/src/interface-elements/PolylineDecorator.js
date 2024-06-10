@@ -17,12 +17,13 @@ export function PolylineDecorator({ lines, markers }) {
         polylineRefs.current = [];
 
         lines.forEach(line => {
-            let positions = [line[0], line[1]];
-            const color = line[2];
-            const arrow = line[3];
-            let item0 = binarySearch(markers, line[4][0], 0, markers.length - 1)
-            let item1 = binarySearch(markers, line[4][1], 0, markers.length - 1)
-            if (item0.position.lat === line[1].lat && item0.position.lng === line[1].lng) {
+            let positions = [line.position1, line.position2];
+            const color = line.color;
+            const arrow = line.arrow;
+            const busLine = line.busLine;
+            let item0 = binarySearch(markers, busLine[0], 0, markers.length - 1);
+            let item1 = binarySearch(markers, busLine[1], 0, markers.length - 1);
+            if (item0.position.lat === line.position2.lat && item0.position.lng === line.position2.lng) {
                 [item0, item1] = [item1, item0];
             }
 
@@ -32,9 +33,9 @@ export function PolylineDecorator({ lines, markers }) {
                 opacity = 100;
                 if (arrow === 'low') {
                     offset = "30%";
-                    if (item1.name === "Transformer") positions = [line[1], line[0]];
+                    if (item1.name === "Transformer") positions = [line.position2, line.position1];
                 }
-                if (arrow === 'high' && item0.name === "Transformer") positions = [line[1], line[0]];
+                if (arrow === 'high' && item0.name === "Transformer") positions = [line.position2, line.position1];
             } 
 
             const polyline = L.polyline(positions, {

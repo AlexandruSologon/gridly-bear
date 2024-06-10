@@ -26,7 +26,7 @@ export function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
-    const [busLines, setBusLines] = useState([]);
+    //const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
@@ -106,17 +106,21 @@ export function ReactApp() {
                         let color = "#358cfb";
                         if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = "#000"
                     if (lines.length === 0 || lines[lines.length - 1].length === 5) {
-                        let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
+                        let newLine = {
+                            position1: selected.position,
+                            position2: current.position,
+                            type: defaultValues.line.type,
+                            color: color,
+                            busLine: [selected.id, current.id].sort(),
+                            arrow: 'none'
+                        };
+                        console.log(newLine);
+                        //let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
                         //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                        const newBusLine = [selected.id, current.id].sort();
-                        let found = false;
-                        for (let i = 0; i < busLines.length; i++) {
-                            const item = busLines[i];
-                            if (item[0] === newBusLine[0] && item[1] === newBusLine[1]) {
-                                found = true;
-                                break;
-                            }
-                        }
+                        const sameLines = lines.filter(line => 
+                            (line.busLine[0] === newLine.busLine[0] && line.busLine[1] === newLine.busLine[1]));
+
+                        const found = sameLines.length !== 0;
                         let maxTransformer = false;
                         // Check for transformer constraints
                         if (selected.name === "Transformer") {
@@ -125,10 +129,10 @@ export function ReactApp() {
                             } else {
                                 if (selected.high === null) {
                                     selected.high = markerId;
-                                    newLine[3] = 'high';
+                                    newLine.arrow = 'high';
                                 } else if (selected.low === null) {
                                     selected.low = markerId;
-                                    newLine[3] = 'low';
+                                    newLine.arrow = 'low';
                                 }
                                 selected.connections++;
                             }
@@ -138,10 +142,10 @@ export function ReactApp() {
                             } else {
                                 if (current.high === null) {
                                     current.high = selectedMarker
-                                    newLine[3] = 'high';
+                                    newLine.arrow = 'high';
                                 } else if (current.low === null) {
                                     current.low = selectedMarker
-                                    newLine[3] = 'low';
+                                    newLine.arrow = 'low';
                                 }
                                 current.connections++;
                             }
@@ -150,7 +154,6 @@ export function ReactApp() {
                         // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
-                            setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
                         }
                     } else {
@@ -164,14 +167,25 @@ export function ReactApp() {
         }
     };
 
-    const handleMarkerDrag = debounce((markerIndex, newPosition) => {
-        const updatedMarkers = markers.map((marker, index) => {
-            if (index === markerIndex) {
+    const handleMarkerDrag = debounce((markerId, newPosition) => {
+        const oldPosition = findMarkerById(markerId).position;
+        const updatedMarkers = markers.map(marker => {
+            if (marker.id === markerId) {
                 return { ...marker, position: newPosition };
             }
             return marker;
         });
 
+        const updatedLines = lines.map(line => {
+            if (line.position1 === oldPosition) {
+                return {...line, position1: newPosition};
+            } else if (line.position2 === oldPosition) {
+                return {...line, position2: newPosition};
+            } else {
+                return line;
+            }
+        })
+        /*
         const updatedLines = lines.map(line => line.map(point => {
             if ((point.lat === markers[markerIndex].position.lat && point.lng === markers[markerIndex].position.lng) && (point === line[0] || point === line[1])) {
                 const lineRef = lineRefs.current[lines.indexOf(line)];
@@ -180,6 +194,7 @@ export function ReactApp() {
             }
             return point;
         }));
+        */
         setMarkers(updatedMarkers);
         setLines(updatedLines);
     }, 100);
@@ -203,20 +218,15 @@ export function ReactApp() {
             return marker;
         });
         updatedMarkers.splice(indexMarker, 1);
-        console.log(updatedMarkers);
         setMarkers(updatedMarkers);
         markerRefs.current.splice(indexMarker, 1);
         if (selectedMarker === indexMarker) {
             setSelectedMarker(null);
         }
         const updatedLines = lines.filter(line => 
-            !((line[0].lat === oldMarkerPos.lat && line[0].lng === oldMarkerPos.lng) || 
-            (line[1].lat === oldMarkerPos.lat && line[1].lng === oldMarkerPos.lng)));
+            !((line.position1.lat === oldMarkerPos.lat && line.position1.lng === oldMarkerPos.lng) || 
+            (line.position2.lat === oldMarkerPos.lat && line.position2.lng === oldMarkerPos.lng)));
         setLines(updatedLines);
-        const updatedBusLines = busLines.filter(line => 
-            !((line[0] === markers[indexMarker].id) || 
-            (line[1] === markers[indexMarker].id)));
-        setBusLines(updatedBusLines);
     };
 
     const handleTransReverse = (markerId) => {
@@ -236,15 +246,9 @@ export function ReactApp() {
 
         
         const updatedLines = lines.map(line => {
-            if(line[0] === marker.position || line[1] === marker.position) {
-                return line.map(point => {
-                    if (point === 'high') {
-                        return 'low';
-                    } else if (point === 'low') {
-                        return 'high';
-                    }
-                    return point;
-                });
+            if(line.position1 === marker.position || line.position2 === marker.position) {
+                if (line.arrow === "high") return {...line, arrow: "low"};
+                if (line.arrow === "low") return {...line, arrow: "high"};
             }
             return line;
         })
@@ -255,12 +259,11 @@ export function ReactApp() {
 
     const handleLineDelete = (index) => {
         const lineRef = lineRefs.current[index];
-        const oldBusLine = busLines[index];
+        const oldBusLine = lines[index].busLine;
         if (lineRef) {
             lineRef.closePopup();
         }
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
-        const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
 
         const marker1 = findMarkerById(oldBusLine[0]);
         const marker2 = findMarkerById(oldBusLine[1]);
@@ -283,7 +286,6 @@ export function ReactApp() {
 
             setMarkers(updatedMarkers);
         }
-        setBusLines(updatedBusLines);
         setLines(updatedLines);
         lineRefs.current.splice(index, 1);
     };
@@ -438,7 +440,7 @@ export function ReactApp() {
                                         click: (e) => handleMarkerClick(e, marker.id),
                                         contextmenu: (e) => handleMarkerRightClick(e),
                                         dragstart: () => setSelectedMarker(null),
-                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
+                                        drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
                                     }}
                             >
                                 <Popup>
@@ -452,8 +454,8 @@ export function ReactApp() {
                         ))}
                         {lines.map((line, index) => (
                             <Polyline key={index}
-                                      positions={[line[0], line[1]]}
-                                      pathOptions={{ color: line[2] }}
+                                      positions={[line.position1, line.position2]}
+                                      pathOptions={{ color: line.color }}
                                       clickable={true}
                                       weight={10}
                                       ref={(ref) => (lineRefs.current[index] = ref)}
@@ -475,13 +477,11 @@ export function ReactApp() {
                             setMarkers={setMarkers}
                             lines={lines}
                             setLines={setLines}
-                            busLines={busLines}
-                            setBusLines={setBusLines}
                             mapContainer={mapContainer}>
                         </ToolElements>
                     </MapContainer>
                     {contextHolder}
-                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi, defaultValues)} />
+                    <RunButton runClicked={runClicked} onRunButtonClick={() => onRunButtonClick(markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi, defaultValues)} />
                 </div>
             </div>
         </div>

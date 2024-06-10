@@ -3,14 +3,14 @@ import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../Core
 import { binarySearch } from './constants';
 
 
-export const handleExport = (markerInputs, markers, busLines) => {
+export const handleExport = (markerInputs, markers, lines) => {
     console.log(markers);
     const buses = [];
     const components = [];
     let indices = [0, 0, 0, 0, 0, 0, 0];
     const busIdMap = new Map();
     const transLines = [];
-
+    const busLines = lines.map(line => line.busLine);
     markerInputs.forEach((marker) => {
         if(marker.name === "Bus")
         {
@@ -84,7 +84,7 @@ export const handleExport = (markerInputs, markers, busLines) => {
 };
 
 
-export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setBusLines, setMarkers, markerRefs, messageApi) => {
+export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -105,11 +105,11 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
         name: marker.name
     }));
 
-    const dat = handleExport(markerInputs, markers, busLines);
+    const dat = handleExport(markerInputs, markers, lines);
     console.log('Sent over Data:', dat);
     cnvs_json_post(dat)
         .then((data) => {
-            renderLines(data, lines, busLines, markers, setLines);
+            renderLines(data, lines, markers, setLines);
             renderBuses(data, markers, markerRefs);
             messageApi.open({
                 key,
@@ -130,7 +130,8 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
         });
 };
 
-const renderLines = (data, lines, busLines, markers, setLines) => {
+const renderLines = (data, lines, markers, setLines) => {
+    const busLines = lines.map(line => line.busLine);
     let nr = -1;
     const uL = lines.map((line) => {
             if(markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name)
