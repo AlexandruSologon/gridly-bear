@@ -1,3 +1,5 @@
+import math
+
 import pandapower as pp
 
 
@@ -48,7 +50,7 @@ def all_line_colors(net):
 
 
 def get_line_color(line, safe_below=70, bad_above=90):
-    if line is not None:
+    if not math.isnan(line):
         # colors starts from bright green
         hue = 120
         # move towards yellow the closer line gets to safe_below
@@ -68,7 +70,7 @@ def get_line_color(line, safe_below=70, bad_above=90):
 # danger_zone: distance from 1 that's unacceptable
 def get_bus_color(bus, safe_within=0.05, danger_zone=0.1):
     # color starts from bright green
-    if bus is not None:
+    if not math.isnan(bus):
         hue = 120
         bus = abs(bus - 1)
         # move towards yellow the closer bus gets to safe_within
