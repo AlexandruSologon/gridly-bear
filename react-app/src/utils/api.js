@@ -8,7 +8,6 @@ export const handleExport = (markerInputs, markers, lines) => {
     let indices = [0, 0, 0, 0, 0, 0, 0];
     const busIdMap = new Map();
     const transLines = [];
-    const busLines = lines.map(line => line.busLine);
     markerInputs.forEach((marker) => {
         if(marker.name === "Bus")
         {
@@ -21,8 +20,9 @@ export const handleExport = (markerInputs, markers, lines) => {
             busIdMap.set(marker.id, busIndex);
         }
     })
-    for (let i = 0; i < busLines.length; i++) {
-        const line = busLines[i];
+    for (let i = 0; i < lines.length; i++) {
+        const lineObject = lines[i]
+        const line = lineObject.busLine;
         let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
         let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
         if (item1.name === 'Bus' && item2.name === 'Bus') {
@@ -30,7 +30,7 @@ export const handleExport = (markerInputs, markers, lines) => {
                                 busIdMap.get(line[0]),
                                 busIdMap.get(line[1]),
                                 item1.position.distanceTo(item2.position)/1000,
-                                'NAYY 4x50 SE'));
+                                lineObject.type));
             indices[1] += 1;
         } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
             if (item1.name === 'Bus') {

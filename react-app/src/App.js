@@ -104,15 +104,22 @@ export function ReactApp() {
                 if (selected && current) {
                     // Logic for creating lines between markers
                         let color = connectionDefaultColor;
-                        if(selected.type === "bus" && current.type === "bus") color = lineDefaultColor
+                        let connection = "direct";
+                        let type = null;
+                        if (selected.type === "bus" && current.type === "bus") {
+                            color = lineDefaultColor
+                            connection = "electrical"
+                            type = defaultValues.line.type
+                        }
                         let newLine = {
                             position1: selected.position,
                             position2: current.position,
-                            type: defaultValues.line.type,
+                            type: type,
                             color: color,
                             // ID of start marker and end marker sorted
                             busLine: [selected.id, current.id].sort(),
-                            arrow: 'none'
+                            arrow: 'none',
+                            connection: connection
                         };
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
