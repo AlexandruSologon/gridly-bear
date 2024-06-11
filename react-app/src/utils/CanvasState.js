@@ -42,7 +42,6 @@ export default class CanvasState {
         setBusLines(this.busLines);
         map.setView(this.center, this.zoom);
         resetMarkerRender(this.markers, this.markerRefs);
-        
     }
 
     //TODO
