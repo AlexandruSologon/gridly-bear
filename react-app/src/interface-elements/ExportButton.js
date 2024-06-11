@@ -30,7 +30,6 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
 
         //Save current canvas state to memory
         const exportData = new CanvasState(markers, null, lines, busLines, center, zoom, new Date());
-        console.log("marker refs to be exported: ", markerRefs);
 
         //Export data to file system as string
         const stringData = JSON.stringify(exportData);
