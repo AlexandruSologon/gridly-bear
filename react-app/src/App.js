@@ -21,7 +21,7 @@ import {
     sidebarItems,
     lineDefaultColor,
     connectionDefaultColor,
-    markerParametersConfig, busDefaultColor
+    markerParametersConfig,
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 
