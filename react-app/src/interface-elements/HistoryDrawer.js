@@ -91,16 +91,15 @@ function SingleHistoryItem(p) {
             {/* TODO: calculate relevant stats here from the available data,
                 TODO: return canvas back to state it was in for this particular history element
             */}
-            <p> Markers on element: {p.item.markers.length} </p>
+            <p> Time : {p.item.getTime()}</p>
+            <p> Marker amount : {p.item.getProblemBusCount()} </p> 
+            <p> Line amount : {p.item.getProblemLineCount()} </p>
         </div>
     );
 }
 
 function setStates(p, map) {
-    map.setView(p.item.center, p.item.zoom);
-    p.setMarkers(p.item.markers);
-    p.setLines(p.item.lines);
-    p.setBusLines(p.item.busLines);
+    p.item.applyState(p.setMarkers, p.setLines, p.setBusLines, map);
 }
 
 export default HistoryDrawer;

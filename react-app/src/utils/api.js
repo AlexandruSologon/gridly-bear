@@ -1,6 +1,7 @@
 import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
+import CanvasState from './CanvasState';
 
 export const handleExport = (markerInputs, markers, busLines) => {
     const buses = [];
@@ -116,14 +117,7 @@ export const onRunButtonClick = (markers, busLines, runClicked, setRunClicked, s
             });
             let zoom = map.getZoom();
             let center = map.getCenter();
-            //TODO make shallow copies instead
-            setHistory([{
-                markers,
-                lines,
-                busLines,
-                center,
-                zoom
-            }, ...history]);
+            setHistory([new CanvasState(markers, markerRefs, lines, busLines, center, zoom, new Date()), ...history]);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             messageApi.open({
