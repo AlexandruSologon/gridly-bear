@@ -51,7 +51,6 @@ export const handleExport = (markerInputs, markers, lines) => {
                     components.push(new ExtGrid(indices[6], busIndex, parseFloat(item1.parameters.voltage)));
                     indices[6] += 1;
                     break;
-
                 case 'Transformer':
                     let newTransLine = [item1.high, item1.low];
                     let found = false;
