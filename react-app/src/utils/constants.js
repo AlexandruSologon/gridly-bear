@@ -28,7 +28,7 @@ export const iconMapping = {
         iconRetinaUrl: require('../images/bus.png'),
         iconAnchor: [anchor, anchor],
         popupAnchor:[0, -anchor],
-        iconSize: [size, size],
+        iconSize: [48, 48],
         className: 'dot'
 
     }),

@@ -14,13 +14,15 @@ import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
 
-import { defVal,
-         mapCenter,
-         iconMapping,
-         sidebarItems,
-         lineDefaultColor,
-         connectionDefaultColor,
-         markerParametersConfig } from './utils/constants';
+import {
+    defVal,
+    mapCenter,
+    iconMapping,
+    sidebarItems,
+    lineDefaultColor,
+    connectionDefaultColor,
+    markerParametersConfig, busDefaultColor
+} from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 
 export function ReactApp() {
@@ -197,8 +199,11 @@ export function ReactApp() {
         const oldMarkerId = oldMarker.id;
         const markerRef = markerRefs.current[markers.indexOf(oldMarker)];
         if (markerRef) {
-            markerRef.valueOf()._icon.style.border = ''
-            markerRef.valueOf()._icon.style.borderWidth = ''
+            const style = markerRef.valueOf()._icon.style;
+            if(markerRef.options.type !== 'bus') {
+                style.border = ''
+                style.borderWidth = ''
+            }
             markerRef.closePopup();
         }
 
@@ -222,8 +227,9 @@ export function ReactApp() {
         const updatedLines = lines.filter(line => 
             !((line.position1.lat === oldMarkerPos.lat && line.position1.lng === oldMarkerPos.lng) ||
             (line.position2.lat === oldMarkerPos.lat && line.position2.lng === oldMarkerPos.lng)));
-        setLines(updatedLines);
-        resetMarkerRender(updatedMarkers, markerRefs)
+        setLines(resetLinesRender(updatedLines, updatedMarkers));
+        resetMarkerRender(markers, markerRefs)
+
     };
 
     const handleTransReverse = (markerId) => {

@@ -132,14 +132,14 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
 };
 
 const renderLines = (data, lines, markers, setLines) => {
-    const busLines = lines.map(line => line.busLine);
     let nr = -1;
     const uL = lines.map((line) => {
-            if (markers[busLines[lines.indexOf(line)][0]].name === markers[busLines[lines.indexOf(line)][1]].name) {
+            if (findMarkerById(line.busLine[0], markers).name === findMarkerById(line.busLine[1], markers).name) {
                 nr++;
-                line.color = 'hsl('+data.lines[nr][0]+','+data.lines[nr][1]+'%,'+data.lines[nr][2]+'%)';
+                const [hue, saturation, lightness] = data.lines[nr];
+                line.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             }
-            return line
+            return line;
         }
     );
     setLines(uL) ;
@@ -151,12 +151,7 @@ const renderBuses = (data, markers, markerRefs) => {
         if(marker !== null) {
         const  style = marker.valueOf()._icon.style;
         if (marker.options.icon.options.id === "bus"){
-            style.backgroundColor = '#fff';
-            style.width = '48px';
-            style.height = '48px';
-            const hue = data.buses[nr][0];
-            const saturation = data.buses[nr][1];
-            const lightness = data.buses[nr][2];
+            const [hue, saturation, lightness] = data.buses[nr];
             style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
             style.borderRadius = '50%'
             nr++;
@@ -167,12 +162,14 @@ const renderBuses = (data, markers, markerRefs) => {
     }})
 }
 
+
 export const resetMarkerRender = (markers, markerRefs) => {
-    markers.forEach(marker => {
+    for( let i =0; i< markerRefs.current.length; i++) {
+        const marker = markerRefs.current[i];
         if(marker !== null)
-        if(markerRefs.current[markers.indexOf(marker)] !== null) {
-            const style = markerRefs.current[markers.indexOf(marker)].valueOf()._icon.style;
-            if (marker.type === 'bus') {
+        if(markers[i] !== null && typeof markers[i] !== 'undefined') {
+            const style = marker.valueOf()._icon.style;
+            if (markers[i].type === 'bus') {
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
 
@@ -181,7 +178,7 @@ export const resetMarkerRender = (markers, markerRefs) => {
                 style.borderRadius = ''
             }
         }
-    })}
+    }}
 
 export const resetLinesRender = (lines, markers) => {
     return lines.map((line) => {
