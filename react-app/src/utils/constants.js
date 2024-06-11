@@ -78,13 +78,13 @@ export const sidebarItems = [
 
 
 export const markerParametersConfig = {
-    bus: ['voltage'],
-    trafo1: ['type'],
-    switch: ['type'],
-    load: ['p_mv', 'q_mvar'],
-    grid: ['voltage'],
-    solar: ['power'],
-    wind: ['power'],
+    bus: [{name:'voltage', unit:'(pu)'}],
+    trafo1: [{name:'type', unit: ''}],
+    switch: [{name:'type', unit: ''}],
+    load: [{name:'p_mv',unit:'(kW)'}, {name:'q_mvar',unit:'(kVar)'}],
+    grid: [{name:'voltage', unit:'(pu)'}],
+    solar: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
+    wind: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
     //battery: ['net', 'p_mw']
 };
 
@@ -105,8 +105,8 @@ export const defVal = {
     trafo1: {type: "0.4 MVA 10/0.4 kV"},
     load: {p_mv: 0.1, q_mvar: 0.05},
     grid: {voltage: 1.02},
-    solar: {power: 1},
-    wind: {power: 1},
+    solar: {p_mw: 1, vm_pu: 0},
+    wind: {p_mw: 1, vm_pu: 0},
     line: {type: "NAYY 4x50 SE"}
 }
 export const lineDefaultColor = '#706E6E'

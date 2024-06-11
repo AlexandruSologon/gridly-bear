@@ -61,7 +61,7 @@ export function ReactApp() {
             const icon = iconMapping[draggedItem.type];
             const parametersConfig = markerParametersConfig[draggedItem.type];
             const parameters = parametersConfig ? parametersConfig.reduce((acc, param) => {
-                acc[param] = '';
+                acc[param.name] = '';
                 return acc;
             }, {}) : {};
 
@@ -324,13 +324,6 @@ export function ReactApp() {
     };
 
     const handleParameterChange = (markerId, paramName, value) => {
-        if (value !== null && value !== 0 && value !== '') {
-            const newValues = {
-                ...defaultValues,
-                [findMarkerById(markerId, markers).type]: {...defaultValues[findMarkerById(markerId, markers).type], [paramName]: value}
-            }
-            setDefaultValues(newValues)
-        }
 
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
