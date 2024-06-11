@@ -2,7 +2,7 @@ import React from 'react';
 import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
 import { markerParametersConfig } from "../utils/constants";
-import {Button} from "antd";
+import { Button, Input} from "antd";
 import { SwapOutlined } from "@ant-design/icons";
 
 function ReverseButton({ onClick }) {
@@ -44,12 +44,17 @@ function MarkerParameters({marker, handleParameterChange}) {
         return null;
     }
     return parameterFields.map(param => (
-        <div key={param} style={{ marginBottom: '5px' }}>
-            <input
+        <div  key={param} style={{ marginBottom: '5px' }}>
+            <div style={{marginBottom: '5px', fontSize: 14, marginLeft: '10px'}}>
+                {param.charAt(0).toUpperCase() + param.slice(1) + ":"}
+            </div>
+            <Input
                 type="text"
                 placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
                 value={parameters[param] || ''}
                 onChange={(e) => handleParameterChange(id, param, e.target.value)}
+                size={'middle'}
+                style={{width: '180px', marginLeft: '10px', marginRight: '10px'}}
             />
         </div>
     ));
@@ -59,7 +64,7 @@ export default function MarkerSettings({index, marker, handleParameterChange, ha
     return (
         <Popup>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginBottom: '5px' }}>{marker.name}</div>
+                <div style={{ marginBottom: '5px', fontSize: 17 }}>{marker.name}</div>
                 <div>
                     <MarkerParameters
                         marker={marker}

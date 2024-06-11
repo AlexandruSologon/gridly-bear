@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
-import {connectionDefaultColor} from "../utils/constants";
 
 function Menu({ line }) {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -61,9 +60,9 @@ function Menu({ line }) {
         '679-AL1/86-ST1A 380.0'
     ];
 
-    const handleChange = (selectedOption) => {
-        setSelectedOption(selectedOption);
-        line.type = selectedOption;
+    const handleChange = (option) => {
+        setSelectedOption(option);
+        line.type = option.value;
     };
 
     return (
@@ -87,7 +86,7 @@ function Menu({ line }) {
 }
 
 const LineSettings = ({ line, index, handleLineDelete }) => {
-    const isElectricalLine = line.color !== connectionDefaultColor;
+    const isElectricalLine = line.connection === "electrical";
 
     return (
         <Popup>
