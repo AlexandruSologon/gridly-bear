@@ -23,18 +23,32 @@ function ReverseButton({ onClick }) {
     );
 }
 
-function MarkerParameters({marker, handleParameterChange, handleTransReverse, handleMarkerDelete}) {
+function MakeDefaultButton({marker, replaceDefaultValues}) {
+    return (
+        <Button
+        onClick={() => replaceDefaultValues(marker)}
+        icon ={<SaveOutlined />}
+        style={{border: '1px solid black', marginBottom: '5px', marginTop: '5px'}}>
+            Set as default
+    </Button>
+    )
+}
+
+function MarkerParameters({marker, handleParameterChange, handleTransReverse, handleMarkerDelete, replaceDefaultValues}) {
     const { id, type, parameters } = marker;
     // Check if marker is a Transformer
     if (type === 'trafo1'){
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
-                <DeleteButton onClick={() => { handleMarkerDelete(marker.id); }}/>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <TransformerSettings transformer={marker}/>
+                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
+                <DeleteButton onClick={() => {
+                    handleMarkerDelete(marker.id);
+                }}/>
+                <MakeDefaultButton marker={marker} replaceDefaultValues={replaceDefaultValues}/>
             </div>
         )
-    // Other markers
+        // Other markers
     } else {
         const parameterFields = markerParametersConfig[type];
         if (!parameterFields) {
@@ -62,7 +76,6 @@ function MarkerParameters({marker, handleParameterChange, handleTransReverse, ha
 
 export default function MarkerSettings({index, marker, handleParameterChange, handleMarkerDelete, handleTransReverse, replaceDefaultValues}) {
     const notTransformer = (marker.type !== 'trafo1')
-    const makeDefaultButton = <Button onClick={() => replaceDefaultValues(marker)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
     return (
         <Popup>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -73,11 +86,11 @@ export default function MarkerSettings({index, marker, handleParameterChange, ha
                         handleParameterChange={handleParameterChange}
                         handleTransReverse={handleTransReverse}
                         handleMarkerDelete={handleMarkerDelete}
+                        replaceDefaultValues={replaceDefaultValues}
                     />
-                    {makeDefaultButton}
                     {notTransformer && (<DeleteButton onClick={() => {
                         handleMarkerDelete(marker.id);
-                    }}/>)}
+                    }}/>) && (<MakeDefaultButton marker={marker} replaceDefaultValues={replaceDefaultValues}/>)}
                 </div>
             </div>
         </Popup>
