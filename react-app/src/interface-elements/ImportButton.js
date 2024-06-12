@@ -6,17 +6,14 @@ import { LatLng } from "leaflet";
 import { Button, Tooltip } from "antd";
 import impIcon from '../images/import.png';
 
-function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
+function ImportButton({setMarkers, setLines, mapContainer, markerRefs, lineRefs}) {
 
     const fileRef = useRef(null);
-    //let [file, setFile] = useState(null);
-
     const map = useMap();
 
     const handleChange = (event) => {
         let selectedFile = event.target.files[0];
-        
-        //setFile(selectedFile);
+
         // Read the file content
         const reader = new FileReader();
         reader.onload = (e) => {loadAction(e)};
@@ -39,16 +36,15 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
             return marker;
         });
 
-        let newLines = loadedFileJson.lines.map((line) => {
-            line[0] = new LatLng(line[0].lat, line[0].lng);
-            line[1] = new LatLng(line[1].lat, line[1].lng);
+        let newLines = loadedFileJson.lines.map(line => {
+            line.position1 = new LatLng(line.position1.lat, line.position1.lng);
+            line.position2 = new LatLng(line.position2.lat, line.position2.lng);
             return line;
         });
-
+        
         map.setView(loadedFileJson.center, loadedFileJson.zoom);
         setMarkers(newMarkers);
         setLines(newLines);
-        setBusLines(loadedFileJson.busLines);
     };
 
     const ImportIcon = () => (
@@ -64,8 +60,13 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
       );      
 
     return(
-        <Tooltip title="import">
-            <Button className={'hasShadow'} style={{width: 40}} size={'large'} onClick={() => fileRef.current.click()} type="default" shape="square" icon={<ImportIcon/>}>
+        <Tooltip title="Import">
+            <Button className={'hasShadow'}
+                    style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
+                    size={'large'}
+                    onClick={() => fileRef.current.click()}
+                    type="default"
+                    shape="square" icon={<ImportIcon/>}>
                 <input style={{display: 'none'}} id="upload" name="upload" type="file" ref={fileRef} hidden onChange={handleChange} />
             </Button>
         </Tooltip>

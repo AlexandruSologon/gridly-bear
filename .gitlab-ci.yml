@@ -28,7 +28,7 @@ Tests:
 Build:
   stage: build
   script:
-    - CI=false npm run build
+    - npm run build
   only:
     refs:
       - main

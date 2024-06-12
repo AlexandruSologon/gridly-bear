@@ -1,28 +1,29 @@
 import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
-//import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import React, { useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl } from 'react-leaflet';
-import { resetLinesRender, resetMarkerRender} from './utils/api';
+import { message } from "antd";
+import React, {useState, useRef} from 'react';
+import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
+
+import Tile from "./interface-elements/Tile";
+import Sidebar from './interface-elements/Sidebar';
+import LineSettings from "./interface-elements/LineSettings";
+import ToolElements from './interface-elements/ToolElements';
+import MarkerSettings from "./interface-elements/MarkerSettings";
+import WaitingOverlay from './interface-elements/WaitingOverlay';
+import PolylineDecorator from './interface-elements/PolylineDecorator';
+
 import {
+    defVal,
     mapCenter,
     iconMapping,
-    markerParametersConfig,
     sidebarItems,
-    defVal,
-    connectionDefaultColor, lineDefaultColor,
+    lineDefaultColor,
+    connectionDefaultColor,
+    markerParametersConfig,
 } from './utils/constants';
-import 'leaflet-polylinedecorator';
-import Sidebar from './interface-elements/Sidebar';
-import DeleteButton from './interface-elements/DeleteButton';
-import ReverseButton from './interface-elements/ReverseButton';
-import WaitingOverlay from './interface-elements/WaitingOverlay';
-import {PolylineDecorator} from './interface-elements/PolylineDecorator';
-import ToolElements from './interface-elements/ToolElements';
-import {findMarkerById} from "./utils/api";
-import {message} from "antd";
-
+import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 
 export function ReactApp() {
     const mapContainer = useRef(null);
@@ -32,12 +33,10 @@ export function ReactApp() {
     const [lines, setLines] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isMapLocked, setIsMapLocked] = useState(true);
-    const [busLines, setBusLines] = useState([]);
     const [runClicked, setRunClicked] = useState(false);
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
-    //let provider = new OpenStreetMapProvider();
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -50,7 +49,6 @@ export function ReactApp() {
     const handleDragOver = (event) => {
         event.preventDefault();
     };
-
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -83,7 +81,6 @@ export function ReactApp() {
                 parameters,
                 color: '#000'
             };
-            
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
@@ -103,25 +100,34 @@ export function ReactApp() {
         if (selectedMarker === null) {
             setSelectedMarker(markerId);
         } else {
-            let selected = findMarkerById(selectedMarker,markers);
-            let current = findMarkerById(markerId,markers);
-            if (selectedMarker !== markerId && (selected.icon.options.id === "bus" || current.icon.options.id === "bus")) {
+            let selected = findMarkerById(selectedMarker, markers);
+            let current = findMarkerById(markerId, markers);
+            if (selectedMarker !== markerId && (selected.type === "bus" || current.type === "bus")) {
                 if (selected && current) {
                     // Logic for creating lines between markers
                         let color = connectionDefaultColor;
-                        if(selected.icon.options.id === "bus" && current.icon.options.id === "bus") color = lineDefaultColor
-                    if (lines.length === 0 || lines[lines.length - 1].length === 5) {
-                        let newLine = [selected.position, current.position,  color, 'none', [selected.id, current.id].sort()];
-                        //const newLine = [markers[selectedMarker].position, markers[markerIndex].position];
-                        const newBusLine = [selected.id, current.id].sort();
-                        let found = false;
-                        for (let i = 0; i < busLines.length; i++) {
-                            const item = busLines[i];
-                            if (item[0] === newBusLine[0] && item[1] === newBusLine[1]) {
-                                found = true;
-                                break;
-                            }
+                        let connection = "direct";
+                        let type = null;
+                        if (selected.type === "bus" && current.type === "bus") {
+                            color = lineDefaultColor
+                            connection = "electrical"
+                            type = defaultValues.line.type
                         }
+                        let newLine = {
+                            position1: selected.position,
+                            position2: current.position,
+                            type: type,
+                            color: color,
+                            // ID of start marker and end marker sorted
+                            busLine: [selected.id, current.id].sort(),
+                            arrow: 'none',
+                            connection: connection
+                        };
+                        console.log(newLine);
+                        const sameLines = lines.filter(line =>
+                            (line.busLine[0] === newLine.busLine[0] && line.busLine[1] === newLine.busLine[1]));
+
+                        const found = sameLines.length !== 0;
                         let maxTransformer = false;
                         // Check for transformer constraints
                         if (selected.name === "Transformer") {
@@ -130,10 +136,10 @@ export function ReactApp() {
                             } else {
                                 if (selected.high === null) {
                                     selected.high = markerId;
-                                    newLine[3] = 'high';
+                                    newLine.arrow = 'high';
                                 } else if (selected.low === null) {
                                     selected.low = markerId;
-                                    newLine[3] = 'low';
+                                    newLine.arrow = 'low';
                                 }
                                 selected.connections++;
                             }
@@ -143,10 +149,10 @@ export function ReactApp() {
                             } else {
                                 if (current.high === null) {
                                     current.high = selectedMarker
-                                    newLine[3] = 'high';
+                                    newLine.arrow = 'high';
                                 } else if (current.low === null) {
                                     current.low = selectedMarker
-                                    newLine[3] = 'low';
+                                    newLine.arrow = 'low';
                                 }
                                 current.connections++;
                             }
@@ -155,7 +161,6 @@ export function ReactApp() {
                         // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
-                            setBusLines([...busLines, newBusLine]);
                             lineRefs.current.push(newLine);
                         }
                     } else {
@@ -163,42 +168,49 @@ export function ReactApp() {
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
                         lineRefs.current.push(newLine);
                     }
-                }
             }
             setSelectedMarker(null);
         }
     };
 
-    const handleMarkerDrag = debounce((markerIndex, newPosition) => {
-        const updatedMarkers = markers.map((marker, index) => {
-            if (index === markerIndex) {
+    const handleMarkerDrag = debounce((markerId, newPosition) => {
+        const oldPosition = findMarkerById(markerId, markers).position;
+        const updatedMarkers = markers.map(marker => {
+            if (marker.id === markerId) {
                 return { ...marker, position: newPosition };
             }
             return marker;
         });
 
-        const updatedLines = lines.map(line => line.map(point => {
-            if ((point.lat === markers[markerIndex].position.lat && point.lng === markers[markerIndex].position.lng) && (point === line[0] || point === line[1])) {
-                return newPosition;
+        const updatedLines = lines.map(line => {
+            const lineRef = lineRefs.current[lines.indexOf(line)];
+            if (lineRef) lineRef.closePopup();
+
+            if (line.position1.lat === oldPosition.lat && line.position1.lng === oldPosition.lng) {
+                return {...line, position1: newPosition};
+            } else if (line.position2.lat === oldPosition.lat && line.position2.lng === oldPosition.lng) {
+                return {...line, position2: newPosition};
+            } else {
+                return line;
             }
-            return point;
-        }));
+        })
 
         setMarkers(updatedMarkers);
         resetMarkerRender(updatedMarkers, markerRefs)
         setLines(resetLinesRender(updatedLines, updatedMarkers));
     }, 100);
 
-    const deleteMarker = (indexMarker) => {
-        handleMarkerDelete(indexMarker)
-    }
-    const handleMarkerDelete = (indexMarker) => {
-        const oldMarkerPos = markers[indexMarker].position;
-        const oldMarkerId = markers[indexMarker].id;
-        const markerRef = markerRefs.current[indexMarker];
+    const handleMarkerDelete = (markerId) => {
+        const oldMarker = findMarkerById(markerId, markers);
+        const oldMarkerPos = oldMarker.position;
+        const oldMarkerId = oldMarker.id;
+        const markerRef = markerRefs.current[markers.indexOf(oldMarker)];
         if (markerRef) {
-            markerRef.valueOf()._icon.style.border = ''
-            markerRef.valueOf()._icon.style.borderWidth = ''
+            const style = markerRef.valueOf()._icon.style;
+            if(markerRef.options.type !== 'bus') {
+                style.border = ''
+                style.borderWidth = ''
+            }
             markerRef.closePopup();
         }
 
@@ -213,27 +225,22 @@ export function ReactApp() {
             }
             return marker;
         });
-        updatedMarkers.splice(indexMarker, 1);
+        updatedMarkers.splice(markers.indexOf(oldMarker), 1);
         setMarkers(updatedMarkers);
 
-        if (selectedMarker === indexMarker) {
+        if (selectedMarker === markerId) {
             setSelectedMarker(null);
         }
-        const updatedLines = lines.filter(line =>
-            !((line[0].lat === oldMarkerPos.lat && line[0].lng === oldMarkerPos.lng) || 
-            (line[1].lat === oldMarkerPos.lat && line[1].lng === oldMarkerPos.lng)));
+        const updatedLines = lines.filter(line => 
+            !((line.position1.lat === oldMarkerPos.lat && line.position1.lng === oldMarkerPos.lng) ||
+            (line.position2.lat === oldMarkerPos.lat && line.position2.lng === oldMarkerPos.lng)));
         setLines(resetLinesRender(updatedLines, updatedMarkers));
-        const updatedBusLines = busLines.filter(line => 
-            !((line[0] === markers[indexMarker].id) || 
-            (line[1] === markers[indexMarker].id)));
-        setBusLines(updatedBusLines);
-        //if(markers[0])
-        //handleMarkerDrag(0,markers[0].position)
-        resetMarkerRender(updatedMarkers, markerRefs)
+        resetMarkerRender(markers, markerRefs)
+
     };
 
     const handleTransReverse = (markerId) => {
-        const marker = findMarkerById(markerId,markers);
+        const marker = findMarkerById(markerId, markers);
         const [newHigh, newLow] = [marker.low, marker.high];
         const updatedMarkers = markers.map(marker => {
             if (marker.id === markerId) {
@@ -246,18 +253,11 @@ export function ReactApp() {
             return marker;
         });
         setMarkers(updatedMarkers);
-
         
         const updatedLines = lines.map(line => {
-            if(line[0] === marker.position || line[1] === marker.position) {
-                return line.map(point => {
-                    if (point === 'high') {
-                        return 'low';
-                    } else if (point === 'low') {
-                        return 'high';
-                    }
-                    return point;
-                });
+            if(line.position1 === marker.position || line.position2 === marker.position) {
+                if (line.arrow === "high") return {...line, arrow: "low"};
+                if (line.arrow === "low") return {...line, arrow: "high"};
             }
             return line;
         })
@@ -269,15 +269,14 @@ export function ReactApp() {
 
     const handleLineDelete = (index) => {
         const lineRef = lineRefs.current[index];
-        const oldBusLine = busLines[index];
+        const oldBusLine = lines[index].busLine;
         if (lineRef) {
             lineRef.closePopup();
         }
         const updatedLines = [...lines.slice(0, index), ...lines.slice(index + 1)];
-        const updatedBusLines = [...busLines.slice(0, index), ...busLines.slice(index + 1)];
 
-        const marker1 = findMarkerById(oldBusLine[0],markers);
-        const marker2 = findMarkerById(oldBusLine[1],markers);
+        const marker1 = findMarkerById(oldBusLine[0], markers);
+        const marker2 = findMarkerById(oldBusLine[1], markers);
         let oldMarkerId = null;
         if (marker1.name === "Transformer" || marker2.name === "Transformer") {
             if (marker1.name === 'Transformer') oldMarkerId = marker2.id;
@@ -297,13 +296,12 @@ export function ReactApp() {
 
             setMarkers(updatedMarkers);
         }
-
-        setBusLines(updatedBusLines);
         setLines(updatedLines);
         lineRefs.current.splice(index, 1);
     };
 
     const handleMarkerRightClick = (event) => {
+        event.originalEvent.preventDefault();
         const targetMarker = event.target;
         if (targetMarker && targetMarker.getPopup()) {
             targetMarker.openPopup();
@@ -318,58 +316,18 @@ export function ReactApp() {
     };
 
     const handleLineRightClick = (event) => {
+        event.originalEvent.preventDefault();
         const targetLine = event.target;
         if (targetLine && targetLine.getPopup()) {
             targetLine.openPopup();
         }
     };
 
-    const renderParameterInputs = (marker) => {
-        const { id, type, parameters } = marker;
-        const parameterFields = markerParametersConfig[type];
-        if (!parameterFields) {
-            console.log('Parameters configuration not found for marker type:', type);
-            return null;
-        }
-        return parameterFields.map(param => (
-            <div key={param} style={{ marginBottom: '5px' }}>
-                <input
-                    type="text"
-                    placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
-                    value={parameters[param] || ''}
-                    onChange={(e) => handleParameterChange(id, param, e.target.value)}
-                />
-            </div>
-        ));
-    };
-
-    const renderRequiredButtons = (marker, index) => {
-        const { type } = marker;
-        if (type === 'trafo1') {
-            return (
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => {deleteMarker(index)}}/>
-            </div>
-            <div style={{marginBottom: '5px'}}>
-                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
-            </div>
-            </div>
-            );
-        }
-        return (
-            <div style={{marginBottom: '5px'}}>
-                <DeleteButton onClick={() => {deleteMarker(index); }}/>
-            </div>
-        )
-    }
-
     const handleParameterChange = (markerId, paramName, value) => {
-        if(value !== null && value !== 0 && value !== '')
-        {
+        if (value !== null && value !== 0 && value !== '') {
             const newValues = {
                 ...defaultValues,
-                [findMarkerById(markerId,markers).type]: {...defaultValues[findMarkerById(markerId,markers).type], [paramName]: value}
+                [findMarkerById(markerId, markers).type]: {...defaultValues[findMarkerById(markerId, markers).type], [paramName]: value}
             }
             setDefaultValues(newValues)
         }
@@ -390,7 +348,6 @@ export function ReactApp() {
     };
 
     const onLockButtonClick = () => {
-        console.log("markers and lines: ", lines, markers);
         setIsMapLocked(!isMapLocked);
         const map = mapContainer.current;
         if (isMapLocked) {
@@ -410,101 +367,75 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
-            <div
-                style={{
-                    position: 'relative',
-                    flex: '1',
-                    height: '100%',
-                    marginLeft: '5px'
-                }}
+            <div style={{ position: 'relative', flex: '1', height: '100%', marginLeft: '5px' }}
                 onDragOver={handleDragOver}
-                onDrop={handleDrop}
-            >
+                onDrop={handleDrop}>
                 <div style={{ position: 'relative', flex: '1', height: '100%' }}>
                     <MapContainer
-                        dragging={isMapLocked}
+                        zoom={13}
+                        minZoom={3}
+                        maxNativeZoom={19}
                         ref={mapContainer}
                         center={mapCenter}
-                        zoom={13}
-                        maxNativeZoom={19}
-                        minZoom={3}
-                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
                         zoomControl={false}
+                        dragging={isMapLocked}
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
-                    >
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a href="https://carto.com/attributions">CARTO</a>'
-                            url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-                            opacity={1}
-                        />
-                        {markers.map((marker, index) => (
-                            <Marker key={index}
-                                    type={marker.type}
-                                    position={marker.position}
-                                    icon={marker.icon}
-                                    draggable={true}
-                                    clickable={true}
-                                    ref={(ref) => (markerRefs.current[index] = ref)}
-
-                                    eventHandlers={{
-                                        click: (e) => handleMarkerClick(e, marker.id),
-                                        contextmenu: (e) => handleMarkerRightClick(e),
-                                        dragstart: () => setSelectedMarker(null),
-                                        drag: (e) => handleMarkerDrag(index, e.target.getLatLng()),
-                                    }}
-                            >
-                                <Popup>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ marginBottom: '5px' }}>{marker.name}</div>
-                                        {renderParameterInputs(marker)}
-                                        {renderRequiredButtons(marker, index)}
-                                    </div>
-                                </Popup>
-                            </Marker>
-                        ))}
-                        {lines.map((line, index) => (
-                            <Polyline key={index}
-                                      positions={[line[0], line[1]]}
-                                      pathOptions={{ color: line[2] }}
-                                      clickable={true}
-                                      weight={10}
-                                      ref={(ref) => (lineRefs.current[index] = ref)}
-                                      eventHandlers={{
-                                          click: (e) => handleLineClick(e),
-                                          contextmenu: (e) => handleLineRightClick(e)
-                                      }}
-                            >
-                                <Popup>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ marginBottom: '5px' }}>{"Connection"}</div>
-                                        <div style={{ marginBottom: '5px' }}>
-                                            <DeleteButton onClick={() => handleLineDelete(index)} />
-                                        </div>
-                                    </div>
-                                </Popup>
-                            </Polyline>
-                        ))}
-                        <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
-                        <ZoomControl position="bottomright" />
-                        <ToolElements
-                            onLockButtonClick={onLockButtonClick}
-                            markers={markers}
-                            setMarkers={setMarkers}
-                            lines={lines}
-                            setLines={setLines}
-                            busLines={busLines}
-                            setBusLines={setBusLines}
-                            mapContainer={mapContainer}
-                            runClicked={runClicked}
-                            setRunClicked={setRunClicked}
-                            setIsMapLocked={setIsMapLocked}
-                            markerRefs={markerRefs}
-                            messageApi={messageApi}
-                            defaultValues={defaultValues}
-                        ></ToolElements>
-                    </MapContainer>
-                    {contextHolder}
+                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
+                            <Tile/>
+                            {markers.map((marker, index) => (
+                                <Marker key={marker.id}
+                                        draggable={true}
+                                        clickable={true}
+                                        type={marker.type}
+                                        icon={marker.icon}
+                                        position={marker.position}
+                                        ref={(ref) => (markerRefs.current[index] = ref)}
+                                        eventHandlers={{
+                                            click: (e) => handleMarkerClick(e, marker.id),
+                                            contextmenu: (e) => handleMarkerRightClick(e),
+                                            dragstart: () => setSelectedMarker(null),
+                                            drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                        }}>
+                                    <MarkerSettings
+                                        index={index}
+                                        marker={marker}
+                                        handleParameterChange={handleParameterChange}
+                                        handleMarkerDelete={handleMarkerDelete}
+                                        handleTransReverse={handleTransReverse}/>
+                                </Marker>))}
+                            {lines.map((line, index) => (
+                                <Polyline key={index}
+                                          weight={10}
+                                          clickable={true}
+                                          pathOptions={{color: line.color}}
+                                          positions={[line.position1, line.position2]}
+                                          ref={(ref) => (lineRefs.current[index] = ref)}
+                                          eventHandlers={{
+                                              click: (e) => handleLineClick(e),
+                                              contextmenu: (e) => handleLineRightClick(e)
+                                          }}>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
+                                </Polyline>
+                            ))}
+                            <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
+                            <ZoomControl position="bottomright" />
+                            <ToolElements
+                                onLockButtonClick={onLockButtonClick}
+                                markers={markers}
+                                setMarkers={setMarkers}
+                                lines={lines}
+                                setLines={setLines}
+                                mapContainer={mapContainer}
+                                runClicked={runClicked}
+                                setRunClicked={setRunClicked}
+                                setIsMapLocked={setIsMapLocked}
+                                markerRefs={markerRefs}
+                                messageApi={messageApi}
+                                defaultValues={defaultValues}
+                            ></ToolElements>
+                        </MapContainer>
+                        {contextHolder}
                 </div>
             </div>
         </div>

@@ -3,15 +3,13 @@ import { useMap } from 'react-leaflet';
 import exportIcon from '../images/export.png';
 import { Tooltip, Button } from 'antd';
 
-function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContainer}) {
+function ExportButton({markerRefs, lineRefs, markers, lines, mapContainer}) {
     const map = useMap();
     const exp = () => {
 
         console.log(mapContainer);
         let center = map.getCenter();
         let zoom = map.getZoom();
-
-        console.log("are there actual buslines? " + busLines);
 
         let newMarkers = markers.map((marker) => {
             let newmarker = Object.assign({}, marker);
@@ -22,7 +20,6 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
         const exportData = {
             markers:newMarkers,
             lines,
-            busLines,
             center,
             zoom
         }
@@ -59,8 +56,13 @@ function ExportButton({markerRefs, lineRefs, markers, lines, busLines, mapContai
     );
 
     return(
-        <Tooltip title="export">
-            <Button className={'hasShadow'} size={'large'} onClick={() => {exp(markers, lines, busLines, mapContainer)}} type="default" shape="square" icon={<ExportIcon/>}>
+        <Tooltip title="Export">
+            <Button className={'hasShadow'}
+                    size={'large'}
+                    onClick={() => {exp(markers, lines, mapContainer)}}
+                    type="default" shape="square"
+                    style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
+                    icon={<ExportIcon/>}>
             </Button>
         </Tooltip>
     );
