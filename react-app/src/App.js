@@ -86,13 +86,13 @@ export function ReactApp() {
                 icon,
                 type: draggedItem.type,
                 parameters,
-                color: '#000'
             };
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
                 newMarker.high = null;
                 newMarker.low = null;
+                newMarker.transformerType = defaultValues.trafo1.type
             }
             setMarkers([...markers, newMarker]);
         }
