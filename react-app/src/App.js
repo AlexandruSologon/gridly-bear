@@ -389,7 +389,7 @@ export function ReactApp() {
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
-                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:680, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:620, top:23}} onChange={(e) => setMapOpacity(e/100)} />
             </ConfigProvider>
             <div
                 style={{
@@ -413,7 +413,7 @@ export function ReactApp() {
                         scrollWheelZoom={isMapLocked}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
                         <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
-                            <Tile/>
+                            <Tile opacity={mapOpacity}/>
                             {markers.map((marker, index) => (
                                 <Marker key={marker.id}
                                         draggable={true}
