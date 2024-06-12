@@ -46,7 +46,6 @@ export default class CanvasState {
     //TODO
     getRepresentativeColor() {
         //Get the worst (most red) color value of all buses or lines and return it
-        console.log("simres: ", this.simRes);
         // Initialize a variable to store the worst color value
         let worstHue = 255;
 
