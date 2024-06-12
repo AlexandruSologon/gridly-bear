@@ -24,8 +24,12 @@ import {
     markerParametersConfig,
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
+import 'leaflet-polylinedecorator';
+import HistoryDrawer from './interface-elements/HistoryDrawer';
+
 
 export function ReactApp() {
+    document.title = "PandaGUI";
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
@@ -38,6 +42,8 @@ export function ReactApp() {
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
     const [mapOpacity, setMapOpacity] = useState(1);
+    const [isHistoryOn, setIsHistoryOn] = useState(false);
+    const [history, setHistory] = useState([]);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -369,9 +375,15 @@ export function ReactApp() {
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
-            <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:680, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:680, top:23}} onChange={(e) => setMapOpacity(e/100)} />
             </ConfigProvider>
-            <div style={{ position: 'relative', flex: '1', height: '100%', marginLeft: '5px' }}
+            <div
+                style={{
+                    position: 'relative',
+                    flex: '1',
+                    height: '100%',
+                    marginLeft: '5px'
+                }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
                 <div style={{ position: 'relative', flex: '1', height: '100%' }}>
@@ -385,62 +397,67 @@ export function ReactApp() {
                         dragging={isMapLocked}
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
-                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
-                            <Tile opacity = {mapOpacity}/>
-                            {markers.map((marker, index) => (
-                                <Marker key={marker.id}
-                                        draggable={true}
+                        style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}
+                    >
+                        <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
+                        <Tile opacity={mapOpacity}/>
+                        {markers.map((marker, index) => (
+                            <Marker key={marker.id}
+                                    draggable={true}
+                                    clickable={true}
+                                    type={marker.type}
+                                    icon={marker.icon}
+                                    position={marker.position}
+                                    ref={(ref) => (markerRefs.current[index] = ref)}
+                                    eventHandlers={{
+                                        click: (e) => handleMarkerClick(e, marker.id),
+                                        contextmenu: (e) => handleMarkerRightClick(e),
+                                        dragstart: () => setSelectedMarker(null),
+                                        drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                    }}>
+                                <MarkerSettings
+                                    index={index}
+                                    marker={marker}
+                                    handleParameterChange={handleParameterChange}
+                                    handleMarkerDelete={handleMarkerDelete}
+                                    handleTransReverse={handleTransReverse}/>
+                            </Marker>))}
+                        {lines.map((line, index) => (
+                            <Polyline key={index}
+                                        weight={10}
                                         clickable={true}
-                                        type={marker.type}
-                                        icon={marker.icon}
-                                        position={marker.position}
-                                        ref={(ref) => (markerRefs.current[index] = ref)}
+                                        pathOptions={{color: line.color}}
+                                        positions={[line.position1, line.position2]}
+                                        ref={(ref) => (lineRefs.current[index] = ref)}
                                         eventHandlers={{
-                                            click: (e) => handleMarkerClick(e, marker.id),
-                                            contextmenu: (e) => handleMarkerRightClick(e),
-                                            dragstart: () => setSelectedMarker(null),
-                                            drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                            click: (e) => handleLineClick(e),
+                                            contextmenu: (e) => handleLineRightClick(e)
                                         }}>
-                                    <MarkerSettings
-                                        index={index}
-                                        marker={marker}
-                                        handleParameterChange={handleParameterChange}
-                                        handleMarkerDelete={handleMarkerDelete}
-                                        handleTransReverse={handleTransReverse}/>
-                                </Marker>))}
-                            {lines.map((line, index) => (
-                                <Polyline key={index}
-                                          weight={10}
-                                          clickable={true}
-                                          pathOptions={{color: line.color}}
-                                          positions={[line.position1, line.position2]}
-                                          ref={(ref) => (lineRefs.current[index] = ref)}
-                                          eventHandlers={{
-                                              click: (e) => handleLineClick(e),
-                                              contextmenu: (e) => handleLineRightClick(e)
-                                          }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
-                                </Polyline>
-                            ))}
-                            <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
-                            <ZoomControl position="bottomright" />
-                            <ToolElements
-                                onLockButtonClick={onLockButtonClick}
-                                markers={markers}
-                                setMarkers={setMarkers}
-                                lines={lines}
-                                setLines={setLines}
-                                mapContainer={mapContainer}
-                                runClicked={runClicked}
-                                setRunClicked={setRunClicked}
-                                setIsMapLocked={setIsMapLocked}
-                                markerRefs={markerRefs}
-                                messageApi={messageApi}
-                                defaultValues={defaultValues}
-                                opacityChange={setMapOpacity}
-                            ></ToolElements>
-                        </MapContainer>
-                        {contextHolder}
+                                <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
+                            </Polyline>
+                        ))}
+                        <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
+                        <ZoomControl position="bottomright" />
+                        <ToolElements
+                            onLockButtonClick={onLockButtonClick}
+                            markers={markers}
+                            setMarkers={setMarkers}
+                            lines={lines}
+                            setLines={setLines}
+                            mapContainer={mapContainer}
+                            runClicked={runClicked}
+                            setRunClicked={setRunClicked}
+                            setIsMapLocked={setIsMapLocked}
+                            markerRefs={markerRefs}
+                            messageApi={messageApi}
+                            defaultValues={defaultValues}
+                            isHistoryOn={isHistoryOn}
+                            setIsHistoryOn={setIsHistoryOn}
+                            setHistory={setHistory}
+                            history={history}
+                        ></ToolElements>
+                    </MapContainer>
+                    {contextHolder}
                 </div>
             </div>
         </div>

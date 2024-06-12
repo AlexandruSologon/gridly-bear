@@ -1,14 +1,15 @@
 //import { IconButton } from "@mui/material";
 import { useRef } from "react";
-import { iconMapping } from "../utils/constants";
 import { useMap } from 'react-leaflet';
-import { LatLng } from "leaflet";
 import { Button, Tooltip } from "antd";
 import impIcon from '../images/import.png';
+import CanvasState from "../utils/CanvasState";
+import {resetMarkerRender} from "../utils/api";
 
 function ImportButton({setMarkers, setLines, mapContainer, markerRefs, lineRefs}) {
 
     const fileRef = useRef(null);
+
     const map = useMap();
 
     const handleChange = (event) => {
@@ -22,29 +23,20 @@ function ImportButton({setMarkers, setLines, mapContainer, markerRefs, lineRefs}
     };
 
     const loadAction = (e) => {
-        markerRefs = null;
+        //Reset references for lines and markers
         lineRefs = null;
+
+        //Get the contents of the loaded file
         const fileContent = e.target.result;
-        console.log("File content:", fileContent);
+        console.log("File content: ", fileContent);
+
         // Now you can parse the JSON content or handle it as needed
         let loadedFileJson = JSON.parse(fileContent);
-        console.log(loadedFileJson);
-        //Draw the elements on screen
-        let newMarkers = loadedFileJson.markers.map((marker) => {
-            marker.icon = iconMapping[marker.type];
-            marker.position = new LatLng(marker.position.lat, marker.position.lng);
-            return marker;
-        });
-
-        let newLines = loadedFileJson.lines.map(line => {
-            line.position1 = new LatLng(line.position1.lat, line.position1.lng);
-            line.position2 = new LatLng(line.position2.lat, line.position2.lng);
-            return line;
-        });
-        
-        map.setView(loadedFileJson.center, loadedFileJson.zoom);
-        setMarkers(newMarkers);
-        setLines(newLines);
+        console.log("Loaded file Json: ", loadedFileJson);
+        resetMarkerRender(loadedFileJson.markers, markerRefs.current)
+        //Draw the elements on screen (by applying the past state)
+        const newState = new CanvasState(loadedFileJson.markers, markerRefs, loadedFileJson.lines, loadedFileJson.center, loadedFileJson.zoom, new Date());
+        newState.applyState(setMarkers, setLines, map);
     };
 
     const ImportIcon = () => (
