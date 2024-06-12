@@ -120,7 +120,7 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
             });
             let zoom = map.getZoom();
             let center = map.getCenter();
-            setHistory([new CanvasState(markers, markerRefs, lines, center, zoom, new Date()), ...history]);
+            setHistory([new CanvasState(markers, markerRefs, lines, center, zoom, new Date(), data), ...history]);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             messageApi.open({

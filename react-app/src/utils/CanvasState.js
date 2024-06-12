@@ -6,7 +6,7 @@ export default class CanvasState {
 
     static ids = 0;
 
-    constructor(markers, markerRefs, lines, center, zoom, time) {
+    constructor(markers, markerRefs, lines, center, zoom, time, simRes) {
         //Todo make copies instead of using the same references
         this.markers = markers.map((marker) => {
             let newmarker = Object.assign({}, marker);
@@ -14,6 +14,7 @@ export default class CanvasState {
             return newmarker;
         });
         this.markerRefs = markerRefs;
+        this.simRes = simRes;
         this.lines = lines;
         this.center = center;
         this.zoom = zoom;
@@ -44,17 +45,82 @@ export default class CanvasState {
 
     //TODO
     getRepresentativeColor() {
-        return '#c3cbd9';
+        //Get the worst (most red) color value of all buses or lines and return it
+        console.log("simres: ", this.simRes);
+        // Initialize a variable to store the worst color value
+        let worstHue = 255;
+
+        // Iterate through all buses or lines
+        for (const bus of Object.values(this.simRes.buses)) {
+            if (bus[0] < worstHue) {
+                worstHue = bus[0];
+            }
+        }
+
+        for (const line of Object.values(this.simRes.lines)) {
+            if (line[0] < worstHue) {
+                worstHue = line[0];
+            }
+        }
+
+        // Return the worst color value
+        return "hsl(" + worstHue + ", 100%, 50%)";
     }
 
     //TODO
-    getProblemBusCount() {
-        return this.markers.length;
+    getWarningBusCount() {
+        let c = 0;
+
+        // Iterate through all buses or lines
+        for (const bus of Object.values(this.simRes.buses)) {
+            if (bus[0] > 0 && bus[0] < 120) {
+                c += 1;
+            }
+        }
+
+        return c;
     }
 
     //TODO
-    getProblemLineCount() {
-        return this.lines.length;
+    getWarningLineCount() {
+        let c = 0;
+
+        // Iterate through all buses or lines
+        for (const line of Object.values(this.simRes.lines)) {
+            if (line[0] > 0 && line[0] < 120) {
+                c += 1;
+            }
+        }
+
+        return c;
+    }
+
+    //TODO
+    getOverloadBusCount() {
+        let c = 0;
+
+        // Iterate through all buses or lines
+        for (const bus of Object.values(this.simRes.buses)) {
+            if (bus[0] <= 0) {
+                c += 1;
+            }
+        }
+
+        return c;
+    }
+
+    //TODO
+    getOverloadLineCount() {
+        let c = 0;
+
+        // Iterate through all buses or lines
+        for (const line of Object.values(this.simRes.lines)) {
+            if (line[0] <= 0) {
+                c += 1;
+            }
+        }
+
+        return c;
     }
 
     getTime() {

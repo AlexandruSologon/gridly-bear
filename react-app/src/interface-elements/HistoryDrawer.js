@@ -21,7 +21,8 @@ function HistoryDrawer(props) {
                     marginTop: '80px',
                     borderRadius: '8px',
                     boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)',
-                    zIndex: 1005
+                    zIndex: 1005,
+                    overflow: 'hidden'
                 }
             }}
             style={{
@@ -33,10 +34,8 @@ function HistoryDrawer(props) {
             variant="permanent"
             anchor="topright"
         >
-            <div style={{height: '3%'}}></div>
+        <div style={{height: '3%'}}></div>
             <h2 style={{
-                    fontSize: props.isHistoryOn ? '18px' : '0px',
-                    transition: 'font-size 0.2s' , // Increased font size
                     fontFamily: 'Helvetica, sans-serif', // Changed font family
                     margin: '10px 0', // Added margin for spacing
                     padding: '10px',
@@ -77,31 +76,47 @@ function SingleHistoryItem(p) {
 
     return (
         <div 
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={() => setStates(p, map)}
-        style={
-            {
-                width: '95%',
-                border: '2px solid lightgrey',
-                margin: '8px',
-                background: hovered ? 'lightgray' : 'white'
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => setStates(p, map)}
+            className="hasShadow"
+            style={
+                {
+                    position: 'relative',
+                    width: '95%',
+                    height: '88px' ,
+                    border: '1px solid lightgrey',
+                    margin: '8px',
+                    background: hovered ? '#F6F8FA' : 'white',
+                    borderRadius: '8px',
+                    overflow: 'hidden'
+                }
             }
-        }>
+        >
             {/* TODO: calculate relevant stats here from the available data,
                 TODO: return canvas back to state it was in for this particular history element
             */}
-            <p> Time : {p.item.getTime()}</p>
-            <p> Marker amount : {p.item.getProblemBusCount()} </p> 
-            <p> Line amount : {p.item.getProblemLineCount()} </p>
+            <p> Time : {p.item.getTime()} <br/>
+            Marker amount : {p.item.getProblemBusCount()} <br/>
+            Line amount : {p.item.getProblemLineCount()} </p>
+            <div
+                className="colorstatebar"
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    height: '100%',
+                    width: '14px',
+                    right: 0,
+                    background: p.item.getRepresentativeColor(),
+                }}
+
+            ></div>
         </div>
     );
 }
 
 function setStates(p, map) {
-    console.log(map);
     p.item.applyState(p.setMarkers, p.setLines, map);
-    
 }
 
 export default HistoryDrawer;
