@@ -25,7 +25,6 @@ import {
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
-import DeleteButton from './interface-elements/DeleteButton';
 import HistoryDrawer from './interface-elements/HistoryDrawer';
 
 
