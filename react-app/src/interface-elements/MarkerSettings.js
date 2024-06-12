@@ -3,7 +3,8 @@ import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
 import { markerParametersConfig } from "../utils/constants";
 import { Button, Input} from "antd";
-import { SwapOutlined } from "@ant-design/icons";
+import {SaveOutlined, SwapOutlined} from "@ant-design/icons";
+
 
 function ReverseButton({ onClick }) {
     return (
@@ -27,7 +28,7 @@ function MarkerButtons({marker, index, handleMarkerDelete, handleTransReverse, r
     const isTransformer = (type === 'trafo1');
     const buttonsStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center' };
     const deleteButton = <DeleteButton onClick={() => { handleMarkerDelete(marker.id); }}/>;
-    const makeDefaultsButton = <Button onClick={() => replaceDefaultValues(marker)} style={{border: '1px solid black'}}>Set as default</Button>
+    const makeDefaultsButton = <Button onClick={() => replaceDefaultValues(marker)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
 
     return (
         <div style={buttonsStyle}>
