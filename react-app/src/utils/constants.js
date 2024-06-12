@@ -101,13 +101,13 @@ export const binarySearch = function(arr, x, start, end) {
 }
 
 export const defVal = {
-    bus : {voltage: 1},
-    trafo1: {type: "0.4 MVA 10/0.4 kV"},
-    load: {p_mv: 0.1, q_mvar: 0.05},
-    grid: {voltage: 1.02},
-    solar: {p_mw: 1, vm_pu: 0},
-    wind: {p_mw: 1, vm_pu: 0},
-    line: {type: "NAYY 4x50 SE"}
+    bus : {voltage: null},
+    trafo1: {type: null},
+    load: {p_mv: null, q_mvar: null},
+    grid: {voltage: null},
+    solar: {p_mw: null, vm_pu: null},
+    wind: {p_mw: null, vm_pu: null},
+    line: {type: null}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

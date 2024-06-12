@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app"; //Import the functions you need from the SDKs you need for firebase
 import { getFunctions, httpsCallable } from "firebase/functions";
+import {connectFunctionsEmulator} from "firebase/functions";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD7n865HujlU9MJe9uQ1H4rxMjv_dTIDqQ",
@@ -13,7 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);//App initialization
 const functions = getFunctions(app);//Get functions
-// connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
+connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
 const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
 
 /**

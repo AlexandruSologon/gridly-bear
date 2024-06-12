@@ -28,11 +28,12 @@ function MarkerButtons({marker, index, handleMarkerDelete, handleTransReverse, r
     const isTransformer = (type === 'trafo1');
     const buttonsStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center' };
     const deleteButton = <DeleteButton onClick={() => { handleMarkerDelete(marker.id); }}/>;
-    const makeDefaultsButton = <Button onClick={handleTransReverse}/>
+    const makeDefaultsButton = <Button onClick={() => replaceDefaultValues(marker)}></Button>
 
     return (
         <div style={buttonsStyle}>
-            {isTransformer && <ReverseButton onClick={() => replaceDefaultValues(marker.id)} />}
+            {isTransformer && <ReverseButton onClick={() => handleTransReverse(marker.id)} />}
+            {makeDefaultsButton}
             {deleteButton}
         </div>
     );
@@ -64,7 +65,7 @@ function MarkerParameters({marker, handleParameterChange}) {
     ));
 }
 
-export default function MarkerSettings({index, marker, handleParameterChange, handleMarkerDelete, handleTransReverse}) {
+export default function MarkerSettings({index, marker, handleParameterChange, handleMarkerDelete, handleTransReverse, replaceDefaultValues}) {
     return (
         <Popup>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -77,6 +78,7 @@ export default function MarkerSettings({index, marker, handleParameterChange, ha
                     <MarkerButtons
                         marker={marker}
                         index={index}
+                        replaceDefaultValues={replaceDefaultValues}
                         handleMarkerDelete={handleMarkerDelete}
                         handleTransReverse={handleTransReverse}
                     />

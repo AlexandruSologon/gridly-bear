@@ -43,6 +43,13 @@ export function ReactApp() {
     };
 
     const handleDragEnd = () => {
+        let flag = false;
+            for (const key in defaultValues[draggedItem.type]){
+            if( defaultValues[draggedItem.type][key] === null) {
+                flag = true;
+            }
+            }
+            if(flag) {markerRefs.current[markers.length-1].openPopup() }
         setDraggedItem(null);
     };
 
@@ -88,8 +95,8 @@ export function ReactApp() {
                 newMarker.low = null;
             }
             setMarkers([...markers, newMarker]);
+
         }
-        setDraggedItem(null);
     };
 
     const handleMarkerClick = (event, markerId) => {
@@ -161,12 +168,11 @@ export function ReactApp() {
                         // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!found && !maxTransformer){
                             setLines([...lines, newLine]);
-                            lineRefs.current.push(newLine);
+
                         }
                     } else {
                         const newLine = [[selected.position, current.position],  '#000'];
                         setLines([...lines.slice(0, lines.length - 1), newLine]);
-                        lineRefs.current.push(newLine);
                     }
             }
             setSelectedMarker(null);
@@ -340,6 +346,21 @@ export function ReactApp() {
         setMarkers(updatedMarkers);
     };
 
+    const replaceDefaultValues = (marker) => {
+        let newValue = defaultValues;
+        for(const key in marker.parameters) {
+            const paramName = key;
+            const value = marker.parameters[key];
+        if(value !== null && value !== 0 && value !== '')
+        {
+             newValue = {
+                ...newValue,
+                [marker.type]: {...newValue[marker.type], [paramName]: value}
+            }
+        }}
+        setDefaultValues(newValue)
+    }
+
     const onLockButtonClick = () => {
         setIsMapLocked(!isMapLocked);
         const map = mapContainer.current;
@@ -395,7 +416,8 @@ export function ReactApp() {
                                         marker={marker}
                                         handleParameterChange={handleParameterChange}
                                         handleMarkerDelete={handleMarkerDelete}
-                                        handleTransReverse={handleTransReverse}/>
+                                        handleTransReverse={handleTransReverse}
+                                        replaceDefaultValues = {replaceDefaultValues}/>
                                 </Marker>))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}

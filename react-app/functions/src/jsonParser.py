@@ -1,10 +1,12 @@
 import pandapower as pp
 import json
 
+
 class ParseDataException(Exception):
     def __init__(self, message="The data received could not be parsed properly"):
         self.message = message
         super().__init__(message)
+
 
 def parsejson(x):
     try:
@@ -20,17 +22,22 @@ def parsejson(x):
                     pp.create_bus(net=network, vn_kv=component["voltage"])
                 case "ext-grid":
                     pp.create_ext_grid(net=network, bus=component["bus"],
-                                    vm_pu=component["voltage"])
+                                       vm_pu=component["voltage"])
                 case "load":
-                    pp.create_load(net=network, bus=component["bus"], p_mw=component["p_mv"], q_mvar=component["q_mvar"])
+                    pp.create_load(net=network, bus=component["bus"], p_mw=component["p_mv"],
+                                   q_mvar=component["q_mvar"])
                 case "line":
                     pp.create_line(net=network, from_bus=component["bus1"], to_bus=component["bus2"],
-                                length_km=component["length"], std_type=component["type"])
+                                   length_km=component["length"], std_type=component["type"])
                 case "transformer":
                     pp.create_transformer(net=network, hv_bus=component["highBus"],
-                                        lv_bus=component["lowBus"], std_type=component["type"])
+                                          lv_bus=component["lowBus"], std_type=component["type"])
                 case "generator":
-                    pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["power"])
+                    if component["vm_pu"] is not None:
+                        pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["p_mw"],
+                                             vm_pu=component["vm_pu"])
+                    else:
+                        pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["p_mw"])
                 case _:
                     raise ValueError
         return network
