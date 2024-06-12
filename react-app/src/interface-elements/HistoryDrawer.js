@@ -96,9 +96,9 @@ function SingleHistoryItem(p) {
             {/* TODO: calculate relevant stats here from the available data,
                 TODO: return canvas back to state it was in for this particular history element
             */}
-            <p> Time : {p.item.getTime()} <br/>
-            Marker amount : {p.item.getProblemBusCount()} <br/>
-            Line amount : {p.item.getProblemLineCount()} </p>
+            <p> <b>Time</b> : {p.item.getTime()} <br/>
+            <b>Buses</b> : {p.item.getWarningBusCount()} warnings - {p.item.getOverloadBusCount()} Overloaded <br/>
+            <b>Lines</b> : {p.item.getWarningLineCount()} warnings - {p.item.getOverloadLineCount()} Overloaded</p>
             <div
                 className="colorstatebar"
                 style={{
