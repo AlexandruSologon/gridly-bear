@@ -1,7 +1,7 @@
 import LockButton from "./LockButton";
 import ImportButton from "./ImportButton";
 import ExportButton from "./ExportButton";
-import { ConfigProvider, Flex, Slider } from "antd";
+import { ConfigProvider, Flex } from "antd";
 import { onRunButtonClick } from '../utils/api';
 import RunButton from "./RunButton";
 import Search from "./Search";
