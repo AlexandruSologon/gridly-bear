@@ -381,7 +381,7 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
-            <div style={{ position: 'relative', flex: '1', height: '100%', marginLeft: '5px' }}
+            <div style={{ position: 'relative', flex: '1', height: '100%' }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
                 <div style={{ position: 'relative', flex: '1', height: '100%' }}>
