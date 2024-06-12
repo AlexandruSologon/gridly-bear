@@ -163,7 +163,8 @@ const renderBuses = (data, markers, markerRefs) => {
 export const resetMarkerRender = (markers, markerRefs) => {
     markers.forEach(marker => {
         if(markerRefs === null) return;
-        if(marker !== null)
+        if(marker !== null && typeof marker !== 'undefined')
+        if(typeof markerRefs.current !== 'undefined')
         if(markerRefs.current[markers.indexOf(marker)] !== null) {
             const style = markerRefs.current[markers.indexOf(marker)].valueOf()._icon.style;
             if (marker.type === 'bus') {

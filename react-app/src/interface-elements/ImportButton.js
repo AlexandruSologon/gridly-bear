@@ -4,6 +4,7 @@ import { useMap } from 'react-leaflet';
 import { Button, Tooltip } from "antd";
 import impIcon from '../images/import.png';
 import CanvasState from "../utils/CanvasState";
+import {resetMarkerRender} from "../utils/api";
 
 function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRefs, lineRefs}) {
 
@@ -23,7 +24,6 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
 
     const loadAction = (e) => {
         //Reset references for lines and markers
-        markerRefs = null;
         lineRefs = null;
 
         //Get the contents of the loaded file
@@ -33,9 +33,9 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
         // Now you can parse the JSON content or handle it as needed
         let loadedFileJson = JSON.parse(fileContent);
         console.log("Loaded file Json: ", loadedFileJson);
-
+        resetMarkerRender(loadedFileJson.markers, markerRefs.current)
         //Draw the elements on screen (by applying the past state)
-        const newState = new CanvasState(loadedFileJson.markers, markerRefs, loadedFileJson.lines, loadedFileJson.busLines, loadedFileJson.center, loadedFileJson.zoom, new Date());
+        const    newState = new CanvasState(loadedFileJson.markers, markerRefs, loadedFileJson.lines, loadedFileJson.busLines, loadedFileJson.center, loadedFileJson.zoom, new Date());
         newState.applyState(setMarkers, setLines, setBusLines, map);
     };
 
