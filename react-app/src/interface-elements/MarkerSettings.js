@@ -50,7 +50,7 @@ function MarkerParameters({marker, handleParameterChange}) {
             <ul>
                 <li>
 
-                {param.name.charAt(0).toUpperCase() + param.name.slice(1) + param.unit}:
+                {param.name.charAt(0).toUpperCase() + param.name.slice(1) +' '+ param.unit}:
             <Input
                 type="text"
                 //placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
