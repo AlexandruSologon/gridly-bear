@@ -1,6 +1,6 @@
-/*.leaflet-container{*/
-/*    background: black !important;*/
-/*}*/
+.leaflet-container{
+    background: rgb(255, 255, 255) !important;
+}
 
 .leaflet-control-geosearch {  display:none; left: 300px;  z-index: 10002; }
 

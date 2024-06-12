@@ -37,6 +37,7 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
+    const [mapOpacity, setMapOpacity] = useState(1);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -323,6 +324,10 @@ export function ReactApp() {
         }
     };
 
+    const handleOpacityChange = (newVal) => {
+        setMapOpacity(newVal);
+    }
+
     const handleParameterChange = (markerId, paramName, value) => {
         if (value !== null && value !== 0 && value !== '') {
             const newValues = {
@@ -382,7 +387,7 @@ export function ReactApp() {
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
-                            <Tile/>
+                            <Tile opacity = {mapOpacity}/>
                             {markers.map((marker, index) => (
                                 <Marker key={marker.id}
                                         draggable={true}
@@ -433,6 +438,7 @@ export function ReactApp() {
                                 markerRefs={markerRefs}
                                 messageApi={messageApi}
                                 defaultValues={defaultValues}
+                                opacityChange={setMapOpacity}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}
