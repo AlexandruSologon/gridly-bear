@@ -22,7 +22,6 @@ function ToolElements(props) {
                 }
             }>
                 <Flex gap="middle" wrap>
-                    <Slider defaultValue={100} style={{width:200}} onChange={(e) => props.opacityChange(e/100)} />
                     <Search />
                     <LockButton onLockButtonClick={props.onLockButtonClick} />
                     <ImportButton markerRefs={props.markerRefs} lineRefs={props.lineRefs} setMarkers={props.setMarkers} setLines={props.setLines} mapContainer={props.mapContainer}></ImportButton>

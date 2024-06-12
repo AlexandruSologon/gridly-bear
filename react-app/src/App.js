@@ -2,7 +2,7 @@ import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
-import { message } from "antd";
+import { message, ConfigProvider, Slider } from "antd";
 import React, {useState, useRef} from 'react';
 import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
 
@@ -368,6 +368,9 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
+            <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
+            <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:680, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+            </ConfigProvider>
             <div style={{ position: 'relative', flex: '1', height: '100%', marginLeft: '5px' }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
