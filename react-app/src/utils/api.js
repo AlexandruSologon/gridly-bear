@@ -1,6 +1,7 @@
 import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
+import CanvasState from './CanvasState';
 
 export const handleExport = (markerInputs, markers, lines) => {
     const buses = [];
@@ -52,7 +53,7 @@ export const handleExport = (markerInputs, markers, lines) => {
                     indices[6] += 1;
                     break;
                 case 'Transformer':
-                    let newTransLine = [item1.high, item1.low];
+                    let newTransLine = [item1.high, item1.low, item1.transformerType];
                     let found = false;
                     for (let i = 0; i < transLines.length; i++) {
                         const item = transLines[i];
@@ -73,7 +74,7 @@ export const handleExport = (markerInputs, markers, lines) => {
 
     for (let i = 0; i < transLines.length; i++) {
         const line = transLines[i];
-        components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
+        components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), line[2]));
         indices[4] +=1;
     }
 
@@ -84,7 +85,7 @@ export const handleExport = (markerInputs, markers, lines) => {
 };
 
 
-export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi) => {
+export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi, history, setHistory, map) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -102,7 +103,8 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
         id: marker.id,
         type: marker.type,
         parameters: marker.parameters,
-        name: marker.name
+        name: marker.name,
+        transformer: marker.transformerType
     }));
 
     const dat = handleExport(markerInputs, markers, lines);
@@ -117,6 +119,9 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
                 content: 'simulation complete!',
                 duration: 2,
             });
+            let zoom = map.getZoom();
+            let center = map.getCenter();
+            setHistory([new CanvasState(markers, markerRefs, lines, center, zoom, new Date(), data), ...history]);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             messageApi.open({
@@ -163,6 +168,7 @@ const renderBuses = (data, markers, markerRefs) => {
 
 
 export const resetMarkerRender = (markers, markerRefs) => {
+    if(typeof markerRefs.current !== 'undefined')
     for( let i =0; i< markerRefs.current.length; i++) {
         const marker = markerRefs.current[i];
         if(marker !== null)
@@ -171,7 +177,6 @@ export const resetMarkerRender = (markers, markerRefs) => {
             if (markers[i].type === 'bus') {
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
-
             } else {
                 style.border = 'none'
                 style.borderRadius = ''

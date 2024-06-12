@@ -2,7 +2,7 @@ import './css-files/index.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
-import { message } from "antd";
+import { message, ConfigProvider, Slider } from "antd";
 import React, {useState, useRef} from 'react';
 import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
 
@@ -24,8 +24,12 @@ import {
     markerParametersConfig,
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
+import 'leaflet-polylinedecorator';
+import HistoryDrawer from './interface-elements/HistoryDrawer';
+
 
 export function ReactApp() {
+    document.title = "PandaGUI";
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
@@ -37,6 +41,9 @@ export function ReactApp() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [defaultValues, setDefaultValues] =  useState(defVal);
     const [messageApi, contextHolder] = message.useMessage();
+    const [mapOpacity, setMapOpacity] = useState(1);
+    const [isHistoryOn, setIsHistoryOn] = useState(false);
+    const [history, setHistory] = useState([]);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -86,13 +93,13 @@ export function ReactApp() {
                 icon,
                 type: draggedItem.type,
                 parameters,
-                color: '#000'
             };
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
                 newMarker.high = null;
                 newMarker.low = null;
+                newMarker.transformerType = defaultValues.trafo1.type
             }
             setMarkers([...markers, newMarker]);
 
@@ -381,7 +388,16 @@ export function ReactApp() {
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
-            <div style={{ position: 'relative', flex: '1', height: '100%' }}
+            <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
+                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:680, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+            </ConfigProvider>
+            <div
+                style={{
+                    position: 'relative',
+                    flex: '1',
+                    height: '100%',
+                    marginLeft: '5px'
+                }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
                 <div style={{ position: 'relative', flex: '1', height: '100%' }}>
@@ -396,6 +412,7 @@ export function ReactApp() {
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
+                        <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
                             <Tile/>
                             {markers.map((marker, index) => (
                                 <Marker key={marker.id}
@@ -417,7 +434,7 @@ export function ReactApp() {
                                         handleParameterChange={handleParameterChange}
                                         handleMarkerDelete={handleMarkerDelete}
                                         handleTransReverse={handleTransReverse}
-                                        replaceDefaultValues = {replaceDefaultValues}/>
+                                        replaceDefaultValues = {replaceDefaultValues}/>/>
                                 </Marker>))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
@@ -448,6 +465,10 @@ export function ReactApp() {
                                 markerRefs={markerRefs}
                                 messageApi={messageApi}
                                 defaultValues={defaultValues}
+                                isHistoryOn={isHistoryOn}
+                            setIsHistoryOn={setIsHistoryOn}
+                            setHistory={setHistory}
+                            history={history}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}

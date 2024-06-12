@@ -3,7 +3,7 @@ import { Button } from "antd";
 import {CaretRightFilled} from '@ant-design/icons';
 
 /**
- * Renders both a run button and a loading icon (annular throbber) depending on the state of the canvas.
+ * Renders a run button with action.
  * @param {*} runClicked Boolean to convey the state of the canvas, "has this button been clicked and was there no response yet?".
  * @param {*} onRunButtonClick The action to be taken by the run button.
  * @returns 
