@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 
-function TransformerSettings({ marker }) {
+function TransformerSettings({ transformer }) {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const options = [
@@ -25,7 +25,7 @@ function TransformerSettings({ marker }) {
 
     const handleChange = (option) => {
         setSelectedOption(option);
-        marker.transformerType = option.value
+        transformer.transformerType = option.value
     };
 
     return (
