@@ -35,7 +35,7 @@ function ImportButton({setMarkers, setLines, setBusLines, mapContainer, markerRe
         console.log("Loaded file Json: ", loadedFileJson);
         resetMarkerRender(loadedFileJson.markers, markerRefs.current)
         //Draw the elements on screen (by applying the past state)
-        const    newState = new CanvasState(loadedFileJson.markers, markerRefs, loadedFileJson.lines, loadedFileJson.busLines, loadedFileJson.center, loadedFileJson.zoom, new Date());
+        const newState = new CanvasState(loadedFileJson.markers, markerRefs, loadedFileJson.lines, loadedFileJson.busLines, loadedFileJson.center, loadedFileJson.zoom, new Date());
         newState.applyState(setMarkers, setLines, setBusLines, map);
     };
 

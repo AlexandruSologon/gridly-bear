@@ -170,9 +170,7 @@ export const resetMarkerRender = (markers, markerRefs) => {
             if (marker.type === 'bus') {
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
-
             } else {
-
                 style.border = 'none'
                 style.borderRadius = ''
             }
