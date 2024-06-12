@@ -78,13 +78,13 @@ export const sidebarItems = [
 
 
 export const markerParametersConfig = {
-    bus: ['voltage'],
-    trafo1: ['type'],
-    switch: ['type'],
-    load: ['p_mv', 'q_mvar'],
-    grid: ['voltage'],
-    solar: ['power'],
-    wind: ['power'],
+    bus: [{name:'voltage', unit:'(p.u)'}],
+    trafo1: [{name:'type', unit: ''}],
+    switch: [{name:'type', unit: ''}],
+    load: [{name:'p_mv',unit:'(kW)'}, {name:'q_mvar',unit:'(kVar)'}],
+    grid: [{name:'voltage', unit:'(p.u)'}],
+    solar: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
+    wind: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
     //battery: ['net', 'p_mw']
 };
 
@@ -101,13 +101,13 @@ export const binarySearch = function(arr, x, start, end) {
 }
 
 export const defVal = {
-    bus : {voltage: 1},
-    trafo1: {type: "0.4 MVA 10/0.4 kV"},
-    load: {p_mv: 0.1, q_mvar: 0.05},
-    grid: {voltage: 1.02},
-    solar: {power: 1},
-    wind: {power: 1},
-    line: {type: "NAYY 4x50 SE"}
+    bus : {voltage: null},
+    trafo1: {type: null},
+    load: {p_mv: null, q_mvar: null},
+    grid: {voltage: null},
+    solar: {p_mw: null, vm_pu: null},
+    wind: {p_mw: null, vm_pu: null},
+    line: {type: null}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

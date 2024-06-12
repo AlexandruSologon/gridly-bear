@@ -40,12 +40,12 @@ export const handleExport = (markerInputs, markers, lines) => {
             const busIndex = busIdMap.get(item2.id);
             switch(item1.name) {
                 case 'Load':
-                    components.push(new Load(indices[2], busIndex, parseFloat(item1.parameters.p_mv), parseFloat(item1.parameters.q_mvar)));
+                    components.push(new Load(indices[2], busIndex, parseFloat(item1.parameters.p_mv), parseFloat(item1.parameters.q_mvar))  );
                     indices[2] += 1;
                     break;
                 case 'Solar Panel':
                 case 'Wind Turbine':
-                    components.push(new Generator(indices[3], busIndex, parseFloat(item1.parameters.power)));
+                    components.push(new Generator(indices[3], busIndex, parseFloat(item1.parameters.p_mw), parseFloat(item1.parameters.vm_pu)) );
                     indices[3] += 1;
                     break;
                 case 'External Grid':
