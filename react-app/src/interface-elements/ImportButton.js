@@ -1,8 +1,6 @@
 //import { IconButton } from "@mui/material";
 import { useRef } from "react";
-import { iconMapping } from "../utils/constants";
 import { useMap } from 'react-leaflet';
-import { LatLng } from "leaflet";
 import { Button, Tooltip } from "antd";
 import impIcon from '../images/import.png';
 import CanvasState from "../utils/CanvasState";
