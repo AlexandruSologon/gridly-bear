@@ -1,6 +1,6 @@
-/*.leaflet-container{*/
-/*    background: black !important;*/
-/*}*/
+.leaflet-container{
+    background: rgb(255, 255, 255) !important;
+}
 
 .leaflet-control-geosearch {  display:none; left: 300px;  z-index: 10002; }
 
@@ -11,7 +11,7 @@
   border-radius: 50%;
   margin: auto;
   background-color: #ECEFF1;
-        }
+}
 
 .triangle {
   width: 0px;
@@ -53,7 +53,6 @@
   height: 32px;
 }
 
-
 @media screen and (min-width: 768px) {
   .dndflow {
     flex-direction: row;
@@ -82,23 +81,23 @@
 }
 
 .search-bar {
-    display: flex;
+  display: flex;
 }
 
 .leaflet-control-geosearch .search-input {
-    display: none;
-    width: 300px;
+  display: none;
+  width: 300px;
 }
 
 .leaflet-control-geosearch .glass {
-    background: none;
-    width: 30px;
-    height: 30px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: none;
+  width: 30px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 input[type="file"] {

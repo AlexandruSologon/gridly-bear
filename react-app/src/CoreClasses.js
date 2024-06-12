@@ -56,11 +56,12 @@ export class ExtGrid {
 }
 
 export class Generator{
-    constructor(id, bus, power) {
+    constructor(id, bus, power, voltageSetLevel) {
         this.id = id
         this.class = "generator"
         this.bus = bus
-        this.power = power
+        this.p_mw = power
+        this.vm_pu = voltageSetLevel
     }
 }
 export class Network {

@@ -1,4 +1,3 @@
-//import IconButton from "@mui/material/IconButton";
 import LockIcon from "@mui/icons-material/LockOutlined";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import React from "react";
@@ -13,8 +12,14 @@ function LockButton(props) {
     }
 
     return(
-        <Tooltip title="import">
-            <Button data-testid = "lockbutton" className={'hasShadow'} size={'large'} onClick={onLockButtonClick} type="default" shape="square"
+        <Tooltip title="lock map">
+            <Button data-testid = "lockbutton"
+                    className={'hasShadow'}
+                    size={'large'}
+                    onClick={onLockButtonClick}
+                    type="default"
+                    shape="square"
+                    style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
                     icon={!isMapLocked ? <LockIcon data-testid = "lock-close-icon"/> : <LockOpenIcon data-testid = "lock-open-icon"/>}>
             </Button>
         </Tooltip>
