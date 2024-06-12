@@ -52,7 +52,7 @@ export const handleExport = (markerInputs, markers, lines) => {
                     indices[6] += 1;
                     break;
                 case 'Transformer':
-                    let newTransLine = [item1.high, item1.low];
+                    let newTransLine = [item1.high, item1.low, item1.transformerType];
                     let found = false;
                     for (let i = 0; i < transLines.length; i++) {
                         const item = transLines[i];
@@ -73,7 +73,7 @@ export const handleExport = (markerInputs, markers, lines) => {
 
     for (let i = 0; i < transLines.length; i++) {
         const line = transLines[i];
-        components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), '0.25 MVA 20/0.4 kV'));
+        components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), line[2]));
         indices[4] +=1;
     }
 
@@ -102,7 +102,8 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
         id: marker.id,
         type: marker.type,
         parameters: marker.parameters,
-        name: marker.name
+        name: marker.name,
+        transformer: marker.transformerType
     }));
 
     const dat = handleExport(markerInputs, markers, lines);
