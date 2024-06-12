@@ -12,7 +12,7 @@ function LockButton(props) {
     }
 
     return(
-        <Tooltip title="Lock Map">
+        <Tooltip title="lock map">
             <Button data-testid = "lockbutton"
                     className={'hasShadow'}
                     size={'large'}

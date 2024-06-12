@@ -1,6 +1,7 @@
 import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
+import CanvasState from './CanvasState';
 
 export const handleExport = (markerInputs, markers, lines) => {
     const buses = [];
@@ -84,7 +85,7 @@ export const handleExport = (markerInputs, markers, lines) => {
 };
 
 
-export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi) => {
+export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi, history, setHistory, map) => {
     if(runClicked) return;
     setRunClicked(true);
     setIsMapLocked(true);
@@ -117,6 +118,9 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
                 content: 'simulation complete!',
                 duration: 2,
             });
+            let zoom = map.getZoom();
+            let center = map.getCenter();
+            setHistory([new CanvasState(markers, markerRefs, lines, center, zoom, new Date()), ...history]);
         }).catch((error) => {
             console.log(error.message + " : " +  error.details);
             messageApi.open({
@@ -163,6 +167,7 @@ const renderBuses = (data, markers, markerRefs) => {
 
 
 export const resetMarkerRender = (markers, markerRefs) => {
+    if(typeof markerRefs.current !== 'undefined')
     for( let i =0; i< markerRefs.current.length; i++) {
         const marker = markerRefs.current[i];
         if(marker !== null)
@@ -171,7 +176,6 @@ export const resetMarkerRender = (markers, markerRefs) => {
             if (markers[i].type === 'bus') {
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
-
             } else {
                 style.border = 'none'
                 style.borderRadius = ''
