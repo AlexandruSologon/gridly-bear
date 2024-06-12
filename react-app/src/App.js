@@ -324,10 +324,6 @@ export function ReactApp() {
         }
     };
 
-    const handleOpacityChange = (newVal) => {
-        setMapOpacity(newVal);
-    }
-
     const handleParameterChange = (markerId, paramName, value) => {
         if (value !== null && value !== 0 && value !== '') {
             const newValues = {
