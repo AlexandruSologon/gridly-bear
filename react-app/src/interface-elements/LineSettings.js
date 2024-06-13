@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
+import {Button, Input} from "antd";
+import {SaveOutlined} from "@ant-design/icons";
 
 function Menu({ line }) {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -85,8 +87,9 @@ function Menu({ line }) {
     );
 }
 
-const LineSettings = ({ line, index, handleLineDelete }) => {
+const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, changeLineLength }) => {
     const isElectricalLine = line.connection === "electrical";
+    const makeDefaultButton = <Button onClick={() => replaceDefaultValues(line, true)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
 
     return (
         <Popup>
@@ -98,8 +101,19 @@ const LineSettings = ({ line, index, handleLineDelete }) => {
                     <DeleteButton onClick={() => handleLineDelete(index)} />
                 </div>
                 {isElectricalLine && (
-                    <div style={{ marginBottom: '5px' }}>
+                    <div style={{ marginBottom: '5px', alignItems:'center' }}>
                         <Menu line={line} />
+                        {makeDefaultButton}
+                        <div>
+                        Length (km):
+                    <Input
+                            type = 'text'
+                            value = {line.length}
+                            onChange={(e) => changeLineLength(line,e.target.value)}
+                            size={'middle'}
+                            style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}>
+                        </Input>
+                        </div>
                     </div>
                 )}
             </div>
