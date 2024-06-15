@@ -1,3 +1,4 @@
+import math
 import unittest
 import pandapower as pp
 from ..src import net
@@ -57,6 +58,10 @@ class TestMyCases(unittest.TestCase):
         (h, s, l) = net.get_line_color(130)
         self.assertEqual((h, s, l), (0, 100, 50))
 
+    def test_get_line_color4(self):
+        (h, s, l) = net.get_line_color(math.nan)
+        self.assertEqual((h, s, l), (0, 1, 44))
+
     def test_get_bus_color0(self):
         (h, s, l) = net.get_bus_color(1.03)
         self.assertEqual((h, s, l), (92.99999999999997
@@ -75,6 +80,10 @@ class TestMyCases(unittest.TestCase):
     def test_get_bus_color3(self):
         (h, s, l) = net.get_bus_color(1.21)
         self.assertEqual((h, s, l), (0, 100, 50))
+
+    def test_get_bus_color4(self):
+        (h, s, l) = net.get_bus_color(math.nan)
+        self.assertEqual((h, s, l), (0, 0, 39))
 
     def test_all_buses(self):
         mynet = basic_network()
