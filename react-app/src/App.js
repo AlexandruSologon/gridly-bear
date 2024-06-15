@@ -56,13 +56,14 @@ export function ReactApp() {
                 flag = true;
             }
             }
-            if(flag) {markerRefs.current[markers.length-1].openPopup() }
+            if(flag && markers.length>0) {markerRefs.current[markers.length-1].openPopup() }
         setDraggedItem(null);
     };
 
     const handleDragOver = (event) => {
         event.preventDefault();
     };
+
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -473,6 +474,9 @@ export function ReactApp() {
                             setIsHistoryOn={setIsHistoryOn}
                             setHistory={setHistory}
                             history={history}
+                            setDraggedItem={setDraggedItem}
+                            setSelectedMarker={setSelectedMarker}
+                            setDefaultValues = {setDefaultValues}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}
