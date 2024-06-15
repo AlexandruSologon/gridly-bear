@@ -101,6 +101,8 @@ export function ReactApp() {
                 newMarker.low = null;
                 newMarker.transformerType = defaultValues.trafo1.type
             }
+            resetMarkerRender(markers,markerRefs)
+            setLines(resetLinesRender(lines,markers))
             setMarkers([...markers, newMarker]);
 
         }
@@ -350,7 +352,9 @@ export function ReactApp() {
             }
             return marker;
         });
+        setLines(resetLinesRender(lines,markers))
         setMarkers(updatedMarkers);
+        resetMarkerRender(updatedMarkers, markerRefs);
     };
 
     const replaceDefaultValues = (marker) => {
