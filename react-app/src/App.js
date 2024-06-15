@@ -451,7 +451,7 @@ export function ReactApp() {
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines}></LineSettings>
                                 </Polyline>
                             ))}
                             <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
