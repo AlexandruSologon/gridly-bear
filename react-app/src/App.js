@@ -112,6 +112,20 @@ export function ReactApp() {
         if (targetMarker) {
             targetMarker.closePopup();
         }
+
+        //resetting style of prev marker if a new marker is clicked
+        if (highlightedMarker !== null && markerRefs.current[highlightedMarker]) {
+            markerRefs.current[highlightedMarker]._icon.style.filter = '';
+        }
+
+        //setting current marker
+        setHighlightedMarker(markerId);
+
+        //giving correct style to selected marker
+        if (markerRefs.current[markerId]) {
+            markerRefs.current[markerId]._icon.style.filter = 'brightness(1.5)';
+        }
+
         if (selectedMarker === null) {
             setSelectedMarker(markerId);
         } else {
@@ -439,8 +453,13 @@ export function ReactApp() {
                                     dragstart: () => setSelectedMarker(null),
                                     drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
                                     mouseover: () => handleMarkerHover(markerRefs.current[index], true),
-                                    mouseout: () => handleMarkerHover(markerRefs.current[index], false)
-                                        }}>
+                                    mouseout: () => {
+                                        //making sure that all markers besides the clicked one can return to normal brightness on hover leave
+                                        if (highlightedMarker !== index) {
+                                            handleMarkerHover(markerRefs.current[index], false);
+                                        }
+                                    }
+                                 }}>
                                     <MarkerSettings
                                         index={index}
                                         marker={marker}
