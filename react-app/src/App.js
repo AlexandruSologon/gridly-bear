@@ -198,6 +198,11 @@ export function ReactApp() {
                     }
             }
             setSelectedMarker(null);
+            setHighlightedMarker(null);
+            //resetting style of prev marker if a new marker is clicked
+            if (highlightedMarker !== null && markerRefs.current[highlightedMarker]) {
+                markerRefs.current[highlightedMarker]._icon.style.filter = '';
+            }
         }
     };
 
