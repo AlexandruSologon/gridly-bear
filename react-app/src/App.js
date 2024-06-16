@@ -252,6 +252,16 @@ export function ReactApp() {
 
     };
 
+    const handleMarkerHover = (markerId, isHovered) => {
+        if (markerId && markerId._icon) {
+            if (isHovered) {
+                markerId._icon.style.filter = 'brightness(1.5)';
+            } else {
+                markerId._icon.style.filter = '';
+            }
+        }
+    };
+
     const handleTransReverse = (markerId) => {
         const marker = findMarkerById(markerId, markers);
         const [newHigh, newLow] = [marker.low, marker.high];
@@ -427,6 +437,8 @@ export function ReactApp() {
                                             contextmenu: (e) => handleMarkerRightClick(e),
                                             dragstart: () => setSelectedMarker(null),
                                             drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                            mouseover: () => handleMarkerHover(marker.id.current, true),
+                                            mouseout: () => handleMarkerHover(marker.id.current, false)
                                         }}>
                                     <MarkerSettings
                                         index={index}
