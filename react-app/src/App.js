@@ -112,8 +112,10 @@ export function ReactApp() {
             targetMarker.closePopup();
         }
         if (selectedMarker === null) {
+            handleMarkerHover(findMarkerById(markerId, markers), 'select')
             setSelectedMarker(markerId);
         } else {
+            handleMarkerHover(findMarkerById(selectedMarker, markers), 'deselect')
             let selected = findMarkerById(selectedMarker, markers);
             let current = findMarkerById(markerId, markers);
             if (selectedMarker !== markerId && (selected.type === "bus" || current.type === "bus")) {
@@ -384,6 +386,24 @@ export function ReactApp() {
         return isMapLocked;
     };
 
+    const handleMarkerHover = ( marker, action) => {
+        let size;
+        if (action === 'in' || action === 'select' || (action === 'out' && selectedMarker === marker.id) ) {
+            if (marker.type === 'bus')
+                size = '64px'
+            else
+                size = '85px';
+        } else {
+            if (marker.type === 'bus')
+                size = '48px'
+            else
+                size = '64px';
+        }
+        const style = markerRefs.current[markers.indexOf(marker)].valueOf()._icon.style;
+        style.height = size;
+        style.width = size;
+    }
+
     return (
         <div style={{ height: '100vh', width: '100vw' }}>
             <WaitingOverlay runClicked={runClicked} />
@@ -423,6 +443,8 @@ export function ReactApp() {
                                         position={marker.position}
                                         ref={(ref) => (markerRefs.current[index] = ref)}
                                         eventHandlers={{
+                                            mouseover: () =>   handleMarkerHover( marker, 'in'),
+                                            mouseout: () => handleMarkerHover(marker, 'out'),
                                             click: (e) => handleMarkerClick(e, marker.id),
                                             contextmenu: (e) => handleMarkerRightClick(e),
                                             dragstart: () => setSelectedMarker(null),
