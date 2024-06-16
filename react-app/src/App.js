@@ -44,6 +44,7 @@ export function ReactApp() {
     const [mapOpacity, setMapOpacity] = useState(1);
     const [isHistoryOn, setIsHistoryOn] = useState(false);
     const [history, setHistory] = useState([]);
+    const [highlightedMarker, setHighlightedMarker] = useState(null);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -424,21 +425,21 @@ export function ReactApp() {
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
                         <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
                             <Tile opacity={mapOpacity}/>
-                            {markers.map((marker, index) => (
-                                <Marker key={marker.id}
-                                        draggable={true}
-                                        clickable={true}
-                                        type={marker.type}
-                                        icon={marker.icon}
-                                        position={marker.position}
-                                        ref={(ref) => (markerRefs.current[index] = ref)}
-                                        eventHandlers={{
-                                            click: (e) => handleMarkerClick(e, marker.id),
-                                            contextmenu: (e) => handleMarkerRightClick(e),
-                                            dragstart: () => setSelectedMarker(null),
-                                            drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
-                                            mouseover: () => handleMarkerHover(marker.id.current, true),
-                                            mouseout: () => handleMarkerHover(marker.id.current, false)
+                        {markers.map((marker, index) => (
+                            <Marker key={marker.id}
+                                draggable={true}
+                                clickable={true}
+                                type={marker.type}
+                                icon={marker.icon}
+                                position={marker.position}
+                                ref={(ref) => (markerRefs.current[index] = ref)}
+                                eventHandlers={{
+                                    click: (e) => handleMarkerClick(e, marker.id),
+                                    contextmenu: (e) => handleMarkerRightClick(e),
+                                    dragstart: () => setSelectedMarker(null),
+                                    drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                    mouseover: () => handleMarkerHover(markerRefs.current[index], true),
+                                    mouseout: () => handleMarkerHover(markerRefs.current[index], false)
                                         }}>
                                     <MarkerSettings
                                         index={index}
