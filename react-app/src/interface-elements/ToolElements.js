@@ -1,12 +1,13 @@
 import LockButton from "./LockButton";
 import ImportButton from "./ImportButton";
 import ExportButton from "./ExportButton";
-import { ConfigProvider, Flex, Slider } from "antd";
+import { ConfigProvider, Flex } from "antd";
 import { onRunButtonClick } from '../utils/api';
 import RunButton from "./RunButton";
 import Search from "./Search";
 import HistoryButton from "./HistoryButton.js";
 import { useMap } from "react-leaflet";
+import ResetCanvasButton from "./ResetCanvasButton";
 
 function ToolElements(props) {
 
@@ -27,6 +28,7 @@ function ToolElements(props) {
             }>
                 <Flex gap="middle" wrap>
                     <Search />
+                    <ResetCanvasButton setMarkers={props.setMarkers} setLines={props.setLines} setHistory={props.setHistory} setDraggedItem={props.setDraggedItem} setZoom={props.setZoom} setSelectedMarker={props.setSelectedMarker} setDefaultValues={props.setDefaultValues} />
                     <LockButton onLockButtonClick={props.onLockButtonClick} />
                     <ImportButton markerRefs={props.markerRefs} lineRefs={props.lineRefs} setMarkers={props.setMarkers} setLines={props.setLines} mapContainer={props.mapContainer}></ImportButton>
                     <ExportButton markerRefs={props.markerRefs} markers={props.markers} lines={props.lines} mapContainer={props.mapContainer}></ExportButton>

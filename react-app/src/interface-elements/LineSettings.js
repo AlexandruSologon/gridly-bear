@@ -4,8 +4,9 @@ import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
 import {Button, Input} from "antd";
 import {SaveOutlined} from "@ant-design/icons";
+import {resetLinesRender, resetMarkerRender} from "../utils/api";
 
-function Menu({ line }) {
+function Menu({ line, markers, lines, markerRefs, setLines }) {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const options = [
@@ -63,6 +64,8 @@ function Menu({ line }) {
     ];
 
     const handleChange = (option) => {
+        resetMarkerRender(markers,markerRefs)
+        setLines(resetLinesRender(lines,markers));
         setSelectedOption(option);
         line.type = option.value;
     };
@@ -87,7 +90,7 @@ function Menu({ line }) {
     );
 }
 
-const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, changeLineLength }) => {
+const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, changeLineLength, markers, markerRefs, lines, setLines }) => {
     const isElectricalLine = line.connection === "electrical";
     const makeDefaultButton = <Button onClick={() => replaceDefaultValues(line, true)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
 
@@ -114,6 +117,7 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
                             style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}>
                         </Input>
                         </div>
+                        <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                     </div>
                 )}
             </div>

@@ -19,8 +19,8 @@ Linting:
 Tests:
   stage: test
   script:
-    - poetry run pytest
-    - pytest test/test.py
+    # poetry run pytest --cov-config=.coveragerc --cov-report=html --cov=react-app .\react-app\functions\test
+    - poetry run pytest --cov-config=.coveragerc  --cov=react-app .\react-app\functions\test
 
 Deploy:
   stage: deploy
