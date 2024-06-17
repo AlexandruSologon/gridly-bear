@@ -44,6 +44,7 @@ export function ReactApp() {
     const [mapOpacity, setMapOpacity] = useState(1);
     const [isHistoryOn, setIsHistoryOn] = useState(false);
     const [history, setHistory] = useState([]);
+    const [highlightedMarker, setHighlightedMarker] = useState(null);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -111,6 +112,20 @@ export function ReactApp() {
         if (targetMarker) {
             targetMarker.closePopup();
         }
+
+        //resetting style of prev marker if a new marker is clicked
+        if (highlightedMarker !== null && markerRefs.current[highlightedMarker]) {
+            markerRefs.current[highlightedMarker]._icon.style.filter = '';
+        }
+
+        //setting current marker
+        setHighlightedMarker(markerId);
+
+        //giving correct style to selected marker
+        if (markerRefs.current[markerId]) {
+            markerRefs.current[markerId]._icon.style.filter = 'brightness(1.5)';
+        }
+
         if (selectedMarker === null) {
             setSelectedMarker(markerId);
         } else {
@@ -183,6 +198,11 @@ export function ReactApp() {
                     }
             }
             setSelectedMarker(null);
+            setHighlightedMarker(null);
+            //resetting style of prev marker if a new marker is clicked
+            if (highlightedMarker !== null && markerRefs.current[highlightedMarker]) {
+                markerRefs.current[highlightedMarker]._icon.style.filter = '';
+            }
         }
     };
 
@@ -250,6 +270,16 @@ export function ReactApp() {
         setLines(resetLinesRender(updatedLines, updatedMarkers));
         resetMarkerRender(markers, markerRefs)
 
+    };
+
+    const handleMarkerHover = (markerId, isHovered) => {
+        if (markerId && markerId._icon) {
+            if (isHovered) {
+                markerId._icon.style.filter = 'brightness(1.5)';
+            } else {
+                markerId._icon.style.filter = '';
+            }
+        }
     };
 
     const handleTransReverse = (markerId) => {
@@ -414,20 +444,27 @@ export function ReactApp() {
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
                         <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
                             <Tile opacity={mapOpacity}/>
-                            {markers.map((marker, index) => (
-                                <Marker key={marker.id}
-                                        draggable={true}
-                                        clickable={true}
-                                        type={marker.type}
-                                        icon={marker.icon}
-                                        position={marker.position}
-                                        ref={(ref) => (markerRefs.current[index] = ref)}
-                                        eventHandlers={{
-                                            click: (e) => handleMarkerClick(e, marker.id),
-                                            contextmenu: (e) => handleMarkerRightClick(e),
-                                            dragstart: () => setSelectedMarker(null),
-                                            drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
-                                        }}>
+                        {markers.map((marker, index) => (
+                            <Marker key={marker.id}
+                                draggable={true}
+                                clickable={true}
+                                type={marker.type}
+                                icon={marker.icon}
+                                position={marker.position}
+                                ref={(ref) => (markerRefs.current[index] = ref)}
+                                eventHandlers={{
+                                    click: (e) => handleMarkerClick(e, marker.id),
+                                    contextmenu: (e) => handleMarkerRightClick(e),
+                                    dragstart: () => setSelectedMarker(null),
+                                    drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                    mouseover: () => handleMarkerHover(markerRefs.current[index], true),
+                                    mouseout: () => {
+                                        //making sure that all markers besides the clicked one can return to normal brightness on hover leave
+                                        if (highlightedMarker !== index) {
+                                            handleMarkerHover(markerRefs.current[index], false);
+                                        }
+                                    }
+                                 }}>
                                     <MarkerSettings
                                         index={index}
                                         marker={marker}
