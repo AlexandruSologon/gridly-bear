@@ -1,14 +1,43 @@
-export class Bus {
-    constructor(id, pos, voltage) {
+import {markerParametersConfig} from "./utils/constants";
+
+class InvalidParameterInputException extends Error {
+    constructor(message) {
+        super(message);
+        this.name = this.constructor.name;
+    }
+}
+class Component {
+    assigner (p,type)  {
+    for( const key in p)
+            if(p[key] !== null ) {
+                console.log(p)
+                console.log(this)
+                this[key] = p[key];
+            }
+                else
+            {console.log(key)
+                console.log(markerParametersConfig[type].find(x => x.name === key))
+                console.log(markerParametersConfig[type].find(x => x.name === key).mandatory)
+                    if(markerParametersConfig[type].find(x => x.name === key).mandatory === 'true'){
+                        throw new InvalidParameterInputException(key +' parameter in not set')}
+                    else
+                        this[key] = p[key]}}
+
+}
+export class Bus extends Component {
+    vn_kv;
+    constructor(id, pos, p) {
+        super();
         this.class = "bus"
         this.id = id
         this.pos = pos
-        this.voltage = voltage
+        this.assigner(p, 'bus')
     }
 }
 
-export class Line {
+export class Line extends Component{
     constructor(id, bus1, bus2, length, type) {
+        super();
         this.id = id
         this.class = "line"
         this.type = type
@@ -18,8 +47,9 @@ export class Line {
     }
 }
 
-export class Transformer {
+export class Transformer extends Component{
     constructor(id, highBus, lowBus, type) {
+        super();
         this.id = id
         this.class = "transformer"
         this.highBus = highBus
@@ -36,32 +66,35 @@ export class Transformer {
 //     }
 // }
 
-export class Load {
-    constructor(id, bus, p_mv, q_mvar) {
+export class Load extends Component{
+    p_mv;
+    q_mvar;
+    constructor(id, bus,p) {
+        super();
+        this.assigner(p,'load')
         this.id = id
         this.class = "load"
         this.bus = bus
-        this.p_mv = p_mv
-        this.q_mvar = q_mvar
     }
 }
 
-export class ExtGrid {
-  constructor(id, bus, voltage) {
+export class ExtGrid extends Component{
+  constructor(id, bus, p) {
+      super();
     this.id = id
     this.class = "ext-grid"
     this.bus = bus
-    this.voltage = voltage
+    this.assigner(p,'grid')
   }
 }
 
-export class Generator{
-    constructor(id, bus, power, voltageSetLevel) {
+export class Generator extends Component{
+    constructor(id, bus, p) {
+        super();
         this.id = id
         this.class = "generator"
         this.bus = bus
-        this.p_mw = power
-        this.vm_pu = voltageSetLevel
+        this.assigner(p, 'solar')
     }
 }
 export class Network {
