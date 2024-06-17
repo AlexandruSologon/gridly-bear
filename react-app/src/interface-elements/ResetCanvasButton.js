@@ -4,14 +4,13 @@ import {HistoryOutlined, ReloadOutlined} from "@ant-design/icons";
 
 
 
-function ResetCanvasButton({setLines, setMarkers, setDraggedItem, setSelectedMarker, setDefaultValues, setHistory }) {
+function ResetCanvasButton({setLines, setMarkers, setDraggedItem, setSelectedMarker, setDefaultValues }) {
 const refreshCanvas = () => {
         setLines([])
         setMarkers([])
         setDraggedItem(null)
         setSelectedMarker(null)
         setDefaultValues(defVal)
-        setHistory([])
     }
 
 return (
