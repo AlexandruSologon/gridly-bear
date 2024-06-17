@@ -1,11 +1,12 @@
 import {cnvs_json_post} from './api_interaction';
-import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
+import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer, Storage} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
 import CanvasState from './CanvasState';
 
 export const handleExport = (markerInputs, markers, lines) => {
     const buses = [];
     const components = [];
+    // bus, line, load, generator, transformer, battery, external grid
     let indices = [0, 0, 0, 0, 0, 0, 0];
     const busIdMap = new Map();
     const transLines = [];
@@ -65,6 +66,12 @@ export const handleExport = (markerInputs, markers, lines) => {
                     if (!found) {
                         transLines.push(newTransLine);
                     }
+                    break;
+                case 'Battery':
+                    const isGen = -1 ? item1.isGen : 1;
+                    components.push(new Storage(indices[5], busIndex, isGen * parseFloat(item1.parameters.p_mw),
+                                                parseFloat(item1.parameters.max_e_mwh), parseFloat(item1.parameters.q_mvar)));
+                    indices[5] += 1;
                     break;
                 default:
                     break;

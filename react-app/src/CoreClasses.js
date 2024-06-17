@@ -69,3 +69,14 @@ export class Network {
         this.components = components
     }
 }
+
+export class Storage {
+    constructor(id, bus, p_mw, max_e_mwh, q_mvar) {
+        this.id = id;
+        this.class = "storage"
+        this.bus = bus;
+        this.p_mw = p_mw;
+        this.max_e_mwh = max_e_mwh;
+        this.q_mvar = q_mvar;
+    }
+}
