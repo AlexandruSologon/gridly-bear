@@ -101,6 +101,13 @@ export function ReactApp() {
                 newMarker.low = null;
                 newMarker.transformerType = defaultValues.trafo1.type
             }
+
+            if (newMarker.type === "battery") {
+                newMarker.state = null;
+                newMarker.loadConfig = {'p_mv' : null, 'q_mvar' : null};
+                newMarker.genConfig = {'p_mw' : null, 'vm_pu' : null};
+            }
+
             setMarkers([...markers, newMarker]);
 
         }
@@ -449,7 +456,7 @@ export function ReactApp() {
                                         handleParameterChange={handleParameterChange}
                                         handleMarkerDelete={handleMarkerDelete}
                                         handleTransReverse={handleTransReverse}
-                                        replaceDefaultValues = {replaceDefaultValues}/>/>
+                                        replaceDefaultValues = {replaceDefaultValues}/>
                                 </Marker>))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
