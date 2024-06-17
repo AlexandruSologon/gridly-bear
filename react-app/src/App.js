@@ -44,6 +44,7 @@ export function ReactApp() {
     const [mapOpacity, setMapOpacity] = useState(1);
     const [isHistoryOn, setIsHistoryOn] = useState(false);
     const [history, setHistory] = useState([]);
+    const [highlightedMarker, setHighlightedMarker] = useState(null);
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -56,13 +57,14 @@ export function ReactApp() {
                 flag = true;
             }
             }
-            if(flag) {markerRefs.current[markers.length-1].openPopup() }
+            if(flag && markers.length>0) {markerRefs.current[markers.length-1].openPopup() }
         setDraggedItem(null);
     };
 
     const handleDragOver = (event) => {
         event.preventDefault();
     };
+
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -101,6 +103,8 @@ export function ReactApp() {
                 newMarker.low = null;
                 newMarker.transformerType = defaultValues.trafo1.type
             }
+            resetMarkerRender(markers,markerRefs)
+            setLines(resetLinesRender(lines,markers))
             setMarkers([...markers, newMarker]);
 
         }
@@ -111,6 +115,20 @@ export function ReactApp() {
         if (targetMarker) {
             targetMarker.closePopup();
         }
+
+        //resetting style of prev marker if a new marker is clicked
+        if (highlightedMarker !== null && markerRefs.current[highlightedMarker]) {
+            markerRefs.current[highlightedMarker]._icon.style.filter = '';
+        }
+
+        //setting current marker
+        setHighlightedMarker(markerId);
+
+        //giving correct style to selected marker
+        if (markerRefs.current[markerId]) {
+            markerRefs.current[markerId]._icon.style.filter = 'brightness(1.5)';
+        }
+
         if (selectedMarker === null) {
             setSelectedMarker(markerId);
         } else {
@@ -183,6 +201,11 @@ export function ReactApp() {
                     }
             }
             setSelectedMarker(null);
+            setHighlightedMarker(null);
+            //resetting style of prev marker if a new marker is clicked
+            if (highlightedMarker !== null && markerRefs.current[highlightedMarker]) {
+                markerRefs.current[highlightedMarker]._icon.style.filter = '';
+            }
         }
     };
 
@@ -250,6 +273,16 @@ export function ReactApp() {
         setLines(resetLinesRender(updatedLines, updatedMarkers));
         resetMarkerRender(markers, markerRefs)
 
+    };
+
+    const handleMarkerHover = (markerId, isHovered) => {
+        if (markerId && markerId._icon) {
+            if (isHovered) {
+                markerId._icon.style.filter = 'brightness(1.5)';
+            } else {
+                markerId._icon.style.filter = '';
+            }
+        }
     };
 
     const handleTransReverse = (markerId) => {
@@ -350,7 +383,9 @@ export function ReactApp() {
             }
             return marker;
         });
+        setLines(resetLinesRender(lines,markers))
         setMarkers(updatedMarkers);
+        resetMarkerRender(updatedMarkers, markerRefs);
     };
 
     const replaceDefaultValues = (marker) => {
@@ -414,20 +449,27 @@ export function ReactApp() {
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
                         <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
                             <Tile opacity={mapOpacity}/>
-                            {markers.map((marker, index) => (
-                                <Marker key={marker.id}
-                                        draggable={true}
-                                        clickable={true}
-                                        type={marker.type}
-                                        icon={marker.icon}
-                                        position={marker.position}
-                                        ref={(ref) => (markerRefs.current[index] = ref)}
-                                        eventHandlers={{
-                                            click: (e) => handleMarkerClick(e, marker.id),
-                                            contextmenu: (e) => handleMarkerRightClick(e),
-                                            dragstart: () => setSelectedMarker(null),
-                                            drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
-                                        }}>
+                        {markers.map((marker, index) => (
+                            <Marker key={marker.id}
+                                draggable={true}
+                                clickable={true}
+                                type={marker.type}
+                                icon={marker.icon}
+                                position={marker.position}
+                                ref={(ref) => (markerRefs.current[index] = ref)}
+                                eventHandlers={{
+                                    click: (e) => handleMarkerClick(e, marker.id),
+                                    contextmenu: (e) => handleMarkerRightClick(e),
+                                    dragstart: () => setSelectedMarker(null),
+                                    drag: (e) => handleMarkerDrag(marker.id, e.target.getLatLng()),
+                                    mouseover: () => handleMarkerHover(markerRefs.current[index], true),
+                                    mouseout: () => {
+                                        //making sure that all markers besides the clicked one can return to normal brightness on hover leave
+                                        if (highlightedMarker !== index) {
+                                            handleMarkerHover(markerRefs.current[index], false);
+                                        }
+                                    }
+                                 }}>
                                     <MarkerSettings
                                         index={index}
                                         marker={marker}
@@ -447,7 +489,7 @@ export function ReactApp() {
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines}></LineSettings>
                                 </Polyline>
                             ))}
                             <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
@@ -469,6 +511,9 @@ export function ReactApp() {
                             setIsHistoryOn={setIsHistoryOn}
                             setHistory={setHistory}
                             history={history}
+                            setDraggedItem={setDraggedItem}
+                            setSelectedMarker={setSelectedMarker}
+                            setDefaultValues = {setDefaultValues}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}
