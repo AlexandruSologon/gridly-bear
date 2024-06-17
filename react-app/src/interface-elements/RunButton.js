@@ -68,7 +68,7 @@ function RunButton({
                     key,
                     type: 'error',
                     content: error.message,
-                    duration: 2,
+                    duration: 5,
                 });
             }).finally(() => {
                 setRunClicked(false);
