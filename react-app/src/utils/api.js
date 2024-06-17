@@ -1,7 +1,5 @@
-import {cnvs_json_post} from './api_interaction';
 import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
-import CanvasState from './CanvasState';
 
 export const handleExport = (markerInputs, markers, lines) => {
         const buses = [];
@@ -85,66 +83,6 @@ export const handleExport = (markerInputs, markers, lines) => {
 
 };
 
-
-export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLocked, lines, setLines, setMarkers, markerRefs, messageApi, history, setHistory, map) => {
-    if(runClicked) return;
-    setRunClicked(true);
-    setIsMapLocked(true);
-
-    const key = 'awaitsimalert';
-    messageApi
-        .open({
-            key,
-            type: 'loading',
-            content: 'Awaiting Simulation Results..',
-            duration: 0,
-        });
-
-    const markerInputs = markers.map(marker => ({
-        id: marker.id,
-        type: marker.type,
-        parameters: marker.parameters,
-        name: marker.name,
-        transformer: marker.transformerType
-    }));
-    let dat
-    try{
-        dat = handleExport(markerInputs, markers, lines);
-    }
-    catch (e){console.log('oopsie app threw error');setRunClicked(false);
-        messageApi.open(
-            {key: key,
-             type: 'error',
-             content: e.message,
-             duration: 5,}
-    ); return; }
-    console.log('Sent over Data:', dat);
-    cnvs_json_post(dat)
-        .then((data) => {
-            renderLines(data, lines, markers, setLines);
-            renderBuses(data, markers, markerRefs);
-            messageApi.open({
-                key,
-                type: 'success',
-                content: 'simulation complete!',
-                duration: 2,
-            });
-            let zoom = map.getZoom();
-            let center = map.getCenter();
-            setHistory([new CanvasState(markers, markerRefs, lines, center, zoom, new Date(), data), ...history]);
-        }).catch((error) => {
-            console.log(error.message + " : " +  error.details);
-            messageApi.open({
-                key,
-                type: 'error',
-                content: error.message,
-                duration: 2,
-            });
-        }).finally(() => {
-            setRunClicked(false);
-        });
-};
-
 const renderLines = (data, lines, markers, setLines) => {
     let nr = -1;
     const uL = lines.map((line) => {
@@ -159,7 +97,7 @@ const renderLines = (data, lines, markers, setLines) => {
     setLines(uL) ;
 };
 
-const renderBuses = (data, markers, markerRefs) => {
+export const renderBuses = (data, markers, markerRefs) => {
     let nr = 0;
     markerRefs.current.forEach(marker => {
         if(marker !== null) {
@@ -175,7 +113,6 @@ const renderBuses = (data, markers, markerRefs) => {
         }
     }})
 }
-
 
 export const resetMarkerRender = (markers, markerRefs) => {
     if(typeof markerRefs.current !== 'undefined')

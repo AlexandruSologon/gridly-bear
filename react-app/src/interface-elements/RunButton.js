@@ -1,6 +1,9 @@
 import React from "react";
 import { Button } from "antd";
 import {CaretRightFilled} from '@ant-design/icons';
+import { handleExport, renderBuses, renderLines } from "../utils/api";
+import { cnvs_json_post } from "../utils/api_interaction";
+import CanvasState from "../utils/CanvasState";
 
 /**
  * Renders a run button with action.
@@ -8,7 +11,80 @@ import {CaretRightFilled} from '@ant-design/icons';
  * @param {*} onRunButtonClick The action to be taken by the run button.
  * @returns 
  */
-function RunButton({runClicked, onRunButtonClick}) {
+function RunButton({
+        runClicked, 
+        markers, 
+        setRunClicked, 
+        setIsMapLocked, 
+        lines, 
+        setLines, 
+        setMarkers, 
+        markerRefs, 
+        messageApi, 
+        history, 
+        setHistory, 
+        map}) {
+
+    const onRunButtonClick = () => {
+        if(runClicked) return;
+        setRunClicked(true);
+        setIsMapLocked(true);
+    
+        const key = 'awaitsimalert';
+        messageApi
+            .open({
+                key,
+                type: 'loading',
+                content: 'Awaiting Simulation Results..',
+                duration: 0,
+            });
+    
+        const markerInputs = markers.map(marker => ({
+            id: marker.id,
+            type: marker.type,
+            parameters: marker.parameters,
+            name: marker.name,
+            transformer: marker.transformerType
+        }));
+
+        let dat
+        try{
+            dat = handleExport(markerInputs, markers, lines);
+        }
+        catch (e){console.log('oopsie app threw error');setRunClicked(false);
+            messageApi.open(
+                {key: key,
+                type: 'error',
+                content: e.message,
+                duration: 5,}
+        ); return; }
+        console.log('Sent over Data:', dat);
+        cnvs_json_post(dat)
+            .then((data) => {
+                renderLines(data, lines, markers, setLines);
+                renderBuses(data, markers, markerRefs);
+                messageApi.open({
+                    key,
+                    type: 'success',
+                    content: 'simulation complete!',
+                    duration: 2,
+                });
+                let zoom = map.getZoom();
+                let center = map.getCenter();
+                setHistory([new CanvasState(markers, markerRefs, lines, center, zoom, new Date(), data), ...history]);
+            }).catch((error) => {
+                console.log(error.message + " : " +  error.details);
+                messageApi.open({
+                    key,
+                    type: 'error',
+                    content: error.message,
+                    duration: 2,
+                });
+            }).finally(() => {
+                setRunClicked(false);
+            });
+    };
+
     return (
         <Button data-testid="run-button"
                 className={'hasShadow'}
