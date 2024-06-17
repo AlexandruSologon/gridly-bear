@@ -57,13 +57,14 @@ export function ReactApp() {
                 flag = true;
             }
             }
-            if(flag) {markerRefs.current[markers.length-1].openPopup() }
+            if(flag && markers.length>0) {markerRefs.current[markers.length-1].openPopup() }
         setDraggedItem(null);
     };
 
     const handleDragOver = (event) => {
         event.preventDefault();
     };
+
 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -102,6 +103,8 @@ export function ReactApp() {
                 newMarker.low = null;
                 newMarker.transformerType = defaultValues.trafo1.type
             }
+            resetMarkerRender(markers,markerRefs)
+            setLines(resetLinesRender(lines,markers))
             setMarkers([...markers, newMarker]);
 
         }
@@ -380,7 +383,9 @@ export function ReactApp() {
             }
             return marker;
         });
+        setLines(resetLinesRender(lines,markers))
         setMarkers(updatedMarkers);
+        resetMarkerRender(updatedMarkers, markerRefs);
     };
 
     const replaceDefaultValues = (marker) => {
@@ -484,7 +489,7 @@ export function ReactApp() {
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete}></LineSettings>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines}></LineSettings>
                                 </Polyline>
                             ))}
                             <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
@@ -506,6 +511,9 @@ export function ReactApp() {
                             setIsHistoryOn={setIsHistoryOn}
                             setHistory={setHistory}
                             history={history}
+                            setDraggedItem={setDraggedItem}
+                            setSelectedMarker={setSelectedMarker}
+                            setDefaultValues = {setDefaultValues}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}
