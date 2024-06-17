@@ -1,6 +1,6 @@
 import {defVal} from "../utils/constants";
 import {Button, Tooltip} from "antd";
-import {HistoryOutlined, ReloadOutlined} from "@ant-design/icons";
+import {ReloadOutlined} from "@ant-design/icons";
 
 
 
