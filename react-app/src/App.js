@@ -103,9 +103,7 @@ export function ReactApp() {
             }
 
             if (newMarker.type === "battery") {
-                newMarker.state = null;
-                newMarker.loadConfig = {'p_mv' : null, 'q_mvar' : null};
-                newMarker.genConfig = {'p_mw' : null, 'vm_pu' : null};
+                newMarker.isGen = defaultValues.battery.isGen;
             }
 
             setMarkers([...markers, newMarker]);
@@ -380,14 +378,28 @@ export function ReactApp() {
         for(const key in marker.parameters) {
             const paramName = key;
             const value = marker.parameters[key];
-        if(value !== null && value !== 0 && value !== '')
+            if(value !== null && value !== 0 && value !== '')
         {
              newValue = {
                 ...newValue,
                 [marker.type]: {...newValue[marker.type], [paramName]: value}
-            }
+            };
         }}
-        setDefaultValues(newValue)
+
+        if (marker.type === "battery") {
+            newValue = {
+                ...newValue,
+                [marker.type]: {...newValue[marker.type], ["isGen"]: marker.isGen}
+            };
+        }
+
+        if (marker.type === "trafo1") {
+            newValue = {
+                ...newValue,
+                [marker.type]: {...newValue[marker.type], ["type"]: marker.transformerType}
+            };
+        }
+        setDefaultValues(newValue);
     }
 
     const onLockButtonClick = () => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 function TransformerSettings({ transformer }) {
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedOption, setSelectedOption] = useState(transformer.transformerType);
 
     const options = [
         '160 MVA 380/110 kV',
@@ -32,10 +32,10 @@ function TransformerSettings({ transformer }) {
         <div style={{ marginBottom: '5px' }}>
             <div style={{marginBottom: '5px'}}>{"Select Transformer type:"}</div>
             <Select
-                value={selectedOption}
                 onChange={handleChange}
                 options={options.map(option => ({ value: option, label: option }))}
                 isSearchable={true}
+                value={selectedOption}
                 styles={{
                     control: styles => ({
                         ...styles,

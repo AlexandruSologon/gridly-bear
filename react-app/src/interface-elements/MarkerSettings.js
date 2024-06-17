@@ -37,32 +37,11 @@ function MarkerParameters({marker, handleParameterChange, handleTransReverse, ha
         )
     // Other markers
     } else if (type ==="battery"){
-        let paramList = null;
-        if (marker.state === "Load") paramList = markerParametersConfig["load"]; 
-        if (marker.state === "Generator") paramList = markerParametersConfig["solar"];
-        if (paramList !== null) return paramList.map(param => (
-            <div  key={param.name} style={{ marginBottom: '5px' }}>
-                <ul>
-                    <li>
-    
-                    {param.name.charAt(0).toUpperCase() + param.name.slice(1) +' '+ param.unit}:
-                <Input
-                    type="text"
-                    //placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
-                    value={parameters[param.name] || ''}
-                    onChange={(e) => handleParameterChange(id, param.name, e.target.value)}
-                    size={'middle'}
-                    style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}
-                /></li>
-                </ul>
-            </div>
-        ));
         return (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <BatterySettings battery={marker}/>
+                <BatterySettings battery={marker} handleParameterChange={handleParameterChange}/>
             </div>
         )
-
 
     } else {
         const parameterFields = markerParametersConfig[type];
