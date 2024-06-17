@@ -13,6 +13,7 @@ import ToolElements from './interface-elements/ToolElements';
 import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
+import Scale from './interface-elements/Scale';
 
 import {
     defVal,
@@ -515,6 +516,7 @@ export function ReactApp() {
                             setSelectedMarker={setSelectedMarker}
                             setDefaultValues = {setDefaultValues}
                             ></ToolElements>
+                            <Scale />
                         </MapContainer>
                         {contextHolder}
                 </div>
