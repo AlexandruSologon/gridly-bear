@@ -140,6 +140,21 @@ export function ReactApp() {
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
                             (line.busLine[0] === newLine.busLine[0] && line.busLine[1] === newLine.busLine[1]));
+                        
+                        // Check for one direct connection per component
+                        let componentLine = false;
+                        if(connection === "direct") {
+                            let componentId = selectedMarker;
+                            let transformer = selected.name === "Transformer";
+                            if (selected.type === "bus") {
+                                componentId = markerId;
+                                transformer = current.name === "Transformer";
+                            }
+                            const sameComponent = lines.filter(line =>
+                                (line.busLine[0] === componentId || line.busLine[1] === componentId));
+
+                            componentLine = !transformer && sameComponent.length > 0;
+                        }
 
                         const found = sameLines.length !== 0;
                         let maxTransformer = false;
@@ -173,7 +188,7 @@ export function ReactApp() {
                         }
 
                         // Add line if it doesn't exist and doesn't break transformer constraints
-                        if (!found && !maxTransformer){
+                        if (!(found || maxTransformer || componentLine)){
                             setLines([...lines, newLine]);
 
                         }
@@ -466,9 +481,9 @@ export function ReactApp() {
                                 messageApi={messageApi}
                                 defaultValues={defaultValues}
                                 isHistoryOn={isHistoryOn}
-                            setIsHistoryOn={setIsHistoryOn}
-                            setHistory={setHistory}
-                            history={history}
+                                setIsHistoryOn={setIsHistoryOn}
+                                setHistory={setHistory}
+                                history={history}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}
