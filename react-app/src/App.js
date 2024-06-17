@@ -4,7 +4,7 @@ import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
 import { message, ConfigProvider, Slider } from "antd";
 import React, {useState, useRef} from 'react';
-import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, ZoomControl, ScaleControl } from 'react-leaflet';
 
 import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
@@ -515,8 +515,8 @@ export function ReactApp() {
                             setDraggedItem={setDraggedItem}
                             setSelectedMarker={setSelectedMarker}
                             setDefaultValues = {setDefaultValues}
-                            ></ToolElements>
-                            <Scale />
+                        ></ToolElements>
+                        <Scale />
                         </MapContainer>
                         {contextHolder}
                 </div>
