@@ -9,11 +9,13 @@ function Scale() {
         const scale = L.control.scale({
             metric: true,
             imperial: false,
-            maxWidth: 100,
+            maxWidth: 250,
             position: 'bottomright'
         });
 
         scale.addTo(map);
+
+        const scaleCSS = document.querySelector('.leaflet-control-scale').classList.add('lol');
 
         return () => {
             map.removeControl(scale);
