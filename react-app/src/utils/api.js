@@ -198,3 +198,42 @@ export const resetLinesRender = (lines, markers) => {
 export const findMarkerById = (id,markers) => {
     return binarySearch(markers, id, 0, markers.length - 1);
 }
+
+export  const handleMarkerDelete = (markerId, markers, markerRefs, setMarkers, selectedMarker, setSelectedMarker, lines, setLines) => {
+        const oldMarker = findMarkerById(markerId, markers);
+        const oldMarkerPos = oldMarker.position;
+        const oldMarkerId = oldMarker.id;
+        const markerRef = markerRefs.current[markers.indexOf(oldMarker)];
+        if (markerRef) {
+            const style = markerRef.valueOf()._icon.style;
+            if(markerRef.options.type !== 'bus') {
+                style.border = ''
+                style.borderWidth = ''
+            }
+            markerRef.closePopup();
+        }
+
+        const updatedMarkers = markers.map(marker => {
+            if (marker.name === "Transformer") {
+                const c = marker.connections;
+                if (marker.low === oldMarkerId) {
+                    return {...marker, low: null, connections: c-1};
+                } else if (marker.high === oldMarkerId) {
+                    return {...marker, high: null, connections: c-1};
+                }
+            }
+            return marker;
+        });
+        updatedMarkers.splice(markers.indexOf(oldMarker), 1);
+        setMarkers(updatedMarkers);
+
+        if (selectedMarker === markerId) {
+            setSelectedMarker(null);
+        }
+        const updatedLines = lines.filter(line =>
+            !((line.position1.lat === oldMarkerPos.lat && line.position1.lng === oldMarkerPos.lng) ||
+            (line.position2.lat === oldMarkerPos.lat && line.position2.lng === oldMarkerPos.lng)));
+        setLines(resetLinesRender(updatedLines, updatedMarkers));
+        resetMarkerRender(markers, markerRefs)
+
+    };

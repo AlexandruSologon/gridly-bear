@@ -1,10 +1,11 @@
 import '@testing-library/jest-dom';
 import {fireEvent, render, screen} from '@testing-library/react';
-import React from 'react';
+import React, {useState} from 'react';
 import Sidebar  from "../../interface-elements/Sidebar";
 import RunButton from "../../interface-elements/RunButton";
 import LockButton from "../../interface-elements/LockButton";
 import {iconMappingMock} from "../mocks/iconMappingMock";
+import {handleMarkerDelete} from "../../utils/api";
 
   jest.mock('react-leaflet', () => jest.fn());
   jest.mock('firebase-functions', () => jest.fn());
@@ -54,5 +55,27 @@ test('Run Button', () => {
 test('Run Button Clicked', () => {
     render(<RunButton onRunButtonClick={jest.fn()} runClicked={true} />)
     expect(screen.getByTestId('run-button')).toBeInTheDocument()
+})
+
+test('Delete Marker ', () => {
+    let m = [{id: 0,
+                position: jest.fn(),
+                name: 'name',
+                icon: jest.fn(),
+                type: 'type',
+                parameters: jest.fn(),
+            }];
+        const setM = (newM) => {
+        m = newM
+    }
+    const markerId = 0;
+    const markerRefs = {current: jest.fn()}
+    const setSelectedMarker = jest.fn()
+    const lines = []
+    const setLines = jest.fn()
+    const selectedMarker = 0
+ handleMarkerDelete(markerId, m, markerRefs, setM, selectedMarker, setSelectedMarker, lines, setLines)
+    expect(m).toEqual([])
+
 })
 
