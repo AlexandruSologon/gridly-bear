@@ -18,10 +18,10 @@ def parsejson(x):
         for component in components:
             match component["class"]:
                 case "bus":
-                    pp.create_bus(net=network, vn_kv=component["voltage"])
+                    pp.create_bus(net=network, vn_kv=component["vn_kv"])
                 case "ext-grid":
                     pp.create_ext_grid(net=network, bus=component["bus"],
-                                       vm_pu=component["voltage"])
+                                       vm_pu=component["vm_pu"])
                 case "load":
                     pp.create_load(net=network, bus=component["bus"], p_mw=component["p_mv"],
                                    q_mvar=component["q_mvar"])
