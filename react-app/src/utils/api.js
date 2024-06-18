@@ -53,7 +53,7 @@ export const handleExport = (markerInputs, markers, lines) => {
                     indices[6] += 1;
                     break;
                 case 'Transformer':
-                    let newTransLine = [item1.high, item1.low, item1.transformerType];
+                    let newTransLine = [item1.high, item1.low, item1.parameters.type];
                     let found = false;
                     for (let i = 0; i < transLines.length; i++) {
                         const item = transLines[i];
