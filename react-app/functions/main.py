@@ -9,20 +9,11 @@ from src import apiHandler
 
 app = initialize_app()
 
-
-# Hello world example function, do not use in deployment
-@https_fn.on_request(cors=options.CorsOptions(
-    cors_origins="*",
-    cors_methods=["get", "post", "options"], ))
-def hello_world() -> str:
-    return json.dumps({"data": "hello!"})
-
-
 # Handles the posting of json data corresponding to the canvas state
 @https_fn.on_request(cors=options.CorsOptions(
     cors_origins="*",
     cors_methods=["get", "post", "options"], ))
-def cnvs_json_post(req: https_fn.CallableRequest) -> dict[str, dict[str, dict[str, Any] | str]] | str:
+def cnvs_json_post(req: https_fn.CallableRequest) -> "dict[str, dict[str, dict[str, Any] | str]] | str":
     # returns a dictionary in the following form: {'data' : 'b"..."}
     # of which we take the value corresponding to 'data' as a key
     return apiHandler.handle_sim_request(req.data)
