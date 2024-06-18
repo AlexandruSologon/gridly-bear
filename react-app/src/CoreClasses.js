@@ -34,6 +34,8 @@ export class Bus extends Component {
 export class Line extends Component{
     constructor(id, bus1, bus2, length, type) {
         super();
+        if(type === null || '')
+            throw new InvalidParameterInputException('type parameter in not set')
         this.id = id
         this.class = "line"
         this.type = type
@@ -46,6 +48,8 @@ export class Line extends Component{
 export class Transformer extends Component{
     constructor(id, highBus, lowBus, type) {
         super();
+        if(type === null || '')
+            throw new InvalidParameterInputException('type parameter in not set')
         this.id = id
         this.class = "transformer"
         this.highBus = highBus

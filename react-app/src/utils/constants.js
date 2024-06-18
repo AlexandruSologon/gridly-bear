@@ -82,7 +82,7 @@ export const markerParametersConfig = {
     trafo1: [{name:'type', unit: '', mandatory: 'true'}],
     switch: [{name:'type', unit: '', mandatory: 'true'}],
     load: [{name:'p_mv',unit:'(kW)', mandatory:'true'}, {name:'q_mvar',unit:'(kVar)', mandatory: 'true'}],
-    grid: [{name:'vn_pu', unit:'(p.u)', mandatory: 'true'}],
+    grid: [{name:'vm_pu', unit:'(p.u)', mandatory: 'true'}],
     solar: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)', mandatory:'false'}],
     wind: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)',mandatory:'false'}],
     //battery: ['net', 'p_mw']
@@ -104,7 +104,7 @@ export const defVal = {
     bus : {vn_kv: null},
     trafo1: {type: null},
     load: {p_mv: null, q_mvar: null},
-    grid: {vn_pu: null},
+    grid: {vm_pu: null},
     solar: {p_mw: null, vm_pu: null},
     wind: {p_mw: null, vm_pu: null},
     line: {type: null}
