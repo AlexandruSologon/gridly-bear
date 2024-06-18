@@ -491,7 +491,7 @@ export function ReactApp() {
                                         handleParameterChange={handleParameterChange}
                                         handleMarkerDelete={handleMarkerDelete}
                                         handleTransReverse={handleTransReverse}
-                                        replaceDefaultValues = {replaceDefaultValues}/>/>
+                                        replaceDefaultValues = {replaceDefaultValues}/>
                                 </Marker>))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
