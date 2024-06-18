@@ -3,7 +3,7 @@ import sys
 import os
 from firebase_admin import initialize_app
 from firebase_functions import https_fn, options
-# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src import apiHandler
 
 app = initialize_app()
