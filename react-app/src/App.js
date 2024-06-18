@@ -45,6 +45,7 @@ export function ReactApp() {
     const [isHistoryOn, setIsHistoryOn] = useState(false);
     const [history, setHistory] = useState([]);
     const [highlightedMarker, setHighlightedMarker] = useState(null);
+    
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -508,12 +509,12 @@ export function ReactApp() {
                                 messageApi={messageApi}
                                 defaultValues={defaultValues}
                                 isHistoryOn={isHistoryOn}
-                            setIsHistoryOn={setIsHistoryOn}
-                            setHistory={setHistory}
-                            history={history}
-                            setDraggedItem={setDraggedItem}
-                            setSelectedMarker={setSelectedMarker}
-                            setDefaultValues = {setDefaultValues}
+                                setIsHistoryOn={setIsHistoryOn}
+                                setHistory={setHistory}
+                                history={history}
+                                setDraggedItem={setDraggedItem}
+                                setSelectedMarker={setSelectedMarker}
+                                setDefaultValues = {setDefaultValues}
                             ></ToolElements>
                         </MapContainer>
                         {contextHolder}

@@ -1,22 +1,22 @@
 import React from 'react';
 
-function WaitingOverlay({runClicked}) {
+function WaitingOverlay({runClicked, color='rgba(255, 255, 255, 0.15)'}) {
 
     const renderWaitingOverlay = () => {
         return (
             <div style = {
                 { 
-                    position: 'absolute',
+                    position: 'fixed',
                     overflow: 'hidden',
                     top: 0, 
                     left: 0, 
                     width: '100vw', 
                     height: '100vh', 
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)', 
+                    backgroundColor: color, 
                     display: 'flex', 
                     justifyContent: 'center', 
                     alignItems: 'center', 
-                    zIndex: 1000 
+                    zIndex: 1070 
                 }
             }>
             </div>
