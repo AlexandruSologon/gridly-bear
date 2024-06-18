@@ -125,8 +125,8 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
             renderBuses(data, markers, markerRefs);
             //TODO
             //function
-            const data2 = {buses2:[1,2,3]}
-            renderBusPercentages(data2, markers, markerRefs);
+            //const data2 = {buses2:[1,2,3]}
+            //renderBusPercentages(data2, markers, markerRefs);
             messageApi.open({
                 key,
                 type: 'success',
@@ -172,6 +172,12 @@ const renderBuses = (data, markers, markerRefs) => {
             const [hue, saturation, lightness] = data.buses[nr];
             style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
             style.borderRadius = '50%'
+
+            marker.valueOf().icon.src = '../images/Blank.png';
+            style.backgroundColor = 'rgba(25,49,86,1.0)';
+            style.fontSize = '16px';
+            style.innerText = `${data.buses[nr]}`;
+
             nr++;
         } else {
             style.border = ''
