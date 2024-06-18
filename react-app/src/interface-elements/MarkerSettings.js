@@ -64,7 +64,7 @@ export default function MarkerSettings({index, marker, handleParameterChange, ha
     const makeDefaultButton = <Button onClick={() => replaceDefaultValues(marker)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
     return (
         <Popup>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: '-apple-system, system-ui' }}>
                 <div style={{ marginBottom: '5px', fontSize: 17 }}>{marker.name}</div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <MarkerParameters
