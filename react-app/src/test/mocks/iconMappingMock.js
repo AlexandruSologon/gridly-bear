@@ -1,6 +1,6 @@
 import L from "leaflet";
 
-const mockImage = jest.fn();
+const mockImage = 'jest.fn()';
 
 export const iconMappingMock = {
     grid: new L.icon({

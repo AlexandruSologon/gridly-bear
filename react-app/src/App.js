@@ -17,12 +17,12 @@ import PolylineDecorator from './interface-elements/PolylineDecorator';
 import {
     defVal,
     mapCenter,
-    iconMapping,
     sidebarItems,
     lineDefaultColor,
     connectionDefaultColor,
     markerParametersConfig,
 } from './utils/constants';
+import {iconMapping} from "./utils/iconMapping";
 import {resetLinesRender, resetMarkerRender, findMarkerById, handleMarkerDelete} from './utils/api';
 import 'leaflet-polylinedecorator';
 import HistoryDrawer from './interface-elements/HistoryDrawer';
