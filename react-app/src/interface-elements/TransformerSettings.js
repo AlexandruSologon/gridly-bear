@@ -29,7 +29,7 @@ function TransformerSettings({ transformer }) {
     };
 
     return (
-        <div style={{ marginBottom: '5px' }}>
+        <div style={{ marginBottom: '5px', zIndex: 1000 }}>
             <div style={{marginBottom: '5px'}}>{"Select Transformer type:"}</div>
             <Select
                 value={selectedOption}

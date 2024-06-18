@@ -96,16 +96,21 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
 
     return (
         <Popup>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginBottom: '5px' }}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <div style={{marginBottom: '5px'}}>
                     {isElectricalLine ? "Electrical line" : "Direct Connection"}
                 </div>
-                <div style={{ marginBottom: '5px' }}>
-                    <DeleteButton onClick={() => handleLineDelete(index)} />
+                {isElectricalLine && (
+                    <div style={{marginBottom: '5px', zIndex: 1000}}>
+                        <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
+                    </div>
+                )}
+                <div style={{marginBottom: '5px'}}>
+                    <DeleteButton onClick={() => handleLineDelete(index)}/>
                 </div>
                 {isElectricalLine && (
-                    <div style={{ marginBottom: '5px', alignItems:'center' }}>
-                        <Menu line={line} />
+                    <div style={{ marginBottom: '5px', alignItems: 'center' }}>
+                    <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                         {makeDefaultButton}
                         <div>
                         Length (km):
@@ -117,7 +122,6 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
                             style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}>
                         </Input>
                         </div>
-                        <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                     </div>
                 )}
             </div>
