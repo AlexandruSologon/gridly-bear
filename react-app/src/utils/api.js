@@ -123,6 +123,10 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
         .then((data) => {
             renderLines(data, lines, markers, setLines);
             renderBuses(data, markers, markerRefs);
+            //TODO
+            //function
+            const data2 = {buses2:[1,2,3]}
+            renderBusPercentages(data2, markers, markerRefs);
             messageApi.open({
                 key,
                 type: 'success',
@@ -176,6 +180,25 @@ const renderBuses = (data, markers, markerRefs) => {
     }})
 }
 
+const renderBusPercentages = (data, markers, markerRefs) => {
+    let nr = 0;
+    markerRefs.current.forEach(marker => {
+        if (marker !== null) {
+            const markerIcon = marker.valueOf()._icon;
+            if (marker.options.icon.options.id ) {
+                const percentage = data.buses2[nr][0];
+                let overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.style.backgroundColor = 'rgba(255,255,255,1.0)';
+                overlay.style.fontSize = '16px';
+                overlay.innerText = `${percentage}`;
+                markerIcon.appendChild(overlay);
+                nr++;
+            }
+        }
+    })
+
+}
 
 export const resetMarkerRender = (markers, markerRefs) => {
     if(typeof markerRefs.current !== 'undefined')
