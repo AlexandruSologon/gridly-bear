@@ -6,12 +6,13 @@ function HistoryButton(props) {
     return(
         <div>
             <Tooltip title="history">
-                <Button className={'hasShadow'}
-                        style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}}
-                        size={'large'} onClick={() => props.setIsHistoryOn(!props.isHistoryOn)}
-                        type="default"
-                        shape="square"
-                        icon={<HistoryOutlined />}>
+                <Button 
+                    className={'hasShadow'} 
+                    style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}} 
+                    size={'large'} 
+                    onClick={() => props.setIsHistoryOn(!props.isHistoryOn)} 
+                    type="default" 
+                    shape="square" icon={<HistoryOutlined />}>
                 </Button>
             </Tooltip>
         </div>

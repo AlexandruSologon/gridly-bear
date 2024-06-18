@@ -7,13 +7,18 @@ import Search from "./Search";
 import HistoryButton from "./HistoryButton.js";
 import { useMap } from "react-leaflet";
 import ResetCanvasButton from "./ResetCanvasButton";
+import InfoButton from './InfoButton.js';
 
 function ToolElements(props) {
 
     const map = useMap();
     
     return (
-        <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
+        <ConfigProvider 
+            theme={{ 
+                token: { colorPrimary: '#193165' },
+            }}
+        >
             <div style={
                 {
                     position: "absolute",
@@ -56,6 +61,7 @@ function ToolElements(props) {
                         isHistoryOn={props.isHistoryOn} 
                         setIsHistoryOn={props.setIsHistoryOn}
                     ></HistoryButton>
+                    <InfoButton/>
                     <RunButton 
                         setHistory={props.setHistory} 
                         runClicked={props.runClicked} 
@@ -70,6 +76,7 @@ function ToolElements(props) {
                         history={props.history}
                         map={map}
                     />
+                    
                 </Flex>
             </div>
         </ConfigProvider>

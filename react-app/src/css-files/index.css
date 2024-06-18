@@ -109,6 +109,21 @@ input[type="file"] {
   border: none;
 }
 
+/* Change the color of the arrows */
+.slick-arrow {
+  color: black !important; /* Change this to your desired color */
+}
+
+/* Change the color of the slide indicators (dots) */
+.slick-dots li button {
+  color: black !important; /* Change this to your desired color */
+}
+
+/* Change the color of the active slide indicator (dot) */
+.slick-dots li.slick-active button {
+  color: #193165 !important; /* Change this to your desired color */
+}
+
 .lol {
 	position: absolute;
 	top: 70px;
