@@ -166,25 +166,34 @@ const renderLines = (data, lines, markers, setLines) => {
 const renderBuses = (data, markers, markerRefs) => {
     let nr = 0;
     markerRefs.current.forEach(marker => {
-        if(marker !== null) {
-        const  style = marker.valueOf()._icon.style;
-        if (marker.options.icon.options.id === "bus"){
-            const [hue, saturation, lightness] = data.buses[nr];
-            style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
-            style.borderRadius = '50%'
-
-            marker.valueOf().icon.src = '../images/Blank.png';
-            style.backgroundColor = 'rgba(25,49,86,1.0)';
-            style.fontSize = '16px';
-            style.innerText = `${data.buses[nr]}`;
-
-            nr++;
-        } else {
-            style.border = ''
-            style.borderRadius = ''
+        if (marker !== null) {
+            const style = marker.valueOf()._icon.style;
+            if (marker.options.icon.options.id === "bus") {
+                const [hue, saturation, lightness] = data.buses[nr];
+                const number = "1.00"; //TODO
+                
+                style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
+                style.borderRadius = '50%'
+                style.backgroundColor = 'rgba(25,49,86,1.0)';
+                /*            marker.valueOf().icon.src = '../images/Blank.png';
+                            style.backgroundColor = 'rgba(25,49,86,1.0)';
+                            style.fontSize = '16px';
+                            style.innerText = ` `;
+                */
+                marker.bindTooltip(`${number}`, {
+                    permanent: true,
+                    direction: 'center',
+                    className: `test-tooltip`
+                }).openTooltip();
+                nr++;
+            } else {
+                style.border = ''
+                style.borderRadius = ''
+                style.backgroundColor = ''
+            }
         }
-    }})
-}
+    });
+};
 
 const renderBusPercentages = (data, markers, markerRefs) => {
     let nr = 0;
@@ -216,6 +225,9 @@ export const resetMarkerRender = (markers, markerRefs) => {
             if (markers[i].type === 'bus') {
                 style.border = busDefaultColor + ' solid 6px'
                 style.borderRadius = '50%'
+                if (marker.getTooltip()) {
+                    marker.unbindTooltip();
+                }
             } else {
                 style.border = 'none'
                 style.borderRadius = ''
