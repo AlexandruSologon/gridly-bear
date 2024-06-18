@@ -1,7 +1,8 @@
-import pandapower as pp
-from ..src import net, jsonParser
+import math
 import unittest
-import json
+import pandapower as pp
+from ..src import net
+
 
 def basic_network():
     net = pp.create_empty_network(name="network")
@@ -19,6 +20,7 @@ def basic_network():
     pp.create_transformer(net, hv_bus=b1, lv_bus=b2, std_type="0.4 MVA 20/0.4 kV", name="Trafo")
     pp.create_line(net, from_bus=b2, to_bus=b3, length_km=0.1, name="Line", std_type="NAYY 4x50 SE")
     return net
+
 
 def simple_load_generator():
     net = pp.create_empty_network(name="network")
@@ -40,31 +42,65 @@ def simple_load_generator():
 
 class TestMyCases(unittest.TestCase):
 
-    def test_problematic_lines(self):
-        mynet = basic_network()
-        pp.runpp(mynet)
-        # print(net.res_bus)
-        self.assertTrue((not net.problem_lines(mynet).empty))
-        self.assertTrue(not len(net.problem_lines(mynet)) == 0)
+    def test_get_line_color0(self):
+        (h, s, l) = net.get_line_color(60)
+        self.assertEqual((h, s, l), (81.42857142857142, 100, 50))
 
-    def test_problem_buses(self):
-        mynet = basic_network()
-        pp.runpp(mynet)
-        self.assertTrue(len(net.problem_buses(mynet, 1.05, 0.95)) == 0)
+    def test_get_line_color1(self):
+        (h, s, l) = net.get_line_color(80)
+        self.assertEqual((h, s, l), (40, 100, 50))
+
+    def test_get_line_color2(self):
+        (h, s, l) = net.get_line_color(100)
+        self.assertEqual((h, s, l), (16.666666666666664, 100, 50))
+
+    def test_get_line_color3(self):
+        (h, s, l) = net.get_line_color(130)
+        self.assertEqual((h, s, l), (0, 100, 50))
+
+    def test_get_line_color4(self):
+        (h, s, l) = net.get_line_color(math.nan)
+        self.assertEqual((h, s, l), (0, 1, 44))
+
+    def test_get_bus_color0(self):
+        (h, s, l) = net.get_bus_color(1.03)
+        self.assertEqual((h, s, l), (92.99999999999997
+                                     , 100, 50))
+
+    def test_get_bus_color1(self):
+        (h, s, l) = net.get_bus_color(1.07)
+        self.assertEqual((h, s, l), (44.99999999999994
+                                     , 100, 50))
+
+    def test_get_bus_color2(self):
+        (h, s, l) = net.get_bus_color(1.11)
+        self.assertEqual((h, s, l), (12.499999999999877
+                                     , 100, 50))
+
+    def test_get_bus_color3(self):
+        (h, s, l) = net.get_bus_color(1.21)
+        self.assertEqual((h, s, l), (0, 100, 50))
+
+    def test_get_bus_color4(self):
+        (h, s, l) = net.get_bus_color(math.nan)
+        self.assertEqual((h, s, l), (0, 0, 39))
 
     def test_all_buses(self):
         mynet = basic_network()
         pp.runpp(mynet)
         self.assertTrue(not len(net.all_buses(mynet)) == 0)
 
-    def test_all_lines(self):
-        mynet = simple_load_generator()
-        pp.runpp(mynet)
-        self.assertTrue(len(net.problem_lines(mynet)) == 1)
+    def test_wasSimulated_true(self):
+        myNet = basic_network()
+        pp.runpp(myNet)
+        self.assertTrue(net.wasSimulated(myNet))
 
-    def test_not_yet_sim_all_buses(self):
-        mynet = basic_network()
-        self.assertTrue(not len(net.problem_lines(mynet)) == 0 )
+    def test_wasSimulated_false(self):
+        myNet = basic_network()
+        self.assertFalse(net.wasSimulated(myNet))
+        pp.runpp(myNet)
+        self.assertTrue(net.wasSimulated(myNet))
+
 
 if __name__ == '__main__':
     unittest.main()
