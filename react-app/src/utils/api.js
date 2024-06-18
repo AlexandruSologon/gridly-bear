@@ -115,7 +115,7 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
         messageApi.open(
             {key: key,
              type: 'error',
-             content: 'oopsie app threw error',
+             content: e.message,
              duration: 5,}
     ); return; }
     console.log('Sent over Data:', dat);

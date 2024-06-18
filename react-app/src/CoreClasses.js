@@ -9,15 +9,11 @@ class InvalidParameterInputException extends Error {
 class Component {
     assigner (p,type)  {
     for( const key in p)
-            if(p[key] !== null ) {
-                console.log(p)
-                console.log(this)
+            if(p[key] !== null && p[key] !== '' ) {
                 this[key] = p[key];
             }
                 else
-            {console.log(key)
-                console.log(markerParametersConfig[type].find(x => x.name === key))
-                console.log(markerParametersConfig[type].find(x => x.name === key).mandatory)
+            {
                     if(markerParametersConfig[type].find(x => x.name === key).mandatory === 'true'){
                         throw new InvalidParameterInputException(key +' parameter in not set')}
                     else
