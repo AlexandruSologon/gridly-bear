@@ -93,18 +93,18 @@ const LineSettings = ({ line, index, handleLineDelete, markers, markerRefs, line
 
     return (
         <Popup>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginBottom: '5px' }}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <div style={{marginBottom: '5px'}}>
                     {isElectricalLine ? "Electrical line" : "Direct Connection"}
                 </div>
-                <div style={{ marginBottom: '5px' }}>
-                    <DeleteButton onClick={() => handleLineDelete(index)} />
-                </div>
                 {isElectricalLine && (
-                    <div style={{ marginBottom: '5px' }}>
+                    <div style={{marginBottom: '5px', zIndex: 1000}}>
                         <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                     </div>
                 )}
+                <div style={{marginBottom: '5px'}}>
+                    <DeleteButton onClick={() => handleLineDelete(index)}/>
+                </div>
             </div>
         </Popup>
     );

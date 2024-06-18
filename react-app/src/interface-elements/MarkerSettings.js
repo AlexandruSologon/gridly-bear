@@ -29,9 +29,8 @@ function MarkerParameters({marker, handleParameterChange, handleTransReverse, ha
     if (type === 'trafo1'){
         return (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
-                <DeleteButton onClick={() => { handleMarkerDelete(marker.id); }}/>
                 <TransformerSettings transformer={marker}/>
+                <ReverseButton onClick={() => handleTransReverse(marker.id)}/>
             </div>
         )
     // Other markers
@@ -41,27 +40,27 @@ function MarkerParameters({marker, handleParameterChange, handleTransReverse, ha
             console.log('Parameters configuration not found for marker type:', type);
             return null;
         }
-    return parameterFields.map(param => (
-        <div  key={param.name} style={{ marginBottom: '5px' }}>
-            <ul>
-                <li>
+        return parameterFields.map(param => (
+            <div  key={param.name} style={{ marginBottom: '5px' }}>
+                <ul>
+                    <li>
 
-                {param.name.charAt(0).toUpperCase() + param.name.slice(1) +' '+ param.unit}:
-            <Input
-                type="text"
-                //placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
-                value={parameters[param.name] || ''}
-                onChange={(e) => handleParameterChange(id, param.name, e.target.value)}
-                size={'middle'}
-                style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}
-            /></li>
-            </ul>
-        </div>
-    ));
-}}
+                    {param.name.charAt(0).toUpperCase() + param.name.slice(1) +' '+ param.unit}:
+                <Input
+                    type="text"
+                    //placeholder={param.charAt(0).toUpperCase() + param.slice(1)}
+                    value={parameters[param.name] || ''}
+                    onChange={(e) => handleParameterChange(id, param.name, e.target.value)}
+                    size={'middle'}
+                    style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}
+                /></li>
+                </ul>
+            </div>
+        ));
+    }
+}
 
 export default function MarkerSettings({index, marker, handleParameterChange, handleMarkerDelete, handleTransReverse, replaceDefaultValues}) {
-    const notTransformer = (marker.type !== 'trafo1')
     const makeDefaultButton = <Button onClick={() => replaceDefaultValues(marker)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
     return (
         <Popup>
@@ -75,9 +74,7 @@ export default function MarkerSettings({index, marker, handleParameterChange, ha
                         handleMarkerDelete={handleMarkerDelete}
                     />
                     {makeDefaultButton}
-                    {notTransformer && (<DeleteButton onClick={() => {
-                        handleMarkerDelete(marker.id);
-                    }}/>)}
+                    <DeleteButton onClick={() => {handleMarkerDelete(marker.id);}}/>
                 </div>
             </div>
         </Popup>
