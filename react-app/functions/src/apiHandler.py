@@ -12,7 +12,7 @@ def handle_sim_request(data):
     # returns a dictionary in the following form: {'data' : 'b"..."}
     # of which we take the value corresponding to 'data' as a key
     try:
-        print("received data: " + str(data))
+        print("received client data: " + str(data))
         dat = json.loads(data)['data']
         net = jsonParser.parsejson(dat)  # parse the data
         res = {

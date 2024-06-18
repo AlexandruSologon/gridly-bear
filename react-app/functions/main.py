@@ -9,9 +9,11 @@ from src import apiHandler
 app = initialize_app()
 
 # Handles the posting of json data corresponding to the canvas state
-@https_fn.on_request(cors=options.CorsOptions(
+@https_fn.on_request(memory=2048,
+cors=options.CorsOptions(
     cors_origins="*",
-    cors_methods=["get", "post", "options"], ))
+    cors_methods=["get", "post", "options"], 
+))
 def cnvs_json_post(req: https_fn.CallableRequest) -> https_fn.Response:
     # returns a dictionary in the following form: {'data' : 'b"..."}
     # of which we take the value corresponding to 'data' as a key
