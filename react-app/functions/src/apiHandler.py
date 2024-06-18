@@ -15,7 +15,12 @@ def handle_sim_request(data):
         print("received data: " + str(data))
         dat = json.loads(data)['data']
         net = jsonParser.parsejson(dat)  # parse the data
-        res = {'buses': nt.all_bus_colors(net).to_json(), 'lines': nt.all_line_colors(net).to_json()}
+        res = {
+            'buses': nt.all_bus_colors(net).to_json(), 
+            'lines': nt.all_line_colors(net).to_json(),
+            'bus_results': nt.all_buses(net).to_json(),
+            'line_results': nt.all_lines(net).to_json()
+        }
         return {'data': {'status': "S", 'sim_result': res, 'message': "Success!"}}
     except nt.NetworkInvalidError as e:
         return json.dumps(
