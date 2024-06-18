@@ -107,7 +107,7 @@ export const defVal = {
     grid: {vm_pu: null},
     solar: {p_mw: null, vm_pu: null},
     wind: {p_mw: null, vm_pu: null},
-    line: {type: null}
+    line: {type: null},
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

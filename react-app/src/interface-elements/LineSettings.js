@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
+import {Button, Input} from "antd";
+import {SaveOutlined} from "@ant-design/icons";
 import {resetLinesRender, resetMarkerRender} from "../utils/api";
 
 function Menu({ line, markers, lines, markerRefs, setLines }) {
@@ -88,21 +90,38 @@ function Menu({ line, markers, lines, markerRefs, setLines }) {
     );
 }
 
-const LineSettings = ({ line, index, handleLineDelete, markers, markerRefs, lines, setLines }) => {
+const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, changeLineLength, markers, markerRefs, lines, setLines }) => {
     const isElectricalLine = line.connection === "electrical";
+    const makeDefaultButton = <Button onClick={() => replaceDefaultValues(line, true)} icon ={<SaveOutlined />} style={{border: '1px solid black'}}>Set as default</Button>
 
     return (
         <Popup>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginBottom: '5px' }}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <div style={{marginBottom: '5px'}}>
                     {isElectricalLine ? "Electrical line" : "Direct Connection"}
                 </div>
-                <div style={{ marginBottom: '5px' }}>
-                    <DeleteButton onClick={() => handleLineDelete(index)} />
+                {isElectricalLine && (
+                    <div style={{marginBottom: '5px', zIndex: 1000}}>
+                        <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
+                    </div>
+                )}
+                <div style={{marginBottom: '5px'}}>
+                    <DeleteButton onClick={() => handleLineDelete(index)}/>
                 </div>
                 {isElectricalLine && (
-                    <div style={{ marginBottom: '5px' }}>
-                        <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
+                    <div style={{ marginBottom: '5px', alignItems: 'center' }}>
+                    <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
+                        {makeDefaultButton}
+                        <div>
+                        Length (km):
+                    <Input
+                            type = 'text'
+                            value = {line.length}
+                            onChange={(e) => changeLineLength(line,e.target.value)}
+                            size={'middle'}
+                            style={{width: '180px', marginLeft: '10px', marginRight: '10px', marginTop: '10px'}}>
+                        </Input>
+                        </div>
                     </div>
                 )}
             </div>

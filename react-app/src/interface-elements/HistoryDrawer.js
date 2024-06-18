@@ -36,7 +36,7 @@ function HistoryDrawer(props) {
         >
         <div style={{height: '3%'}}></div>
             <h2 style={{
-                    fontFamily: 'Helvetica, sans-serif', // Changed font family
+                    fontFamily: '-apple-system, system-ui', // Changed font family
                     margin: '10px 0', // Added margin for spacing
                     padding: '10px',
                     textAlign: 'left',

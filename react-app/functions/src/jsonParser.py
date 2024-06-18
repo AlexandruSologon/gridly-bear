@@ -14,7 +14,6 @@ def parsejson(x):
         # the networks stored inside the string
         network = pp.create_empty_network()
         jsonrepr = json.loads(x)
-        # data = jsonrepr["data"]
         components = jsonrepr["components"]
         for component in components:
             match component["class"]:
