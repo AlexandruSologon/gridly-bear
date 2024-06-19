@@ -15,14 +15,16 @@ function HistoryDrawer(props) {
                     color: "#000",
                     width: '624px',
                     textAlign: 'center',
-                    transition: 'height 0.3s',
+                    transition: 'height 0.3s, border 0.3s',
                     marginRight: '30px',
                     height: props.isHistoryOn ? '600px' : '0px' ,
                     marginTop: '80px',
                     borderRadius: '8px',
                     boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)',
                     zIndex: 1005,
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    border: props.isHistoryOn ? 1 : 0,
+                    borderColor: '#d9d9d9'
                 }
             }}
             style={{
