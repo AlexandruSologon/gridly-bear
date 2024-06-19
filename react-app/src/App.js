@@ -389,6 +389,7 @@ export function ReactApp() {
         setLines(resetLinesRender(lines,markers))
         setMarkers(updatedMarkers);
         resetMarkerRender(updatedMarkers, markerRefs);
+        
     };
 
     const changeLineLength = (line, value) => {
@@ -504,7 +505,6 @@ export function ReactApp() {
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                     <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                 </Polyline>
                             ))}

@@ -28,6 +28,10 @@ function TransformerSettings({ transformer }) {
         transformer.transformerType = option.value
     };
 
+    const handleSelectClick = (event) => {
+        // event.stopPropagation(); //try to prevent modal parent from closing on select
+    }
+
     return (
         <div style={{ marginBottom: '5px', zIndex: 1000 }}>
             <div style={{marginBottom: '5px'}}>{"Select Transformer type:"}</div>
@@ -36,12 +40,15 @@ function TransformerSettings({ transformer }) {
                 onChange={handleChange}
                 options={options.map(option => ({ value: option, label: option }))}
                 isSearchable={true}
+                onMenuClose={handleSelectClick}
+                menuPortalTarget={document.body}
                 styles={{
                     control: styles => ({
                         ...styles,
                         width: '250px',
                         overflowY: 'scroll'
-                    })
+                    }),
+                    menuPortal: base => ({ ...base, zIndex: 9999 }) // Ensure the dropdown is always on top
                 }}
             />
         </div>
