@@ -98,6 +98,7 @@ export function ReactApp() {
                 type: draggedItem.type,
                 parameters,
             };
+            console.log(newMarker.parameters)
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
