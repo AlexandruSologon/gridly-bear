@@ -121,6 +121,7 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
     console.log('Sent over Data:', dat);
     cnvs_json_post(dat)
         .then((data) => {
+            console.log(data);
             renderLines(data, lines, markers, setLines);
             renderBuses(data, markers, markerRefs);
             //TODO
@@ -170,7 +171,8 @@ const renderBuses = (data, markers, markerRefs) => {
             const style = marker.valueOf()._icon.style;
             if (marker.options.icon.options.id === "bus") {
                 const [hue, saturation, lightness] = data.buses[nr];
-                const number = "1.00"; //TODO
+                console.log(data);
+               const number = data.bus_results[nr]; //TODO
                 
                 style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
                 style.borderRadius = '50%'
