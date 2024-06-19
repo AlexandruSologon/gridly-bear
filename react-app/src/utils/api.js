@@ -172,7 +172,7 @@ const renderBuses = (data, markers, markerRefs) => {
             if (marker.options.icon.options.id === "bus") {
                 const [hue, saturation, lightness] = data.buses[nr];
                 console.log(data);
-               const number = data.bus_results[nr]; //TODO
+               const number = (parseFloat(data.bus_results[nr])).toFixed(4);
                 
                 style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
                 style.borderRadius = '50%'

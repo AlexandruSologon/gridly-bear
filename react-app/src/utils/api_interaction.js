@@ -40,9 +40,11 @@ function handle_results(result) {
         //alert(result.data.message); //status E=error, S=success
         throw new Error(result.data.message);
     } else {
-        let simres = result.data.sim_result; //is json
-        let busarray = JSON.parse(simres.buses); //json array of buses
-        let linearray = JSON.parse(simres.lines); //json array of lines
-        return {'buses':busarray, 'lines':linearray};
+        const simres = result.data.sim_result; //is json
+        const busarray = JSON.parse(simres.buses); //json array of buses
+        const linearray = JSON.parse(simres.lines); //json array of lines
+        const busres = JSON.parse(simres.bus_results);
+        const lineres = JSON.parse(simres.line_results);
+        return {'buses':busarray, 'lines':linearray, 'bus_results': busres, 'line_results':lineres };
     }
 }
