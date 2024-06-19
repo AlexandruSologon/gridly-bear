@@ -105,16 +105,15 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
                         <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                     </div>
                 )}
-                <div style={{marginBottom: '5px'}}>
-                    <DeleteButton onClick={() => handleLineDelete(index)}/>
+                <div style={{marginBottom: '5px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    {makeDefaultButton}
+                    <DeleteButton onClick={() => handleLineDelete(index)}/> 
                 </div>
                 {isElectricalLine && (
                     <div style={{ marginBottom: '5px', alignItems: 'center' }}>
-                    <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
-                        {makeDefaultButton}
                         <div>
                         Length (km):
-                    <Input
+                        <Input
                             type = 'text'
                             value = {line.length}
                             onChange={(e) => changeLineLength(line,e.target.value)}
