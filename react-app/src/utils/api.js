@@ -2,88 +2,87 @@ import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../Core
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
 
 export const handleExport = (markerInputs, markers, lines) => {
-        const buses = [];
-        const components = [];
-        let indices = [0, 0, 0, 0, 0, 0, 0];
-        const busIdMap = new Map();
-        const transLines = [];
-        markerInputs.forEach((marker) => {
-            if(marker.name === "Bus")
-            {
-                const busIndex = indices[0];
-                indices[0] += 1;
-                let newBus;
-                if (busIndex === 0) newBus = new Bus(busIndex, marker.position, marker.parameters);
-                else newBus = new Bus(busIndex, marker.position, marker.parameters);
-                buses.push(newBus);
-                busIdMap.set(marker.id, busIndex);
+    const buses = [];
+    const components = [];
+    let indices = [0, 0, 0, 0, 0, 0, 0];
+    const busIdMap = new Map();
+    const transLines = [];
+    markerInputs.forEach((marker) => {
+        if(marker.name === "Bus")
+        {
+            const busIndex = indices[0];
+            indices[0] += 1;
+            let newBus;
+            if (busIndex === 0) newBus = new Bus(busIndex, marker.position, marker.parameters);
+            else newBus = new Bus(busIndex, marker.position, marker.parameters);
+            buses.push(newBus);
+            busIdMap.set(marker.id, busIndex);
+        }
+    })
+    for (let i = 0; i < lines.length; i++) {
+        const lineObject = lines[i]
+        const line = lineObject.busLine;
+        let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
+        let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
+        if (item1.name === 'Bus' && item2.name === 'Bus') {
+            components.push(new Line(indices[1],
+                busIdMap.get(line[0]),
+                busIdMap.get(line[1]),
+                item1.position.distanceTo(item2.position)/1000,
+                lineObject.type));
+            indices[1] += 1;
+        } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
+            if (item1.name === 'Bus') {
+                [item1,item2] = [item2, item1];
             }
-        })
-        for (let i = 0; i < lines.length; i++) {
-            const lineObject = lines[i]
-            const line = lineObject.busLine;
-            let item1 = binarySearch(markers, line[0], 0, markers.length - 1);
-            let item2 = binarySearch(markers, line[1], 0, markers.length - 1);
-            if (item1.name === 'Bus' && item2.name === 'Bus') {
-                components.push(new Line(indices[1],
-                    busIdMap.get(line[0]),
-                    busIdMap.get(line[1]),
-                    item1.position.distanceTo(item2.position)/1000,
-                    lineObject.type));
-                indices[1] += 1;
-            } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
-                if (item1.name === 'Bus') {
-                    [item1,item2] = [item2, item1];
-                }
-                const busIndex = busIdMap.get(item2.id);
-                switch(item1.name) {
-                    case 'Load':
-                        components.push(new Load(indices[2], busIndex, item1.parameters)  );
-                        indices[2] += 1;
-                        break;
-                    case 'Solar Panel':
-                    case 'Wind Turbine':
-                        components.push(new Generator(indices[3], busIndex, item1.parameters) );
-                        indices[3] += 1;
-                        break;
-                    case 'External Grid':
-                        components.push(new ExtGrid(indices[6], busIndex, item1.parameters));
-                        indices[6] += 1;
-                        break;
-                    case 'Transformer':
-                        let newTransLine = [item1.high, item1.low, item1.transformerType];
-                        let found = false;
-                        for (let i = 0; i < transLines.length; i++) {
-                            const item = transLines[i];
-                            if (item[0] === newTransLine[0] && item[1] === newTransLine[1]) {
-                                found = true;
-                                break;
-                            }
+            const busIndex = busIdMap.get(item2.id);
+            switch(item1.name) {
+                case 'Load':
+                    components.push(new Load(indices[2], busIndex, item1.parameters)  );
+                    indices[2] += 1;
+                    break;
+                case 'Solar Panel':
+                case 'Wind Turbine':
+                    components.push(new Generator(indices[3], busIndex, item1.parameters) );
+                    indices[3] += 1;
+                    break;
+                case 'External Grid':
+                    components.push(new ExtGrid(indices[6], busIndex, item1.parameters));
+                    indices[6] += 1;
+                    break;
+                case 'Transformer':
+                    let newTransLine = [item1.high, item1.low, item1.transformerType];
+                    let found = false;
+                    for (let i = 0; i < transLines.length; i++) {
+                        const item = transLines[i];
+                        if (item[0] === newTransLine[0] && item[1] === newTransLine[1]) {
+                            found = true;
+                            break;
                         }
-                        if (!found) {
-                            transLines.push(newTransLine);
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                    }
+                    if (!found) {
+                        transLines.push(newTransLine);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
+    }
 
-        for (let i = 0; i < transLines.length; i++) {
-            const line = transLines[i];
-            components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), line[2]));
-            indices[4] +=1;
-        }
+    for (let i = 0; i < transLines.length; i++) {
+        const line = transLines[i];
+        components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), line[2]));
+        indices[4] +=1;
+    }
 
-        const total = buses.concat(components);
-        const networkData = JSON.stringify(new Network(total));
-        console.log('Exported Data:', networkData);
-        return networkData;
+    const total = buses.concat(components);
+    const networkData = JSON.stringify(new Network(total));
+    console.log('Exported Data:', networkData);
+    return networkData;
+}
 
-};
-
-const renderLines = (data, lines, markers, setLines) => {
+export const renderLines = (data, lines, markers, setLines) => {
     let nr = -1;
     const uL = lines.map((line) => {
             if (findMarkerById(line.busLine[0], markers).name === findMarkerById(line.busLine[1], markers).name) {
@@ -129,7 +128,8 @@ export const resetMarkerRender = (markers, markerRefs) => {
                 style.borderRadius = ''
             }
         }
-    }}
+    }
+}
 
 export const resetLinesRender = (lines, markers) => {
     return lines.map((line) => {
