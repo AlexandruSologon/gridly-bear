@@ -78,12 +78,14 @@ function Menu({ line, markers, lines, markerRefs, setLines }) {
                 onChange={handleChange}
                 options={options.map(option => ({ value: option, label: option }))}
                 isSearchable={true}
+                menuPortalTarget={document.body}
                 styles={{
                     control: styles => ({
                         ...styles,
                         width: '250px',
                         overflowY: 'scroll'
-                    })
+                    }),
+                    menuPortal: base => ({ ...base, zIndex: 9999 }) // Ensure the dropdown is always on top
                 }}
             />
         </div>
