@@ -147,23 +147,6 @@ input[type="file"] {
 	right: 40px;
 }
 
-/*.percentage-tooltip {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 30px;
-	height: 30px;
-	font-size: 12px;
-	font-weight: bold;
-	border-radius: 50%;
-	line-height: 30px;
-	pointer-events: none;
-	box-sizing: border-box;
-	border: none;
-	padding: 0;
-	margin: 0;
-}*/
-
 /* Modifying tooltip style to fit into marker*/
 .leaflet-tooltip.test-tooltip {
 	/*positioning*/

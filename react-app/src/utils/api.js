@@ -131,13 +131,8 @@ export const onRunButtonClick = (markers, runClicked, setRunClicked, setIsMapLoc
     console.log('Sent over Data:', dat);
     cnvs_json_post(dat)
         .then((data) => {
-            console.log(data);
             renderLines(data, lines, markers, setLines);
             renderBuses(data, markers, markerRefs);
-            //TODO
-            //function
-            //const data2 = {buses2:[1,2,3]}
-            //renderBusPercentages(data2, markers, markerRefs);
             messageApi.open({
                 key,
                 type: 'success',
@@ -186,17 +181,12 @@ export const renderBuses = (data, markers, markerRefs) => {
             const style = marker.valueOf()._icon.style;
             if (marker.options.icon.options.id === "bus") {
                 const [hue, saturation, lightness] = data.buses[nr];
-                console.log(data);
-               const number = (parseFloat(data.res_buses[nr])).toFixed(4);
+                const number = (parseFloat(data.res_buses[nr])).toFixed(4);
                 
                 style.border = `hsl(${hue}, ${saturation}%, ${lightness}%) solid 6px`;
                 style.borderRadius = '50%'
                 style.backgroundColor = 'rgba(25,49,86,1.0)';
-                /*            marker.valueOf().icon.src = '../images/Blank.png';
-                            style.backgroundColor = 'rgba(25,49,86,1.0)';
-                            style.fontSize = '16px';
-                            style.innerText = ` `;
-                */
+
                 marker.bindTooltip(`${number}`, {
                     permanent: true,
                     direction: 'center',
@@ -211,26 +201,6 @@ export const renderBuses = (data, markers, markerRefs) => {
         }
     });
 };
-
-const renderBusPercentages = (data, markers, markerRefs) => {
-    let nr = 0;
-    markerRefs.current.forEach(marker => {
-        if (marker !== null) {
-            const markerIcon = marker.valueOf()._icon;
-            if (marker.options.icon.options.id ) {
-                const percentage = data.buses2[nr][0];
-                let overlay = document.createElement('div');
-                overlay.className = 'overlay';
-                overlay.style.backgroundColor = 'rgba(255,255,255,1.0)';
-                overlay.style.fontSize = '16px';
-                overlay.innerText = `${percentage}`;
-                markerIcon.appendChild(overlay);
-                nr++;
-            }
-        }
-    })
-
-}
 
 export const resetMarkerRender = (markers, markerRefs) => {
     if(typeof markerRefs.current !== 'undefined')
