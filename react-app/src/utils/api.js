@@ -28,7 +28,7 @@ export const handleExport = (markerInputs, markers, lines) => {
             components.push(new Line(indices[1],
                 busIdMap.get(line[0]),
                 busIdMap.get(line[1]),
-                item1.position.distanceTo(item2.position)/1000,
+                line.length,
                 lineObject.type));
             indices[1] += 1;
         } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
@@ -51,7 +51,7 @@ export const handleExport = (markerInputs, markers, lines) => {
                     indices[6] += 1;
                     break;
                 case 'Transformer':
-                    let newTransLine = [item1.high, item1.low, item1.transformerType];
+                    let newTransLine = [item1.high, item1.low, item1.parameters.type];
                     let found = false;
                     for (let i = 0; i < transLines.length; i++) {
                         const item = transLines[i];
@@ -80,7 +80,9 @@ export const handleExport = (markerInputs, markers, lines) => {
     const networkData = JSON.stringify(new Network(total));
     console.log('Exported Data:', networkData);
     return networkData;
-}
+
+};
+
 
 export const renderLines = (data, lines, markers, setLines) => {
     let nr = -1;
