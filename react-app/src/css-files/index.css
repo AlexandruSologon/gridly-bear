@@ -146,3 +146,24 @@ input[type="file"] {
 	top: 70px;
 	right: 40px;
 }
+
+/* Modifying tooltip style to fit into marker*/
+.leaflet-tooltip.test-tooltip {
+	/*positioning*/
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 50px;
+	height: 50px;
+	background-color: rgba(25,49,86,1);
+	transform: translate(92%);
+	border: 2px solid rgba(25,49,86,1);
+	border-radius: 50%; /*making tooltip into a circle*/
+	box-shadow: none;
+	padding: 0; 
+	margin: 0; 
+	color: white;
+	font-size: 14px;
+	font-weight: bold;
+	box-sizing: border-box;
+}
