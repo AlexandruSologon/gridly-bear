@@ -1,4 +1,4 @@
-import { Divider, Modal, Carousel, Image, Space } from "antd";
+import { Divider, Modal, Carousel, Image } from "antd";
 import dragdroptutorial from '../images/dragdroptutorial.gif';
 import makelinetutorial from '../images/makelinetutorial.gif';
 import connectwithbuses from '../images/connectwithbuses.png';
