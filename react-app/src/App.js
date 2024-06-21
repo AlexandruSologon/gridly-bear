@@ -13,7 +13,6 @@ import ToolElements from './interface-elements/ToolElements';
 import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
-import LineResultMarkers from './interface-elements/LineResultMarkers';
 import Scale from './interface-elements/Scale';
 
 import {
