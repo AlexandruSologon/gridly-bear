@@ -8,7 +8,23 @@ import {CaretRightFilled} from '@ant-design/icons';
  * @param {*} onRunButtonClick The action to be taken by the run button.
  * @returns 
  */
-function RunButton({runClicked, onRunButtonClick}) {
+function RunButton(
+    {
+        runClicked, 
+        markers, 
+        setRunClicked, 
+        setIsMapLocked, 
+        lines, 
+        setLines, 
+        setMarkers, 
+        markerRefs, 
+        messageApi, 
+        history, 
+        setHistory, 
+        map,
+        onRunButtonClick
+    }) {
+
     return (
         <Button data-testid="run-button"
                 className={'hasShadow'}

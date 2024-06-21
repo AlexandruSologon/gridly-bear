@@ -4,7 +4,7 @@ import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
 import { message, ConfigProvider, Slider } from "antd";
 import React, {useState, useRef} from 'react';
-import { MapContainer, Marker, Polyline, ZoomControl, ScaleControl } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
 
 import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
@@ -47,6 +47,7 @@ export function ReactApp() {
     const [isHistoryOn, setIsHistoryOn] = useState(false);
     const [history, setHistory] = useState([]);
     const [highlightedMarker, setHighlightedMarker] = useState(null);
+    
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -410,6 +411,7 @@ export function ReactApp() {
         setLines(resetLinesRender(lines,markers))
         setMarkers(updatedMarkers);
         resetMarkerRender(updatedMarkers, markerRefs);
+        
     };
 
     const changeLineLength = (line, value) => {
@@ -474,14 +476,13 @@ export function ReactApp() {
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
-                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:620, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:'50vw', translate: '-50%', bottom:15}} onChange={(e) => setMapOpacity(e/100)} />
             </ConfigProvider>
             <div
                 style={{
                     position: 'relative',
                     flex: '1',
                     height: '100%',
-                    marginLeft: '5px'
                 }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
@@ -535,12 +536,11 @@ export function ReactApp() {
                                           pathOptions={{color: line.color}}
                                           positions={[line.position1, line.position2]}
                                           ref={(ref) => (lineRefs.current[index] = ref)}
-                                          renderer={L.canvas({padding:0.5, tolerance:15})}
+                                          renderer={L.canvas({padding: 0.5,tolerance:15})}
                                           eventHandlers={{
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                     <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                 </Polyline>
                             ))}
@@ -566,7 +566,8 @@ export function ReactApp() {
                                 setDraggedItem={setDraggedItem}
                                 setSelectedMarker={setSelectedMarker}
                                 setDefaultValues = {setDefaultValues}
-                            ></ToolElements>
+                        ></ToolElements>
+                        <Scale />
                         </MapContainer>
                         {contextHolder}
                 </div>

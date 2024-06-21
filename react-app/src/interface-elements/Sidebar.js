@@ -130,7 +130,9 @@ function Sidebar(state) {
                         marginTop: '80px',
                         borderRadius: '8px',
                         boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)',
-                        scrollbarWidth: 'none'
+                        scrollbarWidth: 'none',
+                        border: 1,
+                        borderColor: '#d9d9d9'
                     }
                 }}
                 style={{
