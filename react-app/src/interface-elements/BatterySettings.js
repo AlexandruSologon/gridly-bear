@@ -25,7 +25,7 @@ function BatterySettings({ battery, handleParameterChange }) {
 
 function BatteryParams({ battery, handleParameterChange }) {
     const parameterFields = markerParametersConfig['battery'];
-    return parameterFields.map(param => (
+    return parameterFields.filter(x => x.name !== 'isGen').map(param => (
         <div  key={param.name} style={{ marginBottom: '5px' }}>
             <ul>
                 <li>

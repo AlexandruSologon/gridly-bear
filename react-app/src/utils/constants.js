@@ -1,8 +1,4 @@
 import L from 'leaflet';
-
-const size = 60;
-const anchor = 30;
-
 export const mapCenter = [51.91145215945188, 4.478236914116433];
 
 export const resultIcon = function(line) {
@@ -13,66 +9,6 @@ export const resultIcon = function(line) {
     return div;
 }
 
-export const iconMapping = {
-    grid: new L.icon({
-        id: 'grid',
-        iconRetinaUrl: require('../images/grid.png'),
-        iconUrl: require('../images/grid.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    solar: new L.icon({
-        id: 'solar',
-        iconRetinaUrl: require('../images/solarPanel.png'),
-        iconUrl: require('../images/solarPanel.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    bus: new L.icon({
-        id: 'bus',
-        iconUrl: require('../images/bus.png'),
-        iconRetinaUrl: require('../images/bus.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [48, 48],
-        className: 'dot'
-
-    }),
-    load: new L.icon({
-        id: 'load',
-        iconRetinaUrl: require('../images/load.png'),
-        iconUrl: require('../images/load.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    wind: new L.icon({
-        id: 'wind',
-        iconRetinaUrl: require('../images/windTurbine.png'),
-        iconUrl: require('../images/windTurbine.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    trafo1: new L.icon({
-        id: 'trafo1',
-        iconRetinaUrl: require('../images/transformer.png'),
-        iconUrl: require('../images/transformer.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    battery: new L.icon({
-        id: 'battery',
-        iconRetinaUrl: require('../images/battery.png'),
-        iconUrl: require('../images/battery.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    })
-};
 
 export const sidebarItems = [
     { id: 1, name: 'Wind Turbine', type: 'wind' },
@@ -93,7 +29,8 @@ export const markerParametersConfig = {
     grid: [{name:'vm_pu', unit:'(p.u)', mandatory: 'true'}],
     solar: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)', mandatory:'false'}],
     wind: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)',mandatory:'false'}],
-    battery: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name: 'max_e_mwh', unit:'(MWh)', mandatory:'true'}, {name: 'q_mvar', unit:'(MVar)', mandatory:'false'}]
+    battery: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name: 'max_e_mwh', unit:'(MWh)', mandatory:'true'},
+        {name: 'q_mvar', unit:'(MVar)', mandatory:'false'}, {name:'isGen', unit:'', mandatory:'true'}],
 };
 
 export const binarySearch = function(arr, x, start, end) {

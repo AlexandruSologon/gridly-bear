@@ -1,6 +1,6 @@
 import { LatLng } from "leaflet";
 import { resetLinesRender, resetMarkerRender } from "./api";
-import { iconMapping } from "./constants";
+import { iconMapping } from "./iconMapping";
 
 export default class CanvasState {
 
