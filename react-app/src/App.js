@@ -18,16 +18,15 @@ import Scale from './interface-elements/Scale';
 import {
     defVal,
     mapCenter,
-    iconMapping,
     sidebarItems,
     lineDefaultColor,
     connectionDefaultColor,
     markerParametersConfig, resultIcon,
 } from './utils/constants';
+import {iconMapping} from './utils/iconMapping'
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
 import HistoryDrawer from './interface-elements/HistoryDrawer';
-import L from "leaflet";
 
 
 export function ReactApp() {
@@ -434,20 +433,6 @@ export function ReactApp() {
                 [component.type]: {...newValue[component.type], [paramName]: value}
             };
         }}
-
-        if (component.type === "battery") {
-            newValue = {
-                ...newValue,
-                [component.type]: {...newValue[component.type], ["isGen"]: component.isGen}
-            };
-        }
-
-        if (component.type === "trafo1") {
-            newValue = {
-                ...newValue,
-                [component.type]: {...newValue[component.type], ["type"]: component.transformerType}
-            };
-        }
         setDefaultValues(newValue);
     }
         else {

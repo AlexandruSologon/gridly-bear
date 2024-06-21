@@ -48,7 +48,7 @@ function MarkerParameters({marker, handleParameterChange, handleTransReverse, ha
             console.log('Parameters configuration not found for marker type:', type);
             return null;
         }
-        return parameterFields.map(param => (
+        return parameterFields.filter(x => x.name !== 'isGen').map(param => (
             <div  key={param.name} style={{ marginBottom: '5px' }}>
                 <ul>
                     <li>
