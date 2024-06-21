@@ -5,7 +5,7 @@ import { useState } from "react";
 
 function InfoButton(props) {
 
-    const [infoActive, setInfoActive] = useState(false);
+    const [infoActive, setInfoActive] = useState(true);
 
     return(
         <div>
