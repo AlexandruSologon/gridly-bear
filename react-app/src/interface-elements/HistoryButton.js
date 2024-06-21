@@ -5,7 +5,7 @@ function HistoryButton(props) {
 
     return(
         <div>
-            <Tooltip title="history">
+            <Tooltip title="History">
                 <Button 
                     className={'hasShadow'} 
                     style={{width: 40, boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)'}} 

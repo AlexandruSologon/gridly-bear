@@ -15,7 +15,7 @@ const refreshCanvas = () => {
 
 return (
     <div>
-            <Tooltip title="refresh canvas">
+            <Tooltip title="Refresh Canvas">
                     <Button className={'hasShadow'} style={{width: 40}} size={'large'}
                             onClick={() => refreshCanvas()} type="default" shape="square"
                             icon={<ReloadOutlined />}>

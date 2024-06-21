@@ -9,7 +9,7 @@ function InfoButton(props) {
 
     return(
         <div>
-            <Tooltip title="help">
+            <Tooltip title="Help">
                 <Button 
                     className={'hasShadow'}
                     style={{width: 40}}
