@@ -86,9 +86,10 @@ function CarouselFilled() {
                     <Image preview={false} width="40%" src={settingstutorial} />
                     <Divider type="vertical"/>
                     <div style={{display:'flex', flexDirection: 'column'}}>
-                        <p>right click elements to enter parameters for them</p>
+                        <p>Right click elements to enter parameters for them</p>
                         <p>'Set as default' to save the current parameters for any new component of the same type</p>
                         <p>Make sure not to leave any parameters empty in order to run your simulation</p>
+                        <p style={{color: '#FF0000'}}>Note - Changing line length will not have an effect on the placement of any components. This means that the components' position on the map may not match reality.</p>
                     </div>
                 </div>
             </div>
