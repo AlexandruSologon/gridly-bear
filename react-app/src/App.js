@@ -13,6 +13,7 @@ import ToolElements from './interface-elements/ToolElements';
 import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
+import LineResultMarkers from './interface-elements/LineResultMarkers';
 import Scale from './interface-elements/Scale';
 
 import {
@@ -23,10 +24,12 @@ import {
     lineDefaultColor,
     connectionDefaultColor,
     markerParametersConfig,
+    resultIcon
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
 import HistoryDrawer from './interface-elements/HistoryDrawer';
+import { LatLng } from 'leaflet';
 
 
 export function ReactApp() {
@@ -154,7 +157,8 @@ export function ReactApp() {
                             // ID of start marker and end marker sorted
                             busLine: [selected.id, current.id].sort(),
                             arrow: 'none',
-                            connection: connection
+                            connection: connection,
+                            value: 50
                         };
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
@@ -477,8 +481,17 @@ export function ReactApp() {
                                         handleParameterChange={handleParameterChange}
                                         handleMarkerDelete={handleMarkerDelete}
                                         handleTransReverse={handleTransReverse}
-                                        replaceDefaultValues = {replaceDefaultValues}/>/>
+                                        replaceDefaultValues = {replaceDefaultValues}/>
                                 </Marker>))}
+                                {lines.filter(line => line.value !== null).map((line, index) => (
+                                    <Marker key={index}
+                                            draggable={false}
+                                            clickable={false}
+                                            icon={resultIcon(line)}
+                                            interactive={false}
+                                            position={[(line.position1.lat + line.position2.lat)/2, (line.position1.lng + line.position2.lng)/2]}
+                                    />
+                                ))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
                                           weight={10}
@@ -492,7 +505,7 @@ export function ReactApp() {
                                           }}>
                                     <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines}></LineSettings>
                                 </Polyline>
-                            ))}
+                            ))} 
                             <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>
                             <ZoomControl position="bottomright" />
                             <ToolElements

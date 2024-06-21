@@ -62,7 +62,7 @@ def get_line_color(line, safe_below=70, bad_above=90):
             # when line > bad_above red return max value red
             hue = max(hue - 95 - (line - bad_above) * (25 / (120 - bad_above)), 0)
         return hue, 100, 50
-    return 0, 1, 44
+    return 0, 1, 44, line
 
 
 # safe_within: distance from one that's determined safe

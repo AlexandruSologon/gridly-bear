@@ -1,4 +1,6 @@
 import L from 'leaflet';
+import '../css-files/index.css';
+import { Tooltip } from "antd";
 
 const size = 60;
 const anchor = 30;
@@ -65,6 +67,11 @@ export const iconMapping = {
         iconSize: [size, size]
     })
 };
+
+export const resultIcon = function(line) {
+    console.log(line.value)
+    return L.divIcon({className: 'resultMarker', html: line.value !== null ? line.value.toString() + "%" : ""});
+}
 
 export const sidebarItems = [
     { id: 1, name: 'Wind Turbine', type: 'wind' },

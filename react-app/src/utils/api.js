@@ -140,8 +140,9 @@ const renderLines = (data, lines, markers, setLines) => {
     const uL = lines.map((line) => {
             if (findMarkerById(line.busLine[0], markers).name === findMarkerById(line.busLine[1], markers).name) {
                 nr++;
-                const [hue, saturation, lightness] = data.lines[nr];
+                const [hue, saturation, lightness, value] = data.lines[nr];
                 line.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                line.value = value;
             }
             return line;
         }
@@ -189,6 +190,7 @@ export const resetLinesRender = (lines, markers) => {
                 if ((findMarkerById(line.busLine[0], markers).type === 'bus')
                     && (findMarkerById(line.busLine[1], markers).type === 'bus')) {
                     line.color = lineDefaultColor;
+                    //line.value = null;
                 }
                 return line
             }
