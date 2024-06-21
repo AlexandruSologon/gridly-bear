@@ -4,6 +4,13 @@
 
 .leaflet-control-geosearch {  display:none; left: 300px;  z-index: 10002; }
 
+.slick-dots li button:before{
+  background-color: blueviolet !important;
+}
+.slick-dots li.slick-active button:before{
+  background-color: blueviolet !important;
+}
+
 .dot {
   width: 48px;
   height: 48px;
