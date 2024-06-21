@@ -440,14 +440,13 @@ export function ReactApp() {
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
-                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:620, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:'50vw', translate: '-50%', bottom:15}} onChange={(e) => setMapOpacity(e/100)} />
             </ConfigProvider>
             <div
                 style={{
                     position: 'relative',
                     flex: '1',
                     height: '100%',
-                    marginLeft: '5px'
                 }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
