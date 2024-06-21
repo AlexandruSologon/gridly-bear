@@ -157,7 +157,7 @@ export function ReactApp() {
                             busLine: [selected.id, current.id].sort(),
                             arrow: 'none',
                             connection: connection,
-                            value: 50
+                            value: null
                         };
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
