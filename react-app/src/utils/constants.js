@@ -69,7 +69,6 @@ export const iconMapping = {
 };
 
 export const resultIcon = function(line) {
-    console.log(line.position1);
     return L.divIcon({className: 'resultMarker', html: line.value !== null ? line.value.toString() + "%" : ""});
 }
 
