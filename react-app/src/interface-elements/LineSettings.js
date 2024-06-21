@@ -98,7 +98,7 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
 
     return (
         <Popup>
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: '-apple-system, system-ui'}}>
                 <div style={{marginBottom: '5px'}}>
                     {isElectricalLine ? "Electrical line" : "Direct Connection"}
                 </div>
