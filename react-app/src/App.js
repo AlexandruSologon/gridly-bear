@@ -546,7 +546,6 @@ export function ReactApp() {
                                           pathOptions={{color: line.color}}
                                           positions={[line.position1, line.position2]}
                                           ref={(ref) => (lineRefs.current[index] = ref)}
-                                          renderer={L.canvas({padding: 0.5,tolerance:15})}
                                           eventHandlers={{
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
