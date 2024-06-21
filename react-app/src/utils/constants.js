@@ -1,70 +1,14 @@
 import L from 'leaflet';
-
-const size = 60;
-const anchor = 30;
-
 export const mapCenter = [51.91145215945188, 4.478236914116433];
 
-export const iconMapping = {
-    grid: new L.icon({
-        id: 'grid',
-        iconRetinaUrl: require('../images/grid.png'),
-        iconUrl: require('../images/grid.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    solar: new L.icon({
-        id: 'solar',
-        iconRetinaUrl: require('../images/solarPanel.png'),
-        iconUrl: require('../images/solarPanel.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    bus: new L.icon({
-        id: 'bus',
-        iconUrl: require('../images/bus.png'),
-        iconRetinaUrl: require('../images/bus.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [48, 48],
-        className: 'dot'
+export const resultIcon = function(line) {
+    const div =  L.divIcon({className: 'resultMarker', html: line.value !== null ? line.value.toString() + "%" : ""});
+    div.options.iconSize = [64,32]
+    div.options.iconAnchor = [24,8]
 
-    }),
-    load: new L.icon({
-        id: 'load',
-        iconRetinaUrl: require('../images/load.png'),
-        iconUrl: require('../images/load.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    wind: new L.icon({
-        id: 'wind',
-        iconRetinaUrl: require('../images/windTurbine.png'),
-        iconUrl: require('../images/windTurbine.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    trafo1: new L.icon({
-        id: 'trafo1',
-        iconRetinaUrl: require('../images/transformer.png'),
-        iconUrl: require('../images/transformer.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    }),
-    battery: new L.icon({
-        id: 'battery',
-        iconRetinaUrl: require('../images/battery.png'),
-        iconUrl: require('../images/battery.png'),
-        iconAnchor: [anchor, anchor],
-        popupAnchor:[0, -anchor],
-        iconSize: [size, size]
-    })
-};
+    return div;
+}
+
 
 export const sidebarItems = [
     { id: 1, name: 'Wind Turbine', type: 'wind' },
@@ -78,14 +22,15 @@ export const sidebarItems = [
 
 
 export const markerParametersConfig = {
-    bus: [{name:'voltage', unit:'(p.u)'}],
-    trafo1: [{name:'type', unit: ''}],
-    switch: [{name:'type', unit: ''}],
-    load: [{name:'p_mv',unit:'(kW)'}, {name:'q_mvar',unit:'(kVar)'}],
-    grid: [{name:'voltage', unit:'(p.u)'}],
-    solar: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
-    wind: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
-    //battery: ['net', 'p_mw']
+    bus: [{name:'vn_kv', unit:'(kV)', mandatory: 'true'}],
+    trafo1: [{name:'type', unit: '', mandatory: 'true'}],
+    switch: [{name:'type', unit: '', mandatory: 'true'}],
+    load: [{name:'p_mv',unit:'(kW)', mandatory:'true'}, {name:'q_mvar',unit:'(kVar)', mandatory: 'true'}],
+    grid: [{name:'vm_pu', unit:'(p.u)', mandatory: 'true'}],
+    solar: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)', mandatory:'false'}],
+    wind: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)',mandatory:'false'}],
+    battery: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name: 'max_e_mwh', unit:'(MWh)', mandatory:'true'},
+        {name: 'q_mvar', unit:'(MVar)', mandatory:'false'}, {name:'isGen', unit:'', mandatory:'true'}],
 };
 
 export const binarySearch = function(arr, x, start, end) {
@@ -101,13 +46,14 @@ export const binarySearch = function(arr, x, start, end) {
 }
 
 export const defVal = {
-    bus : {voltage: null},
+    bus : {vn_kv: null},
     trafo1: {type: null},
     load: {p_mv: null, q_mvar: null},
-    grid: {voltage: null},
+    grid: {vm_pu: null},
     solar: {p_mw: null, vm_pu: null},
     wind: {p_mw: null, vm_pu: null},
-    line: {type: null}
+    line: {type: null},
+    battery: {p_mw: null, max_energy: null, q_mvar: null, isGen: false}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

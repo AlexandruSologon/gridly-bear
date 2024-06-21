@@ -130,7 +130,9 @@ function Sidebar(state) {
                         marginTop: '80px',
                         borderRadius: '8px',
                         boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.3)',
-                        scrollbarWidth: 'none'
+                        scrollbarWidth: 'none',
+                        border: 1,
+                        borderColor: '#d9d9d9'
                     }
                 }}
                 style={{
@@ -145,7 +147,7 @@ function Sidebar(state) {
                 <h2 style={{
                         fontSize: isSidebarOn ? '18px' : '0px' ,
                         transition: 'font-size 0.2s' , // Increased font size
-                        fontFamily: 'Helvetica, sans-serif', // Changed font family
+                        fontFamily: '-apple-system, system-ui', // Changed font family
                         margin: '10px 0', // Added margin for spacing
                         padding: '10px',
                         textAlign: 'left',

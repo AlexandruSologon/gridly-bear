@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app"; //Import the functions you need from the SDKs you need for firebase
 import { getFunctions, httpsCallable } from "firebase/functions";
-//import {connectFunctionsEmulator} from "firebase/functions";
+//  import {connectFunctionsEmulator} from "firebase/functions";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD7n865HujlU9MJe9uQ1H4rxMjv_dTIDqQ",
@@ -15,7 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);//App initialization
 const functions = getFunctions(app);//Get functions
 // connectFunctionsEmulator(functions, 'localhost', 5001); //don't use localhost in deployment //Set connection to local emulator
-const post = httpsCallable(functions, 'cnvs_json_post'); //create callable request
+const post = httpsCallable(functions, 'cnvs_json_post', {timeout: 200000}); //create callable request with timeout at 20 seconds
 
 /**
  * 
@@ -40,9 +40,11 @@ function handle_results(result) {
         //alert(result.data.message); //status E=error, S=success
         throw new Error(result.data.message);
     } else {
-        let simres = result.data.sim_result; //is json
-        let busarray = JSON.parse(simres.buses); //json array of buses
-        let linearray = JSON.parse(simres.lines); //json array of lines
-        return {'buses':busarray, 'lines':linearray};
+        const simres = result.data.sim_result; //is json
+        const busarray = JSON.parse(simres.buses); //json array of buses
+        const linearray = JSON.parse(simres.lines); //json array of lines
+        const l = JSON.parse(simres.line_results)
+        const b = JSON.parse(simres.bus_results)
+        return {'buses':busarray, 'lines':linearray, 'res_lines':l, 'res_buses':b};
     }
 }

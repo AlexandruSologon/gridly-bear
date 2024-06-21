@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 function TransformerSettings({ transformer }) {
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [value, setValue] = useState(null);
 
     const options = [
         '160 MVA 380/110 kV',
@@ -21,27 +21,32 @@ function TransformerSettings({ transformer }) {
         '0.63 MVA 10/0.4 kV',
         '63/25/38 MVA 110/20/10 kV',
         '63/25/38 MVA 110/10/10 kV'
-    ];
+    ].map(x => ({value:x, label:x}));
+
+
 
     const handleChange = (option) => {
-        setSelectedOption(option);
-        transformer.transformerType = option.value
+        setValue(option)
+        transformer.parameters.type = option.value;
+        console.log(transformer.parameters.type)
     };
 
     return (
-        <div style={{ marginBottom: '5px' }}>
+        <div style={{ marginBottom: '5px', zIndex: 1000 }}>
             <div style={{marginBottom: '5px'}}>{"Select Transformer type:"}</div>
             <Select
-                value={selectedOption}
+                value={value}
                 onChange={handleChange}
-                options={options.map(option => ({ value: option, label: option }))}
+                options={options}
                 isSearchable={true}
+                menuPortalTarget={document.body}
                 styles={{
                     control: styles => ({
                         ...styles,
                         width: '250px',
                         overflowY: 'scroll'
-                    })
+                    }),
+                    menuPortal: base => ({ ...base, zIndex: 9999 }) // Ensure the dropdown is always on top
                 }}
             />
         </div>

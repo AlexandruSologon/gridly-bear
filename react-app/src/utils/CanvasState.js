@@ -1,6 +1,6 @@
 import { LatLng } from "leaflet";
 import { resetLinesRender, resetMarkerRender } from "./api";
-import { iconMapping } from "./constants";
+import { iconMapping } from "./iconMapping";
 
 export default class CanvasState {
 
@@ -46,24 +46,19 @@ export default class CanvasState {
     //TODO
     getRepresentativeColor() {
         //Get the worst (most red) color value of all buses or lines and return it
-        // Initialize a variable to store the worst color value
-        let worstHue = 255;
 
-        // Iterate through all buses or lines
-        for (const bus of Object.values(this.simRes.buses)) {
-            if (bus[0] < worstHue) {
-                worstHue = bus[0];
-            }
-        }
+        const val = Math.min(Math.min.apply(null,Object.keys(this.simRes.buses).map(x => this.simRes.buses[x]).map(x => x[0])),
+            Math.min.apply(null,Object.keys(this.simRes.lines).map(x => this.simRes.lines[x]).map(x => x[0])))
 
-        for (const line of Object.values(this.simRes.lines)) {
-            if (line[0] < worstHue) {
-                worstHue = line[0];
-            }
-        }
-
-        // Return the worst color value
-        return "hsl(" + worstHue + ", 100%, 50%)";
+        // Return a constant color depending on the color range in which val is
+        if(val>=75)
+            return "hsl(120, 100%, 50%)";
+        if(val>=50)
+            return "hsl(60, 100%, 50%)";
+        if(val>=20)
+            return "hsl(30, 100%, 50%)";
+        else
+            return "hsl(0, 100%, 50%)";
     }
 
     //TODO

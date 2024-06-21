@@ -14,15 +14,14 @@ def parsejson(x):
         # the networks stored inside the string
         network = pp.create_empty_network()
         jsonrepr = json.loads(x)
-        # data = jsonrepr["data"]
         components = jsonrepr["components"]
         for component in components:
             match component["class"]:
                 case "bus":
-                    pp.create_bus(net=network, vn_kv=component["voltage"])
+                    pp.create_bus(net=network, vn_kv=component["vn_kv"])
                 case "ext-grid":
                     pp.create_ext_grid(net=network, bus=component["bus"],
-                                       vm_pu=component["voltage"])
+                                       vm_pu=component["vm_pu"])
                 case "load":
                     pp.create_load(net=network, bus=component["bus"], p_mw=component["p_mv"],
                                    q_mvar=component["q_mvar"])
@@ -38,6 +37,9 @@ def parsejson(x):
                                              vm_pu=component["vm_pu"])
                     else:
                         pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["p_mw"])
+                case "storage":
+                    pp.create.create_storage(net=network, bus=component["bus"], p_mw=component["p_mw"], 
+                                             max_e_mwh=component["max_e_mwh"], q_mvar=component["q_mvar"])
                 case _:
                     raise ValueError
         return network
