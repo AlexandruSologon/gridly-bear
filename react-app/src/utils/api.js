@@ -1,11 +1,12 @@
-import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer} from '../CoreClasses';
+import {cnvs_json_post} from './api_interaction';
+import {Bus, ExtGrid, Generator, Line, Load, Network, Transformer, Storage} from '../CoreClasses';
 import {binarySearch, busDefaultColor, lineDefaultColor} from './constants';
-import { cnvs_json_post } from './api_interaction';
 import CanvasState from './CanvasState';
 
 export const handleExport = (markerInputs, markers, lines) => {
     const buses = [];
     const components = [];
+    // bus, line, load, generator, transformer, battery, external grid
     let indices = [0, 0, 0, 0, 0, 0, 0];
     const busIdMap = new Map();
     const transLines = [];
@@ -21,6 +22,7 @@ export const handleExport = (markerInputs, markers, lines) => {
             busIdMap.set(marker.id, busIndex);
         }
     })
+
     for (let i = 0; i < lines.length; i++) {
         const lineObject = lines[i]
         const line = lineObject.busLine;
@@ -61,10 +63,17 @@ export const handleExport = (markerInputs, markers, lines) => {
                             found = true;
                             break;
                         }
+
                     }
                     if (!found) {
-                        transLines.push(newTransLine);
-                    }
+                            transLines.push(newTransLine);
+                        }
+                    break;
+                case 'Battery':
+                    const isGen = item1.isGen ? -1 : 1;
+                    const batParams = {...item1.parameters, p_mw: isGen * item1.parameters.p_mw};
+                    components.push(new Storage(indices[5], busIndex, batParams));
+                    indices[5] += 1;
                     break;
                 default:
                     break;
@@ -73,6 +82,7 @@ export const handleExport = (markerInputs, markers, lines) => {
     }
 
     for (let i = 0; i < transLines.length; i++) {
+        console.log('hi')
         const line = transLines[i];
         components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), line[2]));
         indices[4] +=1;

@@ -93,7 +93,7 @@ export const markerParametersConfig = {
     grid: [{name:'vm_pu', unit:'(p.u)', mandatory: 'true'}],
     solar: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)', mandatory:'false'}],
     wind: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)',mandatory:'false'}],
-    //battery: ['net', 'p_mw']
+    battery: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name: 'max_e_mwh', unit:'(MWh)', mandatory:'true'}, {name: 'q_mvar', unit:'(MVar)', mandatory:'false'}]
 };
 
 export const binarySearch = function(arr, x, start, end) {
@@ -116,6 +116,7 @@ export const defVal = {
     solar: {p_mw: null, vm_pu: null},
     wind: {p_mw: null, vm_pu: null},
     line: {type: null},
+    battery: {p_mw: null, max_energy: null, q_mvar: null, isGen: false}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'

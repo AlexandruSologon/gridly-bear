@@ -107,6 +107,11 @@ export function ReactApp() {
                 newMarker.low = null;
                 newMarker.transformerType = defaultValues.trafo1.type
             }
+
+            if (newMarker.type === "battery") {
+                newMarker.isGen = defaultValues.battery.isGen;
+            }
+
             resetMarkerRender(markers,markerRefs)
             setLines(resetLinesRender(lines,markers))
             setMarkers([...markers, newMarker]);
@@ -164,6 +169,21 @@ export function ReactApp() {
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
                             (line.busLine[0] === newLine.busLine[0] && line.busLine[1] === newLine.busLine[1]));
+                        
+                        // Check for one direct connection per component
+                        let componentLine = false;
+                        if(connection === "direct") {
+                            let componentId = selectedMarker;
+                            let transformer = selected.name === "Transformer";
+                            if (selected.type === "bus") {
+                                componentId = markerId;
+                                transformer = current.name === "Transformer";
+                            }
+                            const sameComponent = lines.filter(line =>
+                                (line.busLine[0] === componentId || line.busLine[1] === componentId));
+
+                            componentLine = !transformer && sameComponent.length > 0;
+                        }
 
                         const found = sameLines.length !== 0;
                         let maxTransformer = false;
@@ -197,7 +217,7 @@ export function ReactApp() {
                         }
 
                         // Add line if it doesn't exist and doesn't break transformer constraints
-                        if (!found && !maxTransformer){
+                        if (!(found || maxTransformer || componentLine)){
                             setLines([...lines, newLine]);
 
                         }
@@ -407,14 +427,29 @@ export function ReactApp() {
         for(const key in component.parameters) {
             const paramName = key;
             const value = component.parameters[key];
-        if(value !== null && value !== 0 && value !== '')
+            if(value !== null && value !== 0 && value !== '')
         {
              newValue = {
                 ...newValue,
                 [component.type]: {...newValue[component.type], [paramName]: value}
-            }
+            };
         }}
-        setDefaultValues(newValue)}
+
+        if (component.type === "battery") {
+            newValue = {
+                ...newValue,
+                [component.type]: {...newValue[component.type], ["isGen"]: component.isGen}
+            };
+        }
+
+        if (component.type === "trafo1") {
+            newValue = {
+                ...newValue,
+                [component.type]: {...newValue[component.type], ["type"]: component.transformerType}
+            };
+        }
+        setDefaultValues(newValue);
+    }
         else {
             const newValue = {...defaultValues, 'line': defaultValues['line'], 'type':component.type }
             setDefaultValues(newValue)

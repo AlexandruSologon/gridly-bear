@@ -5,6 +5,7 @@ import { markerParametersConfig } from "../utils/constants";
 import { Button, Input} from "antd";
 import {SaveOutlined, SwapOutlined} from "@ant-design/icons";
 import TransformerSettings from "./TransformerSettings";
+import BatterySettings from "./BatterySettings";
 
 function ReverseButton({ onClick }) {
     return (
@@ -34,6 +35,13 @@ function MarkerParameters({marker, handleParameterChange, handleTransReverse, ha
             </div>
         )
     // Other markers
+    } else if (type ==="battery"){
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <BatterySettings battery={marker} handleParameterChange={handleParameterChange}/>
+            </div>
+        )
+
     } else {
         const parameterFields = markerParametersConfig[type];
         if (!parameterFields) {

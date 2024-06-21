@@ -102,3 +102,13 @@ export class Network {
         this.components = components
     }
 }
+
+export class Storage extends Component{
+    constructor(id, bus, p) {
+        super()
+        this.id = id;
+        this.class = "storage"
+        this.bus = bus;
+        this.assigner(p, 'battery')
+    }
+}
