@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 function TransformerSettings({ transformer }) {
+    const [value, setValue] = useState(null);
 
     const options = [
         '160 MVA 380/110 kV',
@@ -25,15 +26,16 @@ function TransformerSettings({ transformer }) {
 
 
     const handleChange = (option) => {
-        console.log(transformer.parameters.type);
+        setValue(option)
         transformer.parameters.type = option.value;
+        console.log(transformer.parameters.type)
     };
 
     return (
         <div style={{ marginBottom: '5px', zIndex: 1000 }}>
             <div style={{marginBottom: '5px'}}>{"Select Transformer type:"}</div>
             <Select
-                value={options.find(x => x.value === transformer.parameters.type)}
+                value={value}
                 onChange={handleChange}
                 options={options}
                 isSearchable={true}

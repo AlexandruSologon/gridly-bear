@@ -105,6 +105,7 @@ export class Network {
 
 export class Storage extends Component{
     constructor(id, bus, p) {
+        super()
         this.id = id;
         this.class = "storage"
         this.bus = bus;

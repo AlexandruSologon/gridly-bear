@@ -63,10 +63,11 @@ export const handleExport = (markerInputs, markers, lines) => {
                             found = true;
                             break;
                         }
-                        if (!found) {
+
+                    }
+                    if (!found) {
                             transLines.push(newTransLine);
                         }
-                    }
                     break;
                 case 'Battery':
                     const isGen = item1.isGen ? -1 : 1;
@@ -81,6 +82,7 @@ export const handleExport = (markerInputs, markers, lines) => {
     }
 
     for (let i = 0; i < transLines.length; i++) {
+        console.log('hi')
         const line = transLines[i];
         components.push(new Transformer(indices[4], busIdMap.get(line[0]), busIdMap.get(line[1]), line[2]));
         indices[4] +=1;
