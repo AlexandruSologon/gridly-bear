@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 function TransformerSettings({ transformer }) {
-    const [selectedOption, setSelectedOption] = useState(null);
 
     const options = [
         '160 MVA 380/110 kV',
@@ -26,9 +25,8 @@ function TransformerSettings({ transformer }) {
 
 
     const handleChange = (option) => {
-        console.log(transformer.parameters.type)
-        setSelectedOption(option);
-        transformer.parameters.type = option.value
+        console.log(transformer.parameters.type);
+        transformer.parameters.type = option.value;
     };
 
     return (
