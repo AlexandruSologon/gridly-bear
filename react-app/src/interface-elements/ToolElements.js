@@ -8,6 +8,7 @@ import HistoryButton from "./HistoryButton.js";
 import { useMap } from "react-leaflet";
 import ResetCanvasButton from "./ResetCanvasButton";
 import InfoButton from './InfoButton.js';
+import { onRunButtonClick } from "../utils/api.js";
 
 function ToolElements(props) {
 
@@ -75,6 +76,7 @@ function ToolElements(props) {
                         messageApi={props.messageApi} 
                         history={props.history}
                         map={map}
+                        onRunButtonClick={() => {onRunButtonClick(props.markers, props.runClicked, props.setRunClicked, props.setIsMapLocked, props.lines, props.setLines, props.setMarkers, props.markerRefs, props.messageApi, props.history, props.setHistory, map)}}
                     />
                     
                 </Flex>
