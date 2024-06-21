@@ -37,12 +37,14 @@ function TransformerSettings({ transformer }) {
                 onChange={handleChange}
                 options={options}
                 isSearchable={true}
+                menuPortalTarget={document.body}
                 styles={{
                     control: styles => ({
                         ...styles,
                         width: '250px',
                         overflowY: 'scroll'
-                    })
+                    }),
+                    menuPortal: base => ({ ...base, zIndex: 9999 }) // Ensure the dropdown is always on top
                 }}
             />
         </div>
