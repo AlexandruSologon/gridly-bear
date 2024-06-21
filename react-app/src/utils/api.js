@@ -30,7 +30,7 @@ export const handleExport = (markerInputs, markers, lines) => {
             components.push(new Line(indices[1],
                 busIdMap.get(line[0]),
                 busIdMap.get(line[1]),
-                line.length,
+                lineObject.length,
                 lineObject.type));
             indices[1] += 1;
         } else if (item1.name === 'Bus' ^ item2.name === 'Bus'){
