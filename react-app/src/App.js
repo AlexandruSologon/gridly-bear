@@ -4,7 +4,7 @@ import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
 import { message, ConfigProvider, Slider } from "antd";
 import React, {useState, useRef} from 'react';
-import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, ZoomControl, ScaleControl } from 'react-leaflet';
 
 import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
@@ -13,6 +13,7 @@ import ToolElements from './interface-elements/ToolElements';
 import MarkerSettings from "./interface-elements/MarkerSettings";
 import WaitingOverlay from './interface-elements/WaitingOverlay';
 import PolylineDecorator from './interface-elements/PolylineDecorator';
+import Scale from './interface-elements/Scale';
 
 import {
     defVal,
@@ -26,6 +27,7 @@ import {
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
 import HistoryDrawer from './interface-elements/HistoryDrawer';
+import L from "leaflet";
 
 
 export function ReactApp() {
@@ -96,6 +98,7 @@ export function ReactApp() {
                 type: draggedItem.type,
                 parameters,
             };
+            console.log(newMarker.parameters)
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
@@ -158,7 +161,8 @@ export function ReactApp() {
                             // ID of start marker and end marker sorted
                             busLine: [selected.id, current.id].sort(),
                             arrow: 'none',
-                            connection: connection
+                            connection: connection,
+                            length: selected.position.distanceTo(current.position)/1000
                         };
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
@@ -243,9 +247,9 @@ export function ReactApp() {
             if (lineRef) lineRef.closePopup();
 
             if (line.position1.lat === oldPosition.lat && line.position1.lng === oldPosition.lng) {
-                return {...line, position1: newPosition};
+                return {...line, position1: newPosition, length: line.position2.distanceTo(newPosition)/1000};
             } else if (line.position2.lat === oldPosition.lat && line.position2.lng === oldPosition.lng) {
-                return {...line, position2: newPosition};
+                return {...line, position2: newPosition, length: line.position1.distanceTo(newPosition)/1000};
             } else {
                 return line;
             }
@@ -408,33 +412,45 @@ export function ReactApp() {
         resetMarkerRender(updatedMarkers, markerRefs);
     };
 
-    const replaceDefaultValues = (marker) => {
+    const changeLineLength = (line, value) => {
+        console.log(value)
+        setLines(lines.map(l => {if (l.busLine[1] === line.busLine[1] && l.busLine[0] === line.busLine[0]) return {...l, length: value}; else return l}));
+        console.log(lines)
+    }
+
+    const replaceDefaultValues = (component, isLine) => {
+        if(!isLine) {
         let newValue = defaultValues;
-        for(const key in marker.parameters) {
+        for(const key in component.parameters) {
             const paramName = key;
-            const value = marker.parameters[key];
+            const value = component.parameters[key];
             if(value !== null && value !== 0 && value !== '')
         {
              newValue = {
                 ...newValue,
-                [marker.type]: {...newValue[marker.type], [paramName]: value}
+                [component.type]: {...newValue[component.type], [paramName]: value}
             };
         }}
 
-        if (marker.type === "battery") {
+        if (component.type === "battery") {
             newValue = {
                 ...newValue,
-                [marker.type]: {...newValue[marker.type], ["isGen"]: marker.isGen}
+                [component.type]: {...newValue[component.type], ["isGen"]: component.isGen}
             };
         }
 
-        if (marker.type === "trafo1") {
+        if (component.type === "trafo1") {
             newValue = {
                 ...newValue,
-                [marker.type]: {...newValue[marker.type], ["type"]: marker.transformerType}
+                [component.type]: {...newValue[component.type], ["type"]: component.transformerType}
             };
         }
         setDefaultValues(newValue);
+    }
+        else {
+            const newValue = {...defaultValues, 'line': defaultValues['line'], 'type':component.type }
+            setDefaultValues(newValue)
+        }
     }
 
     const onLockButtonClick = () => {
@@ -519,11 +535,13 @@ export function ReactApp() {
                                           pathOptions={{color: line.color}}
                                           positions={[line.position1, line.position2]}
                                           ref={(ref) => (lineRefs.current[index] = ref)}
+                                          renderer={L.canvas({padding:0.5, tolerance:15})}
                                           eventHandlers={{
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines}></LineSettings>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
+                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                 </Polyline>
                             ))}
                             <PolylineDecorator lines = {lines} markers = {markers}> </PolylineDecorator>

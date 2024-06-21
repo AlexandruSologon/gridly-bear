@@ -145,7 +145,7 @@ function Sidebar(state) {
                 <h2 style={{
                         fontSize: isSidebarOn ? '18px' : '0px' ,
                         transition: 'font-size 0.2s' , // Increased font size
-                        fontFamily: 'Helvetica, sans-serif', // Changed font family
+                        fontFamily: '-apple-system, system-ui', // Changed font family
                         margin: '10px 0', // Added margin for spacing
                         padding: '10px',
                         textAlign: 'left',

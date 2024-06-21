@@ -78,14 +78,14 @@ export const sidebarItems = [
 
 
 export const markerParametersConfig = {
-    bus: [{name:'voltage', unit:'(kV)'}],
-    trafo1: [{name:'type', unit: ''}],
-    switch: [{name:'type', unit: ''}],
-    load: [{name:'p_mv',unit:'(kW)'}, {name:'q_mvar',unit:'(kVar)'}],
-    grid: [{name:'voltage', unit:'(p.u)'}],
-    solar: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
-    wind: [{name:'p_mw', unit: '(MW)'}, {name:'vm_pu', unit:'(MVar)'}],
-    battery: [{name:'p_mw', unit: '(MW)'}, {name: 'max_energy', unit:'(MWh)'}, {name: 'q_mvar', unit:'(MVar)'}]
+    bus: [{name:'vn_kv', unit:'(kV)', mandatory: 'true'}],
+    trafo1: [{name:'type', unit: '', mandatory: 'true'}],
+    switch: [{name:'type', unit: '', mandatory: 'true'}],
+    load: [{name:'p_mv',unit:'(kW)', mandatory:'true'}, {name:'q_mvar',unit:'(kVar)', mandatory: 'true'}],
+    grid: [{name:'vm_pu', unit:'(p.u)', mandatory: 'true'}],
+    solar: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)', mandatory:'false'}],
+    wind: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)',mandatory:'false'}],
+    battery: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name: 'max_e_mwh', unit:'(MWh)', mandatory:'true'}, {name: 'q_mvar', unit:'(MVar)', mandatory:'false'}]
 };
 
 export const binarySearch = function(arr, x, start, end) {
@@ -101,10 +101,10 @@ export const binarySearch = function(arr, x, start, end) {
 }
 
 export const defVal = {
-    bus : {voltage: null},
+    bus : {vn_kv: null},
     trafo1: {type: null},
     load: {p_mv: null, q_mvar: null},
-    grid: {voltage: null},
+    grid: {vm_pu: null},
     solar: {p_mw: null, vm_pu: null},
     wind: {p_mw: null, vm_pu: null},
     line: {type: null},

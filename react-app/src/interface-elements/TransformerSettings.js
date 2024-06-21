@@ -21,21 +21,24 @@ function TransformerSettings({ transformer }) {
         '0.63 MVA 10/0.4 kV',
         '63/25/38 MVA 110/20/10 kV',
         '63/25/38 MVA 110/10/10 kV'
-    ];
+    ].map(x => ({value:x, label:x}));
+
+
 
     const handleChange = (option) => {
+        console.log(transformer.parameters.type)
         setSelectedOption(option);
-        transformer.transformerType = option.value
+        transformer.parameters.type = option.value
     };
 
     return (
-        <div style={{ marginBottom: '5px' }}>
+        <div style={{ marginBottom: '5px', zIndex: 1000 }}>
             <div style={{marginBottom: '5px'}}>{"Select Transformer type:"}</div>
             <Select
+                value={options.find(x => x.value === transformer.parameters.type)}
                 onChange={handleChange}
-                options={options.map(option => ({ value: option, label: option }))}
+                options={options}
                 isSearchable={true}
-                value={selectedOption}
                 styles={{
                     control: styles => ({
                         ...styles,

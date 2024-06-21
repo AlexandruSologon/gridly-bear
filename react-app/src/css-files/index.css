@@ -108,3 +108,9 @@ input[type="file"] {
   margin: 0;
   border: none;
 }
+
+.lol {
+	position: absolute;
+	top: 70px;
+	right: 40px;
+}
