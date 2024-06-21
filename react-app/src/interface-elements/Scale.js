@@ -15,7 +15,7 @@ function Scale() {
 
         scale.addTo(map);
 
-        const scaleCSS = document.querySelector('.leaflet-control-scale').classList.add('lol');
+        document.querySelector('.leaflet-control-scale').classList.add('lol');
 
         return () => {
             map.removeControl(scale);

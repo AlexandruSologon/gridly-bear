@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 function TransformerSettings({ transformer }) {
-    const [selectedOption, setSelectedOption] = useState(transformer.transformerType);
 
     const options = [
         '160 MVA 380/110 kV',
@@ -26,9 +25,8 @@ function TransformerSettings({ transformer }) {
 
 
     const handleChange = (option) => {
-        console.log(transformer.parameters.type)
-        setSelectedOption(option);
-        transformer.parameters.type = option.value
+        console.log(transformer.parameters.type);
+        transformer.parameters.type = option.value;
     };
 
     return (
@@ -39,12 +37,14 @@ function TransformerSettings({ transformer }) {
                 onChange={handleChange}
                 options={options}
                 isSearchable={true}
+                menuPortalTarget={document.body}
                 styles={{
                     control: styles => ({
                         ...styles,
                         width: '250px',
                         overflowY: 'scroll'
-                    })
+                    }),
+                    menuPortal: base => ({ ...base, zIndex: 9999 }) // Ensure the dropdown is always on top
                 }}
             />
         </div>

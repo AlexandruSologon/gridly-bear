@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "gridlybear",
     "public": "build",
     "ignore": [
       "firebase.json",
@@ -25,7 +26,9 @@
   "functions": [
     {
       "source": "functions",
+      "timeout": "540s",
       "codebase": "default",
+      "host": "0.0.0.0",
       "ignore": [
         "venv",
         ".git",

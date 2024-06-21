@@ -4,6 +4,13 @@
 
 .leaflet-control-geosearch {  display:none; left: 300px;  z-index: 10002; }
 
+.slick-dots li button:before{
+  background-color: blueviolet !important;
+}
+.slick-dots li.slick-active button:before{
+  background-color: blueviolet !important;
+}
+
 .dot {
   width: 48px;
   height: 48px;
@@ -107,6 +114,21 @@ input[type="file"] {
   padding: 0;
   margin: 0;
   border: none;
+}
+
+/* Change the color of the arrows */
+.slick-arrow {
+  color: black !important; /* Change this to your desired color */
+}
+
+/* Change the color of the slide indicators (dots) */
+.slick-dots li button {
+  color: black !important; /* Change this to your desired color */
+}
+
+/* Change the color of the active slide indicator (dot) */
+.slick-dots li.slick-active button {
+  color: #193165 !important; /* Change this to your desired color */
 }
 
 .lol {

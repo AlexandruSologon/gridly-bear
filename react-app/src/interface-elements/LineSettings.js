@@ -78,12 +78,14 @@ function Menu({ line, markers, lines, markerRefs, setLines }) {
                 onChange={handleChange}
                 options={options.map(option => ({ value: option, label: option }))}
                 isSearchable={true}
+                menuPortalTarget={document.body}
                 styles={{
                     control: styles => ({
                         ...styles,
                         width: '250px',
                         overflowY: 'scroll'
-                    })
+                    }),
+                    menuPortal: base => ({ ...base, zIndex: 9999 }) // Ensure the dropdown is always on top
                 }}
             />
         </div>
@@ -96,7 +98,7 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
 
     return (
         <Popup>
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: '-apple-system, system-ui'}}>
                 <div style={{marginBottom: '5px'}}>
                     {isElectricalLine ? "Electrical line" : "Direct Connection"}
                 </div>
@@ -105,16 +107,15 @@ const LineSettings = ({ line, index, handleLineDelete, replaceDefaultValues, cha
                         <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                     </div>
                 )}
-                <div style={{marginBottom: '5px'}}>
-                    <DeleteButton onClick={() => handleLineDelete(index)}/>
+                <div style={{marginBottom: '5px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    {makeDefaultButton}
+                    <DeleteButton onClick={() => handleLineDelete(index)}/> 
                 </div>
                 {isElectricalLine && (
                     <div style={{ marginBottom: '5px', alignItems: 'center' }}>
-                    <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
-                        {makeDefaultButton}
                         <div>
                         Length (km):
-                    <Input
+                        <Input
                             type = 'text'
                             value = {line.length}
                             onChange={(e) => changeLineLength(line,e.target.value)}
