@@ -13,7 +13,7 @@ beginners."It uses PandaPower to ensure all the simulation are correct."?
 
 ## Getting started
 
-To use the app just go to https://pandapower-ui.web.app/ and start modelling.
+To use the app just go to https://gridlybear.web.app/ and start modelling.
 
 ## Features
 
