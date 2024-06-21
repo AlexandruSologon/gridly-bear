@@ -153,6 +153,10 @@ export const renderLines = (data, lines, markers, setLines) => {
                 nr++;
                 const [hue, saturation, lightness] = data.lines[nr];
                 line.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                line.value = (data.res_lines[nr]).toFixed(0)
+                if(line.value >= 1000)
+                    line.value = '>999'
+
             }
             return line;
         }
@@ -200,6 +204,7 @@ export const resetLinesRender = (lines, markers) => {
                 if ((findMarkerById(line.busLine[0], markers).type === 'bus')
                     && (findMarkerById(line.busLine[1], markers).type === 'bus')) {
                     line.color = lineDefaultColor;
+                    line.value = null;
                 }
                 return line
             }

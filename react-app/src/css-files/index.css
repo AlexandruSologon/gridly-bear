@@ -11,6 +11,16 @@
   background-color: blueviolet !important;
 }
 
+.resultMarker {
+  background: #193165;
+  border-radius: 10px;
+    padding-top: 2px;
+  text-align: center;
+  color: #EEEEEE;
+  font-family: -apple-system, system-ui;
+  font-size: 14px;
+}
+
 .dot {
   width: 48px;
   height: 48px;

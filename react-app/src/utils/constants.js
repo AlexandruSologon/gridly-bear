@@ -5,6 +5,14 @@ const anchor = 30;
 
 export const mapCenter = [51.91145215945188, 4.478236914116433];
 
+export const resultIcon = function(line) {
+    const div =  L.divIcon({className: 'resultMarker', html: line.value !== null ? line.value.toString() + "%" : ""});
+    div.options.iconSize = [64,32]
+    div.options.iconAnchor = [24,8]
+
+    return div;
+}
+
 export const iconMapping = {
     grid: new L.icon({
         id: 'grid',

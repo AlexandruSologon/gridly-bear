@@ -22,7 +22,7 @@ import {
     sidebarItems,
     lineDefaultColor,
     connectionDefaultColor,
-    markerParametersConfig,
+    markerParametersConfig, resultIcon,
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
@@ -158,7 +158,8 @@ export function ReactApp() {
                             busLine: [selected.id, current.id].sort(),
                             arrow: 'none',
                             connection: connection,
-                            length: selected.position.distanceTo(current.position)/1000
+                            length: selected.position.distanceTo(current.position)/1000,
+                            value: null
                         };
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
@@ -494,6 +495,15 @@ export function ReactApp() {
                                         handleTransReverse={handleTransReverse}
                                         replaceDefaultValues = {replaceDefaultValues}/>
                                 </Marker>))}
+                        {lines.filter(x => x.value !== null).map((line,index) => (
+                            <Marker key={index}
+                                            draggable={false}
+                                            clickable={false}
+                                            icon={resultIcon(line)}
+                                            interactive={false}
+                                            // These offsets should depend on line length / Camera zoom level
+                                            position={[(line.position1.lat + line.position2.lat)/2 + 0.0005, (line.position1.lng + line.position2.lng)/2 - 0.0010]}
+                    />))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
                                           weight={10}
