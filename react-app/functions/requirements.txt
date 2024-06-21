@@ -1,2 +1,4 @@
 firebase_functions~=0.1.0
-pandapower
+pandapower==2.14.7
+numpy==1.26.4
+numba

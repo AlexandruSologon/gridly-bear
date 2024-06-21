@@ -1,22 +1,21 @@
 import {defVal} from "../utils/constants";
 import {Button, Tooltip} from "antd";
-import {HistoryOutlined, ReloadOutlined} from "@ant-design/icons";
+import {ReloadOutlined} from "@ant-design/icons";
 
 
 
-function ResetCanvasButton({setLines, setMarkers, setDraggedItem, setSelectedMarker, setDefaultValues, setHistory }) {
+function ResetCanvasButton({setLines, setMarkers, setDraggedItem, setSelectedMarker, setDefaultValues }) {
 const refreshCanvas = () => {
         setLines([])
         setMarkers([])
         setDraggedItem(null)
         setSelectedMarker(null)
         setDefaultValues(defVal)
-        setHistory([])
     }
 
 return (
     <div>
-            <Tooltip title="refresh">
+            <Tooltip title="refresh canvas">
                     <Button className={'hasShadow'} style={{width: 40}} size={'large'}
                             onClick={() => refreshCanvas()} type="default" shape="square"
                             icon={<ReloadOutlined />}>

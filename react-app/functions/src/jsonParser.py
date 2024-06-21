@@ -37,6 +37,9 @@ def parsejson(x):
                                              vm_pu=component["vm_pu"])
                     else:
                         pp.create.create_gen(net=network, slack=True, bus=component["bus"], p_mw=component["p_mw"])
+                case "storage":
+                    pp.create.create_storage(net=network, bus=component["bus"], p_mw=component["p_mw"], 
+                                             max_e_mwh=component["max_e_mwh"], q_mvar=component["q_mvar"])
                 case _:
                     raise ValueError
         return network

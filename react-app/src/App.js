@@ -4,7 +4,7 @@ import 'leaflet-polylinedecorator';
 import debounce from 'lodash.debounce';
 import { message, ConfigProvider, Slider } from "antd";
 import React, {useState, useRef} from 'react';
-import { MapContainer, Marker, Polyline, ZoomControl, ScaleControl } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, ZoomControl } from 'react-leaflet';
 
 import Tile from "./interface-elements/Tile";
 import Sidebar from './interface-elements/Sidebar';
@@ -22,7 +22,7 @@ import {
     sidebarItems,
     lineDefaultColor,
     connectionDefaultColor,
-    markerParametersConfig,
+    markerParametersConfig, resultIcon,
 } from './utils/constants';
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
@@ -47,6 +47,7 @@ export function ReactApp() {
     const [isHistoryOn, setIsHistoryOn] = useState(false);
     const [history, setHistory] = useState([]);
     const [highlightedMarker, setHighlightedMarker] = useState(null);
+    
 
     const handleDragStart = (event, item) => {
         setDraggedItem(item);
@@ -98,6 +99,7 @@ export function ReactApp() {
                 type: draggedItem.type,
                 parameters,
             };
+            console.log(newMarker.parameters)
 
             if (newMarker.name === "Transformer") {
                 newMarker.connections = 0;
@@ -105,6 +107,11 @@ export function ReactApp() {
                 newMarker.low = null;
                 newMarker.transformerType = defaultValues.trafo1.type
             }
+
+            if (newMarker.type === "battery") {
+                newMarker.isGen = defaultValues.battery.isGen;
+            }
+
             resetMarkerRender(markers,markerRefs)
             setLines(resetLinesRender(lines,markers))
             setMarkers([...markers, newMarker]);
@@ -156,11 +163,27 @@ export function ReactApp() {
                             busLine: [selected.id, current.id].sort(),
                             arrow: 'none',
                             connection: connection,
-                            length: selected.position.distanceTo(current.position)/1000
+                            length: selected.position.distanceTo(current.position)/1000,
+                            value: null
                         };
                         console.log(newLine);
                         const sameLines = lines.filter(line =>
                             (line.busLine[0] === newLine.busLine[0] && line.busLine[1] === newLine.busLine[1]));
+                        
+                        // Check for one direct connection per component
+                        let componentLine = false;
+                        if(connection === "direct") {
+                            let componentId = selectedMarker;
+                            let transformer = selected.name === "Transformer";
+                            if (selected.type === "bus") {
+                                componentId = markerId;
+                                transformer = current.name === "Transformer";
+                            }
+                            const sameComponent = lines.filter(line =>
+                                (line.busLine[0] === componentId || line.busLine[1] === componentId));
+
+                            componentLine = !transformer && sameComponent.length > 0;
+                        }
 
                         const found = sameLines.length !== 0;
                         let maxTransformer = false;
@@ -194,7 +217,7 @@ export function ReactApp() {
                         }
 
                         // Add line if it doesn't exist and doesn't break transformer constraints
-                        if (!found && !maxTransformer){
+                        if (!(found || maxTransformer || componentLine)){
                             setLines([...lines, newLine]);
 
                         }
@@ -389,6 +412,7 @@ export function ReactApp() {
         setLines(resetLinesRender(lines,markers))
         setMarkers(updatedMarkers);
         resetMarkerRender(updatedMarkers, markerRefs);
+        
     };
 
     const changeLineLength = (line, value) => {
@@ -403,14 +427,29 @@ export function ReactApp() {
         for(const key in component.parameters) {
             const paramName = key;
             const value = component.parameters[key];
-        if(value !== null && value !== 0 && value !== '')
+            if(value !== null && value !== 0 && value !== '')
         {
              newValue = {
                 ...newValue,
                 [component.type]: {...newValue[component.type], [paramName]: value}
-            }
+            };
         }}
-        setDefaultValues(newValue)}
+
+        if (component.type === "battery") {
+            newValue = {
+                ...newValue,
+                [component.type]: {...newValue[component.type], ["isGen"]: component.isGen}
+            };
+        }
+
+        if (component.type === "trafo1") {
+            newValue = {
+                ...newValue,
+                [component.type]: {...newValue[component.type], ["type"]: component.transformerType}
+            };
+        }
+        setDefaultValues(newValue);
+    }
         else {
             const newValue = {...defaultValues, 'line': defaultValues['line'], 'type':component.type }
             setDefaultValues(newValue)
@@ -438,14 +477,13 @@ export function ReactApp() {
             <WaitingOverlay runClicked={runClicked} />
             <Sidebar handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} iconMapping={iconMapping} sidebarItems={sidebarItems} />
             <ConfigProvider theme={{ token: { colorPrimary: '#193165' } }}>
-                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:620, top:23}} onChange={(e) => setMapOpacity(e/100)} />
+                <Slider defaultValue={100} style={{width:200, position:'absolute', zIndex: 1001, left:'50vw', translate: '-50%', bottom:15}} onChange={(e) => setMapOpacity(e/100)} />
             </ConfigProvider>
             <div
                 style={{
                     position: 'relative',
                     flex: '1',
                     height: '100%',
-                    marginLeft: '5px'
                 }}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}>
@@ -490,8 +528,17 @@ export function ReactApp() {
                                         handleParameterChange={handleParameterChange}
                                         handleMarkerDelete={handleMarkerDelete}
                                         handleTransReverse={handleTransReverse}
-                                        replaceDefaultValues = {replaceDefaultValues}/>/>
+                                        replaceDefaultValues = {replaceDefaultValues}/>
                                 </Marker>))}
+                        {lines.filter(x => x.value !== null).map((line,index) => (
+                            <Marker key={index}
+                                            draggable={false}
+                                            clickable={false}
+                                            icon={resultIcon(line)}
+                                            interactive={false}
+                                            // These offsets should depend on line length / Camera zoom level
+                                            position={[(line.position1.lat + line.position2.lat)/2 + 0.0005, (line.position1.lng + line.position2.lng)/2 - 0.0010]}
+                    />))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
                                           weight={10}
@@ -499,12 +546,10 @@ export function ReactApp() {
                                           pathOptions={{color: line.color}}
                                           positions={[line.position1, line.position2]}
                                           ref={(ref) => (lineRefs.current[index] = ref)}
-                                          renderer={L.canvas({padding:0.5, tolerance:15})}
                                           eventHandlers={{
                                               click: (e) => handleLineClick(e),
                                               contextmenu: (e) => handleLineRightClick(e)
                                           }}>
-                                    <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                     <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                 </Polyline>
                             ))}
@@ -524,12 +569,12 @@ export function ReactApp() {
                                 messageApi={messageApi}
                                 defaultValues={defaultValues}
                                 isHistoryOn={isHistoryOn}
-                            setIsHistoryOn={setIsHistoryOn}
-                            setHistory={setHistory}
-                            history={history}
-                            setDraggedItem={setDraggedItem}
-                            setSelectedMarker={setSelectedMarker}
-                            setDefaultValues = {setDefaultValues}
+                                setIsHistoryOn={setIsHistoryOn}
+                                setHistory={setHistory}
+                                history={history}
+                                setDraggedItem={setDraggedItem}
+                                setSelectedMarker={setSelectedMarker}
+                                setDefaultValues = {setDefaultValues}
                         ></ToolElements>
                         <Scale />
                         </MapContainer>

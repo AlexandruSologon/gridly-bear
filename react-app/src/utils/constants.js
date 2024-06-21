@@ -5,6 +5,14 @@ const anchor = 30;
 
 export const mapCenter = [51.91145215945188, 4.478236914116433];
 
+export const resultIcon = function(line) {
+    const div =  L.divIcon({className: 'resultMarker', html: line.value !== null ? line.value.toString() + "%" : ""});
+    div.options.iconSize = [64,32]
+    div.options.iconAnchor = [24,8]
+
+    return div;
+}
+
 export const iconMapping = {
     grid: new L.icon({
         id: 'grid',
@@ -85,7 +93,7 @@ export const markerParametersConfig = {
     grid: [{name:'vm_pu', unit:'(p.u)', mandatory: 'true'}],
     solar: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)', mandatory:'false'}],
     wind: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name:'vm_pu', unit:'(MVar)',mandatory:'false'}],
-    //battery: ['net', 'p_mw']
+    battery: [{name:'p_mw', unit: '(MW)', mandatory:'true'}, {name: 'max_e_mwh', unit:'(MWh)', mandatory:'true'}, {name: 'q_mvar', unit:'(MVar)', mandatory:'false'}]
 };
 
 export const binarySearch = function(arr, x, start, end) {
@@ -108,6 +116,7 @@ export const defVal = {
     solar: {p_mw: null, vm_pu: null},
     wind: {p_mw: null, vm_pu: null},
     line: {type: null},
+    battery: {p_mw: null, max_energy: null, q_mvar: null, isGen: false}
 }
 export const lineDefaultColor = '#706E6E'
 export const connectionDefaultColor = '#1f3c6a'
