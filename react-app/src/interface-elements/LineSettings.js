@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Popup } from "react-leaflet";
 import DeleteButton from "./DeleteButton";
+import {resetLinesRender, resetMarkerRender} from "../utils/api";
 
-function Menu({ line }) {
+function Menu({ line, markers, lines, markerRefs, setLines }) {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const options = [
@@ -61,6 +62,8 @@ function Menu({ line }) {
     ];
 
     const handleChange = (option) => {
+        resetMarkerRender(markers,markerRefs)
+        setLines(resetLinesRender(lines,markers));
         setSelectedOption(option);
         line.type = option.value;
     };
@@ -85,7 +88,7 @@ function Menu({ line }) {
     );
 }
 
-const LineSettings = ({ line, index, handleLineDelete }) => {
+const LineSettings = ({ line, index, handleLineDelete, markers, markerRefs, lines, setLines }) => {
     const isElectricalLine = line.connection === "electrical";
 
     return (
@@ -99,7 +102,7 @@ const LineSettings = ({ line, index, handleLineDelete }) => {
                 </div>
                 {isElectricalLine && (
                     <div style={{ marginBottom: '5px' }}>
-                        <Menu line={line} />
+                        <Menu line={line} lines={lines} markers={markers} markerRefs={markerRefs} setLines={setLines} />
                     </div>
                 )}
             </div>

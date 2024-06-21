@@ -78,7 +78,7 @@ export const sidebarItems = [
 
 
 export const markerParametersConfig = {
-    bus: [{name:'voltage', unit:'(p.u)'}],
+    bus: [{name:'voltage', unit:'(kV)'}],
     trafo1: [{name:'type', unit: ''}],
     switch: [{name:'type', unit: ''}],
     load: [{name:'p_mv',unit:'(kW)'}, {name:'q_mvar',unit:'(kVar)'}],
