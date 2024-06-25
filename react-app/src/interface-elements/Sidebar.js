@@ -81,7 +81,7 @@ function CollapseButton({onSidebarToggle, isSidebarOn}) {
                 left: '30px',
                 top: '20px',
                 boxShadow: '4px -4px 8px rgba(0, 0, 0, 0.3)',
-                zIndex: 1001
+                zIndex: 1000
             }}
             onClick={onSidebarToggle}
         >
