@@ -27,6 +27,7 @@ import {iconMapping} from './utils/iconMapping'
 import { resetLinesRender, resetMarkerRender, findMarkerById } from './utils/api';
 import 'leaflet-polylinedecorator';
 import HistoryDrawer from './interface-elements/HistoryDrawer';
+import LineCreateListener from './utils/LineCreateListener';
 
 
 export function ReactApp() {
@@ -218,7 +219,7 @@ export function ReactApp() {
                         // Add line if it doesn't exist and doesn't break transformer constraints
                         if (!(found || maxTransformer || componentLine)){
                             setLines([...lines, newLine]);
-
+                            document.dispatchEvent(new Event("line-added"));
                         }
                     } else {
                         const newLine = [[selected.position, current.position],  '#000'];
@@ -484,6 +485,7 @@ export function ReactApp() {
                         doubleClickZoom={false}
                         scrollWheelZoom={isMapLocked}
                         style={{ width: '100%', height: '100%', zIndex: 0, opacity: 1 }}>
+                        <LineCreateListener lineRefs={lineRefs} lines={lines}></LineCreateListener>
                         <HistoryDrawer history={history} isHistoryOn={isHistoryOn} setIsHistoryOn={setIsHistoryOn} setMarkers={setMarkers} setLines={setLines}></HistoryDrawer>
                             <Tile opacity={mapOpacity}/>
                         {markers.map((marker, index) => (
@@ -526,15 +528,15 @@ export function ReactApp() {
                     />))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
-                                          weight={10}
-                                          clickable={true}
-                                          pathOptions={{color: line.color}}
-                                          positions={[line.position1, line.position2]}
-                                          ref={(ref) => (lineRefs.current[index] = ref)}
-                                          eventHandlers={{
-                                              click: (e) => handleLineClick(e),
-                                              contextmenu: (e) => handleLineRightClick(e)
-                                          }}>
+                                        weight={10}
+                                        clickable={true}
+                                        pathOptions={{color: line.color}}
+                                        positions={[line.position1, line.position2]}
+                                        ref={(ref) => (lineRefs.current[index] = ref)}
+                                        eventHandlers={{
+                                            click: (e) => handleLineClick(e),
+                                            contextmenu: (e) => handleLineRightClick(e)
+                                        }}>
                                     <LineSettings line={line} index={index} handleLineDelete={handleLineDelete} markers={markers} lines={lines} markerRefs={markerRefs} setLines={setLines} replaceDefaultValues={replaceDefaultValues} changeLineLength={changeLineLength}></LineSettings>
                                 </Polyline>
                             ))}
