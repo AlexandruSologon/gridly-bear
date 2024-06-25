@@ -36,11 +36,11 @@ test('Sidebar', () => {
    expect(screen.getByTestId('retract-sidebar-icon-right').style.display).toEqual('flex');
   expect(screen.getByTestId('retract-sidebar-icon-left').style.display).toEqual('none')
   expect(screen.getByTestId('sidebar').style.display).toEqual('grid')
-  expect(screen.getByTestId("draggable-solar").style.backgroundColor).toEqual('inherit');
+  expect(screen.getByTestId("draggable-solar").style.filter).toEqual('none');
   fireEvent.mouseOver(screen.getByTestId("draggable-solar"))
-  expect(screen.getByTestId("draggable-solar").style.backgroundColor).toEqual('rgb(230, 230, 230)');
+  expect(screen.getByTestId("draggable-solar").style.filter).toEqual('brightness(150%) drop-shadow(0px 0px 7px rgba(25, 49, 101, 0.5))');
   fireEvent.mouseOut(screen.getByTestId("draggable-solar"))
-  expect(screen.getByTestId("draggable-solar").style.backgroundColor).toEqual('inherit');
+  expect(screen.getByTestId("draggable-solar").style.filter).toEqual('none');
 
 
 });

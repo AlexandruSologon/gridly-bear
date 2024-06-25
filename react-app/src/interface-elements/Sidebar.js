@@ -20,7 +20,6 @@ function SingleDraggable({state, item, isSidebarOn}) {
     }
 
     return (<div
-        data-testid={testid}
         key={item.id}
         draggable={true}
         onDragStart={(event) => state.handleDragStart(event, item)}
@@ -43,6 +42,7 @@ function SingleDraggable({state, item, isSidebarOn}) {
             style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: h, width: w}}>
             {/* Render the icon based on item.type */}
             <img src={state.iconMapping[item.type].options.iconRetinaUrl}
+                data-testid={testid}
                 alt={item.name}
                 style={{
                     width: isSidebarOn ? w : '0',
