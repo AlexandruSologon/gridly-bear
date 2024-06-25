@@ -30,7 +30,7 @@ import HistoryDrawer from './interface-elements/HistoryDrawer';
 
 
 export function ReactApp() {
-    document.title = "PandaGUI";
+    document.title = "GridlyBear";
     const mapContainer = useRef(null);
     const [markers, setMarkers] = useState([]);
     const markerRefs = useRef([]);
