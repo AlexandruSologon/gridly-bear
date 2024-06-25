@@ -28,7 +28,6 @@ function SingleDraggable({state, item, isSidebarOn}) {
         onMouseEnter={set}
         onMouseLeave={unset}
         style={{
-            backgroundColor: mousedOver ? 'rgb(230, 230, 230)' : 'inherit',
             margin: '2px ',
             cursor: 'grab',
             width: isSidebarOn ? '96px' : '0',
@@ -44,18 +43,19 @@ function SingleDraggable({state, item, isSidebarOn}) {
             style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: h, width: w}}>
             {/* Render the icon based on item.type */}
             <img src={state.iconMapping[item.type].options.iconRetinaUrl}
-                 alt={item.name}
-                 style={{
-                     width: isSidebarOn ? w : '0',
-                     height: isSidebarOn ? h : '0',
-                     transition: 'height 0.4s, width 0.4s'
+                alt={item.name}
+                style={{
+                    width: isSidebarOn ? w : '0',
+                    height: isSidebarOn ? h : '0',
+                    transition: 'height 0.4s, width 0.4s',
+                    filter: mousedOver ? 'brightness(150%) drop-shadow(0px 0px 7px rgba(25, 49, 101, 0.5))' : 'none'
                  }}
             />
         </div>
         {/* Render the text */}
         <div style={{marginTop: '7px',
-                     fontSize: isSidebarOn ? '13px' : '0px' ,
-                     transition: 'font-size 0.4s' }}>{item.name}</div>
+                    fontSize: isSidebarOn ? '13px' : '0px' ,
+                    transition: 'font-size 0.4s' }}>{item.name}</div>
     </div>);
 }
 
