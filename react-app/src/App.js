@@ -522,7 +522,7 @@ export function ReactApp() {
                                             icon={resultIcon(line)}
                                             interactive={false}
                                             // These offsets should depend on line length / Camera zoom level
-                                            position={[(line.position1.lat + line.position2.lat)/2 + 0.0005, (line.position1.lng + line.position2.lng)/2 - 0.0010]}
+                                            position={[(line.position1.lat + line.position2.lat)/2, (line.position1.lng + line.position2.lng)/2]}
                     />))}
                             {lines.map((line, index) => (
                                 <Polyline key={index}
