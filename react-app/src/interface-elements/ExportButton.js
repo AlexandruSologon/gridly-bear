@@ -14,7 +14,7 @@ function ExportButton({markerRefs, lineRefs, markers, lines, mapContainer}) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'pandagui_canvas_export.json'; // Specify the desired filename
+        link.download = 'gridlybear_canvas_export.json'; // Specify the desired filename
         document.body.appendChild(link);
         link.click();
 
