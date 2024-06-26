@@ -7,7 +7,7 @@ import {SaveOutlined} from "@ant-design/icons";
 import {resetLinesRender, resetMarkerRender} from "../utils/api";
 
 function Menu({ line, markers, lines, markerRefs, setLines }) {
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedOption, setSelectedOption] = useState({value: line.type, label: line.type});
 
     const options = [
         'NAYY 4x50 SE',

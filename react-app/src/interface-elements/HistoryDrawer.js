@@ -13,7 +13,7 @@ function HistoryDrawer(props) {
                 sx: {
                     backgroundColor: "rgba(253, 253, 253, 1)",
                     color: "#000",
-                    width: '624px',
+                    width: '420px',
                     textAlign: 'center',
                     transition: 'height 0.3s, border 0.3s',
                     marginRight: '30px',
@@ -31,7 +31,7 @@ function HistoryDrawer(props) {
                 display: 'grid',
                 position: 'absolute',
                 zIndex: 1002,
-                right: '644px'
+                right: '440px'
             }}
             variant="permanent"
             anchor="topright"

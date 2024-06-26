@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 function TransformerSettings({ transformer }) {
-    const [value, setValue] = useState(null);
+    const [value, setValue] = useState({value:transformer.parameters.type, label:transformer.parameters.type});
 
     const options = [
         '160 MVA 380/110 kV',
