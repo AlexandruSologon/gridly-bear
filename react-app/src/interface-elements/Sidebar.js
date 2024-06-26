@@ -41,7 +41,7 @@ function SingleDraggable({state, item, isSidebarOn}) {
         <div
             style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: h, width: w}}>
             {/* Render the icon based on item.type */}
-            <img src={state.iconMapping[item.type].options.iconRetinaUrl}
+            <img src={state.iconMapping[item.type].options.iconUrl}
                 data-testid={testid}
                 alt={item.name}
                 style={{
