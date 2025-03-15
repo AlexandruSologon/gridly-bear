@@ -3,7 +3,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 //  import {connectFunctionsEmulator} from "firebase/functions";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD7n865HujlU9MJe9uQ1H4rxMjv_dTIDqQ",
+    apiKey: "",
     authDomain: "pandapower-ui.firebaseapp.com",
     projectId: "pandapower-ui",
     storageBucket: "pandapower-ui.appspot.com",
